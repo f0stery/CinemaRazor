@@ -1,0 +1,53 @@
+﻿@page
+@model CinemaRazor.Pages.Sessions.CreateModel
+
+@{
+    ViewData["Title"] = "Создание сеанса";
+}
+
+<h1>Создание сеанса</h1>
+
+<h4>Сеанс</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="Session.MovieId" class="control-label">Фильм</label>
+                <select asp-for="Session.MovieId" class="form-control" asp-items="ViewBag.MovieId"></select>
+                <span asp-validation-for="Session.MovieId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Session.StartTime" class="control-label">Дата и время начала</label>
+                <input asp-for="Session.StartTime" class="form-control" type="datetime-local" />
+                <span asp-validation-for="Session.StartTime" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Session.EndTime" class="control-label">Дата и время окончания</label>
+                <input asp-for="Session.EndTime" class="form-control" type="datetime-local" />
+                <span asp-validation-for="Session.EndTime" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Session.Price" class="control-label">Цена билета</label>
+                <input asp-for="Session.Price" class="form-control" />
+                <span asp-validation-for="Session.Price" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-3">
+                <input type="submit" value="Создать" class="btn btn-primary" />
+                <a asp-page="Index" class="btn btn-secondary">Назад к списку</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

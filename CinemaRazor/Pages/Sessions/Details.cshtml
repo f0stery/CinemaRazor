@@ -1,0 +1,47 @@
+﻿@page
+@model CinemaRazor.Pages.Sessions.DetailsModel
+
+@{
+    ViewData["Title"] = "Детали сеанса";
+}
+
+<h1>Детали сеанса</h1>
+
+<div>
+    <h4>Сеанс</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Фильм
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Session.Movie.Title)
+        </dd>
+
+        <dt class="col-sm-2">
+            Время начала
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Session.StartTime)
+        </dd>
+
+        <dt class="col-sm-2">
+            Время окончания
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Session.EndTime)
+        </dd>
+
+        <dt class="col-sm-2">
+            Цена билета
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Session.Price)
+        </dd>
+    </dl>
+</div>
+
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.Session.Id" class="btn btn-primary">Редактировать</a>
+    <a asp-page="./Index" class="btn btn-secondary">Назад к списку</a>
+</div>

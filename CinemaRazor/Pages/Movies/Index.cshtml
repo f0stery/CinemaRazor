@@ -1,0 +1,42 @@
+﻿@page
+@model CinemaRazor.Pages.Movies.IndexModel
+
+@{
+    ViewData["Title"] = "Список фильмов";
+}
+
+<h1>Список фильмов</h1>
+
+<p>
+    <a asp-page="Create" class="btn btn-primary">Добавить фильм</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>Описание</th>
+            <th>Дата выхода</th>
+            <th>Длительность (мин)</th>
+            <th>Жанр</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var movie in Model.Movies)
+        {
+            <tr>
+                <td>@movie.Title</td>
+                <td>@movie.Description</td>
+                <td>@movie.ReleaseDate.ToString("dd.MM.yyyy")</td>
+                <td>@movie.DurationMinutes</td>
+                <td>@movie.Genre?.Name</td>
+                <td>
+                    <a asp-page="Edit" asp-route-id="@movie.Id" class="btn btn-sm btn-warning">Изменить</a>
+                    <a asp-page="Details" asp-route-id="@movie.Id" class="btn btn-sm btn-info">Подробнее</a>
+                    <a asp-page="Delete" asp-route-id="@movie.Id" class="btn btn-sm btn-danger">Удалить</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

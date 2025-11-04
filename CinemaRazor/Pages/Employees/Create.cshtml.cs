@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using CinemaRazor.Data;
 using CinemaRazor.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CinemaRazor.Pages.Employees
 {
@@ -18,20 +19,33 @@ namespace CinemaRazor.Pages.Employees
         [BindProperty]
         public Employee Employee { get; set; } = default!;
 
-        public IActionResult OnGet()
+        public async Task<IActionResult> OnGetAsync()
         {
-            ViewData["PositionId"] = new SelectList(_context.Positions, "Id", "Title");
+            await PopulatePositionsAsync();
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
+            {
+                await PopulatePositionsAsync();
                 return Page();
+            }
 
             _context.Employees.Add(Employee);
             await _context.SaveChangesAsync();
             return RedirectToPage("./Index");
+        }
+
+        private async Task PopulatePositionsAsync()
+        {
+            var positions = await _context.Positions
+                .AsNoTracking()
+                .OrderBy(p => p.Title)
+                .ToListAsync();
+
+            ViewData["PositionId"] = new SelectList(positions, "Id", "Title");
         }
     }
 }

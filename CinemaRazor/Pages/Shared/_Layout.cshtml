@@ -9,43 +9,44 @@
     <link rel="stylesheet" href="~/CinemaRazor.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+    <header class="shadow-sm">
+        <nav class="navbar navbar-expand-lg cinema-navbar">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">CinemaRazor</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <a class="navbar-brand" asp-area="" asp-page="/Index">
+                    <span class="brand-accent">Cinema</span>Razor
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-page="/Index">🏠 Home</a>
+                            <a class="nav-link" asp-page="/Index">Главная</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-page="/Movies/Index">🎬 Movies</a>
+                            <a class="nav-link" asp-page="/Movies/Index">Фильмы</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-page="/Genres/Index">🎭 Genres</a>
+                            <a class="nav-link" asp-page="/Sessions/Index">Сеансы</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-page="/Seats/Index">💺 Seats</a>
-                            <a class="nav-link text-dark" asp-page="/Booking/Index">🎫 Booking</a>
+                            <a class="nav-link" asp-page="/Booking/Index">Бронирование</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-page="/Sessions/Index">🕒 Sessions</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-page="/Tickets/Index">🎟 Tickets</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-page="/Seats/Index">💺 Seats</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-page="/Employees/Index">👥 Employees</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-page="/Positions/Index">💼 Positions</a>
+                    </ul>
+                    <ul class="navbar-nav align-items-lg-center">
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Администрирование
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow">
+                                <li><a class="dropdown-item" asp-page="/Admin/Index">Панель</a></li>
+                                <li><hr class="dropdown-divider" /></li>
+                                <li><a class="dropdown-item" asp-page="/Movies/Index">Фильмы</a></li>
+                                <li><a class="dropdown-item" asp-page="/Genres/Index">Жанры</a></li>
+                                <li><a class="dropdown-item" asp-page="/Sessions/Index">Сеансы</a></li>
+                                <li><a class="dropdown-item" asp-page="/Employees/Index">Сотрудники</a></li>
+                                <li><a class="dropdown-item" asp-page="/Positions/Index">Должности</a></li>
+                            </ul>
                         </li>
                     </ul>
                 </div>

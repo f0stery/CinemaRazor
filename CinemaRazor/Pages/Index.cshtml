@@ -1,10 +1,51 @@
-﻿@page
+@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Главная";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-center mt-5">
+    <h1 class="display-3 mb-4">🎬 Добро пожаловать в CinemaRazor</h1>
+    <p class="lead mb-5">Бронируйте билеты на лучшие фильмы онлайн!</p>
+    
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-8">
+            <a asp-page="/Booking/Index" class="btn btn-primary btn-lg px-5 py-3" style="font-size: 1.5rem;">
+                🎫 Забронировать билеты
+            </a>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="display-1 mb-3">🎬</div>
+                    <h3>Фильмы</h3>
+                    <p>Просмотрите наш каталог фильмов</p>
+                    <a asp-page="/Movies/Index" class="btn btn-outline-primary">Перейти</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="display-1 mb-3">🕒</div>
+                    <h3>Сеансы</h3>
+                    <p>Расписание показов фильмов</p>
+                    <a asp-page="/Sessions/Index" class="btn btn-outline-primary">Перейти</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <div class="display-1 mb-3">🎟</div>
+                    <h3>Билеты</h3>
+                    <p>Управление проданными билетами</p>
+                    <a asp-page="/Tickets/Index" class="btn btn-outline-primary">Перейти</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

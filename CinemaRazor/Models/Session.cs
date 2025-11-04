@@ -29,9 +29,6 @@ namespace CinemaRazor.Models
 
         [ValidateNever]
         public ICollection<Ticket> Tickets { get; set; }
-
-        [ValidateNever]
-        public ICollection<Seat> Seats { get; set; }
     }
 
     public class Ticket

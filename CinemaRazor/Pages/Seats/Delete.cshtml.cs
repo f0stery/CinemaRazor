@@ -30,8 +30,6 @@ namespace CinemaRazor.Pages.Seats
             }
 
             var seat = await _context.Seats
-                .Include(s => s.Session)
-                .ThenInclude(session => session.Movie)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (seat == null)

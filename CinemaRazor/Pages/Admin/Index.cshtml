@@ -2,87 +2,10 @@
 @model CinemaRazor.Pages.Admin.IndexModel
 
 @{
-    ViewData["Title"] = "Админ-панель";
+    ViewData["Title"] = "Администрирование";
 }
 
-<section class="page-header mb-5">
-    <h1 class="page-title">Администрирование кинотеатра</h1>
-    <p class="page-subtitle">
-        Управляйте расписанием, репертуаром и командой из одного места.
-    </p>
-</section>
-
-<section class="mb-5">
-    <div class="row g-4">
-        <div class="col-12 col-lg-3 col-sm-6">
-            <div class="dashboard-card gradient-card-primary">
-                <div class="card-label">Активных сеансов</div>
-                <div class="card-value">@Model.Stats.Sessions</div>
-            </div>
-        </div>
-        <div class="col-12 col-lg-3 col-sm-6">
-            <div class="dashboard-card gradient-card-secondary">
-                <div class="card-label">Фильмов в афише</div>
-                <div class="card-value">@Model.Stats.Movies</div>
-            </div>
-        </div>
-        <div class="col-12 col-lg-3 col-sm-6">
-            <div class="dashboard-card gradient-card-tertiary">
-                <div class="card-label">Сотрудников</div>
-                <div class="card-value">@Model.Stats.Employees</div>
-            </div>
-        </div>
-        <div class="col-12 col-lg-3 col-sm-6">
-            <div class="dashboard-card gradient-card-quaternary">
-                <div class="card-label">Открытых вакансий</div>
-                <div class="card-value">@Model.Stats.Positions</div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="mb-5">
-    <div class="row g-4">
-        <div class="col-12 col-lg-4">
-            <div class="management-card">
-                <h2>Репертуар и жанры</h2>
-                <p>Актуализируйте фильмы, жанры и расписание показов для зрителей.</p>
-                <div class="d-flex gap-2 flex-wrap">
-                    <a class="btn btn-outline-primary" asp-page="/Movies/Index">Фильмы</a>
-                    <a class="btn btn-outline-primary" asp-page="/Genres/Index">Жанры</a>
-                    <a class="btn btn-outline-primary" asp-page="/Sessions/Index">Сеансы</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-lg-4">
-            <div class="management-card">
-                <h2>Команда</h2>
-                <p>Добавляйте новых сотрудников и назначайте им должности.</p>
-                <div class="d-flex gap-2 flex-wrap">
-                    <a class="btn btn-outline-primary" asp-page="/Employees/Create">Нанять сотрудника</a>
-                    <a class="btn btn-outline-secondary" asp-page="/Employees/Index">Список сотрудников</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-lg-4">
-            <div class="management-card">
-                <h2>Должности</h2>
-                <p>Определяйте требования, оклады и обязанности по каждой позиции.</p>
-                <div class="d-flex gap-2 flex-wrap">
-                    <a class="btn btn-outline-primary" asp-page="/Positions/Create">Создать должность</a>
-                    <a class="btn btn-outline-secondary" asp-page="/Positions/Index">Каталог должностей</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section>
-    <div class="support-card">
-        <h2>Работа с залом</h2>
-        <p>
-            Зал автоматически настроен на <strong>3 ряда × 5 мест</strong>. Бронирование и продажа билетов
-            происходит через страницы сеансов и бронирования.
-        </p>
-    </div>
-</section>
+<div class="alert alert-info mt-5">
+    <strong>Панель администратора перенесена.</strong> Используйте <a asp-page="/Index">главную страницу</a>, чтобы
+    управлять данными кинотеатра.
+</div>

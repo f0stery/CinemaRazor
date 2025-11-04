@@ -1,51 +1,177 @@
 @page
 @model IndexModel
 @{
-    ViewData["Title"] = "Главная";
+    ViewData["Title"] = "Панель администратора";
 }
 
-<div class="text-center mt-5">
-    <h1 class="display-3 mb-4">🎬 Добро пожаловать в CinemaRazor</h1>
-    <p class="lead mb-5">Бронируйте билеты на лучшие фильмы онлайн!</p>
-    
-    <div class="row justify-content-center mb-5">
-        <div class="col-md-8">
-            <a asp-page="/Booking/Index" class="btn btn-primary btn-lg px-5 py-3" style="font-size: 1.5rem;">
-                🎫 Забронировать билеты
-            </a>
-        </div>
-    </div>
+<section class="page-header mb-5">
+    <h1 class="page-title">Администрирование кинотеатра</h1>
+    <p class="page-subtitle">
+        Управляйте репертуаром, расписанием, персоналом и продажами билетов из единой панели. Все данные кинотеатра
+        доступны для просмотра, добавления, редактирования и удаления.
+    </p>
+</section>
 
-    <div class="row mt-5">
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <div class="display-1 mb-3">🎬</div>
-                    <h3>Фильмы</h3>
-                    <p>Просмотрите наш каталог фильмов</p>
-                    <a asp-page="/Movies/Index" class="btn btn-outline-primary">Перейти</a>
+<section class="mb-5">
+    <div class="row g-4">
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="dashboard-card gradient-card-primary">
+                <div class="card-label">Фильмов в базе</div>
+                <div class="card-value">@Model.Stats.Movies</div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="dashboard-card gradient-card-quinary">
+                <div class="card-label">Жанров</div>
+                <div class="card-value">@Model.Stats.Genres</div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="dashboard-card gradient-card-secondary">
+                <div class="card-label">Активных сеансов</div>
+                <div class="card-value">@Model.Stats.Sessions</div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="dashboard-card gradient-card-senary">
+                <div class="card-label">Проданных билетов</div>
+                <div class="card-value">@Model.Stats.Tickets</div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="dashboard-card gradient-card-tertiary">
+                <div class="card-label">Сотрудников</div>
+                <div class="card-value">@Model.Stats.Employees</div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="dashboard-card gradient-card-quaternary">
+                <div class="card-label">Должностей</div>
+                <div class="card-value">@Model.Stats.Positions</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mb-5">
+    <div class="row g-4">
+        <div class="col-12 col-lg-6">
+            <div class="management-card h-100">
+                <h2>Репертуар и расписание</h2>
+                <p>Добавляйте фильмы, описания, жанры и планируйте будущие сеансы с указанием времени и стоимости.</p>
+                <div class="d-flex gap-2 flex-wrap">
+                    <a class="btn btn-outline-primary" asp-page="/Movies/Create">Новый фильм</a>
+                    <a class="btn btn-outline-secondary" asp-page="/Movies/Index">Каталог фильмов</a>
+                    <a class="btn btn-outline-primary" asp-page="/Sessions/Create">Новый сеанс</a>
+                    <a class="btn btn-outline-secondary" asp-page="/Sessions/Index">Расписание</a>
+                    <a class="btn btn-outline-secondary" asp-page="/Genres/Index">Справочник жанров</a>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <div class="display-1 mb-3">🕒</div>
-                    <h3>Сеансы</h3>
-                    <p>Расписание показов фильмов</p>
-                    <a asp-page="/Sessions/Index" class="btn btn-outline-primary">Перейти</a>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <div class="display-1 mb-3">🎟</div>
-                    <h3>Билеты</h3>
-                    <p>Управление проданными билетами</p>
-                    <a asp-page="/Tickets/Index" class="btn btn-outline-primary">Перейти</a>
+        <div class="col-12 col-lg-6">
+            <div class="management-card h-100">
+                <h2>Команда и продажи</h2>
+                <p>Управляйте сотрудниками, должностями и контролируйте реализацию билетов по каждому фильму.</p>
+                <div class="d-flex gap-2 flex-wrap">
+                    <a class="btn btn-outline-primary" asp-page="/Employees/Create">Добавить сотрудника</a>
+                    <a class="btn btn-outline-secondary" asp-page="/Employees/Index">Все сотрудники</a>
+                    <a class="btn btn-outline-primary" asp-page="/Tickets/Create">Продать билет</a>
+                    <a class="btn btn-outline-secondary" asp-page="/Tickets/Index">Отчёт по билетам</a>
+                    <a class="btn btn-outline-secondary" asp-page="/Positions/Index">Должности и требования</a>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
+
+<section class="mb-5">
+    <div class="row g-4">
+        <div class="col-12 col-xl-6">
+            <div class="table-container h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="h5 mb-0">Ближайшие сеансы</h2>
+                    <a asp-page="/Sessions/Create" class="btn btn-sm btn-primary">Запланировать</a>
+                </div>
+                @if (Model.UpcomingSessions.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Фильм</th>
+                                    <th>Начало</th>
+                                    <th>Окончание</th>
+                                    <th>Цена</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var session in Model.UpcomingSessions)
+                            {
+                                <tr>
+                                    <td>
+                                        <a asp-page="/Sessions/Details" asp-route-id="@session.SessionId">@session.MovieTitle</a>
+                                    </td>
+                                    <td>@session.StartTime.ToString("dd.MM.yyyy HH:mm")</td>
+                                    <td>
+                                        @{
+                                            DateTime? endTime = session.EndTime > DateTime.MinValue && session.EndTime >= session.StartTime
+                                                ? session.EndTime
+                                                : (session.DurationMinutes > 0
+                                                    ? session.StartTime.AddMinutes(session.DurationMinutes)
+                                                    : (DateTime?)null);
+                                        }
+                                        @(endTime.HasValue ? endTime.Value.ToString("dd.MM.yyyy HH:mm") : "—")
+                                    </td>
+                                    <td>@session.Price.ToString("F2") ₽</td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted mb-0">Нет запланированных сеансов. Создайте новый сеанс, чтобы он появился в расписании.</p>
+                }
+            </div>
+        </div>
+        <div class="col-12 col-xl-6">
+            <div class="table-container h-100">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="h5 mb-0">Продажи по фильмам</h2>
+                    <a asp-page="/Tickets/Index" class="btn btn-sm btn-primary">Смотреть отчёт</a>
+                </div>
+                @if (Model.TicketSales.Any())
+                {
+                    <ul class="list-group list-group-flush">
+                    @foreach (var sale in Model.TicketSales)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>@sale.MovieTitle</span>
+                            <span class="badge bg-primary rounded-pill">@sale.TicketsSold</span>
+                        </li>
+                    }
+                    </ul>
+                }
+                else
+                {
+                    <p class="text-muted mb-0">Продажи билетов пока не зафиксированы.</p>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="support-card">
+        <h2>Схема кинозала</h2>
+        <p>
+            По умолчанию зал рассчитан на <strong>3 ряда × 5 мест</strong>. Места считаются занятыми, если для выбранного
+            сеанса продан билет: система автоматически предотвращает двойное бронирование одного и того же места.
+        </p>
+        <p class="mb-0 text-muted">
+            Изменить конфигурацию зала можно через заполнение таблицы `Seats`. При необходимости добавьте новые места
+            или удалите лишние, соблюдая связь с проданными билетами.
+        </p>
+    </div>
+</section>

@@ -153,6 +153,14 @@ main {
   background: linear-gradient(135deg, #0ea5e9, #0284c7);
 }
 
+.gradient-card-quinary {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+}
+
+.gradient-card-senary {
+    background: linear-gradient(135deg, #ec4899, #db2777);
+}
+
 .management-card,
 .support-card,
 .card,

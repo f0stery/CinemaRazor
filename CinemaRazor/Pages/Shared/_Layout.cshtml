@@ -21,32 +21,25 @@
                 <div class="collapse navbar-collapse" id="mainNav">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link" asp-page="/Index">Главная</a>
+                            <a class="nav-link" asp-page="/Index">Панель</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-page="/Movies/Index">Фильмы</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" asp-page="/Genres/Index">Жанры</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" asp-page="/Sessions/Index">Сеансы</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-page="/Booking/Index">Бронирование</a>
+                            <a class="nav-link" asp-page="/Tickets/Index">Билеты</a>
                         </li>
-                    </ul>
-                    <ul class="navbar-nav align-items-lg-center">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Администрирование
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end shadow">
-                                <li><a class="dropdown-item" asp-page="/Admin/Index">Панель</a></li>
-                                <li><hr class="dropdown-divider" /></li>
-                                <li><a class="dropdown-item" asp-page="/Movies/Index">Фильмы</a></li>
-                                <li><a class="dropdown-item" asp-page="/Genres/Index">Жанры</a></li>
-                                <li><a class="dropdown-item" asp-page="/Sessions/Index">Сеансы</a></li>
-                                <li><a class="dropdown-item" asp-page="/Employees/Index">Сотрудники</a></li>
-                                <li><a class="dropdown-item" asp-page="/Positions/Index">Должности</a></li>
-                            </ul>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-page="/Employees/Index">Сотрудники</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-page="/Positions/Index">Должности</a>
                         </li>
                     </ul>
                 </div>

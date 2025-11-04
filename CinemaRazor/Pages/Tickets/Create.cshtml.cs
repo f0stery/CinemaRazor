@@ -45,10 +45,6 @@ namespace CinemaRazor.Pages.Tickets
             {
                 ModelState.AddModelError("Ticket.SeatId", "Выбранное место не найдено.");
             }
-            else if (seat.SessionId != Ticket.SessionId)
-            {
-                ModelState.AddModelError("Ticket.SeatId", "Место не относится к выбранному сеансу.");
-            }
             else if (await _context.Tickets.AnyAsync(t => t.SessionId == Ticket.SessionId && t.SeatId == Ticket.SeatId))
             {
                 ModelState.AddModelError(string.Empty, "Это место уже продано для выбранного сеанса.");
@@ -71,7 +67,6 @@ namespace CinemaRazor.Pages.Tickets
             }
 
             _context.Tickets.Add(Ticket);
-            seat!.IsOccupied = true;
             await _context.SaveChangesAsync();
             return RedirectToPage("./Index");
         }
@@ -98,18 +93,25 @@ namespace CinemaRazor.Pages.Tickets
 
             SessionOptions = new SelectList(sessionItems, "Id", "Display", resolvedSessionId);
 
+            // Получаем все места, исключая те, которые уже проданы для выбранного сеанса
+            var occupiedSeatIds = new int[] { };
+            if (resolvedSessionId.HasValue)
+            {
+                occupiedSeatIds = await _context.Tickets
+                    .Where(t => t.SessionId == resolvedSessionId.Value)
+                    .Select(t => t.SeatId)
+                    .ToArrayAsync();
+            }
+
             var seats = await _context.Seats
-                .Include(s => s.Session)
-                    .ThenInclude(sess => sess.Movie)
                 .AsNoTracking()
-                .Where(s => (!s.IsOccupied || s.Id == Ticket.SeatId) && (!resolvedSessionId.HasValue || s.SessionId == resolvedSessionId))
-                .OrderBy(s => s.Session.StartTime)
-                .ThenBy(s => s.RowNumber)
+                .Where(s => !occupiedSeatIds.Contains(s.Id) || s.Id == Ticket.SeatId)
+                .OrderBy(s => s.RowNumber)
                 .ThenBy(s => s.SeatNumber)
                 .Select(s => new
                 {
                     s.Id,
-                    Display = $"{s.Session.Movie.Title} - {s.Session.StartTime:dd.MM HH:mm}, ряд {s.RowNumber}, место {s.SeatNumber}"
+                    Display = $"Ряд {s.RowNumber}, место {s.SeatNumber}"
                 })
                 .ToListAsync();
 

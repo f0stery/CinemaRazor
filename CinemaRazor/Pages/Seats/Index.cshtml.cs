@@ -24,11 +24,8 @@ namespace CinemaRazor.Pages.Seats
         public async Task OnGetAsync()
         {
             Seats = await _context.Seats
-                .Include(s => s.Session)
-                .ThenInclude(session => session.Movie)
                 .AsNoTracking()
-                .OrderBy(s => s.Session.StartTime)
-                .ThenBy(s => s.RowNumber)
+                .OrderBy(s => s.RowNumber)
                 .ThenBy(s => s.SeatNumber)
                 .ToListAsync();
         }

@@ -52,11 +52,10 @@ namespace CinemaRazor.Data
                 .Property(t => t.Price)
                 .HasPrecision(10, 2);
 
-            modelBuilder.Entity<Seat>()
-                .HasOne(seat => seat.Session)
-                .WithMany(session => session.Seats)
-                .HasForeignKey(seat => seat.SessionId)
-                .OnDelete(DeleteBehavior.Cascade);
+            // Уникальный индекс: одно место может быть продано только один раз на сеанс
+            modelBuilder.Entity<Ticket>()
+                .HasIndex(t => new { t.SessionId, t.SeatId })
+                .IsUnique();
         }
     }
 }

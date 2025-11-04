@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CinemaRazor.Models
 {
@@ -15,13 +14,5 @@ namespace CinemaRazor.Models
         [Display(Name = "Номер места")]
         [Range(1, 200)]
         public int SeatNumber { get; set; }
-
-        [Display(Name = "Сеанс")]
-        public int SessionId { get; set; }
-
-        public Session Session { get; set; }
-
-        [Display(Name = "Занято")] 
-        public bool IsOccupied { get; set; }
     }
 }

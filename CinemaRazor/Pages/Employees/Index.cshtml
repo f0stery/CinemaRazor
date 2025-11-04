@@ -1,66 +1,70 @@
-﻿@page
+@page
 @model CinemaRazor.Pages.Employees.IndexModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Сотрудники";
 }
 
-<h1>Index</h1>
+<section class="page-header mb-4">
+    <h1 class="page-title">Команда кинотеатра</h1>
+    <p class="page-subtitle">Следите за кадрами, назначайте должности и оперативно обновляйте данные.</p>
+</section>
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Employee[0].FullName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Employee[0].Age)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Employee[0].Gender)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Employee[0].Address)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Employee[0].Phone)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Employee[0].Position)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Employee) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FullName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Age)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Gender)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Address)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Phone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Position.Title)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <span class="text-muted">Всего сотрудников: @Model.Employee.Count</span>
+    <a asp-page="Create" class="btn btn-primary">Добавить сотрудника</a>
+</div>
+
+@if (Model.Employee.Any())
+{
+    <div class="table-container">
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>ФИО</th>
+                        <th>Возраст</th>
+                        <th>Телефон</th>
+                        <th>Должность</th>
+                        <th class="text-end">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model.Employee)
+                {
+                    <tr>
+                        <td>
+                            <div class="fw-semibold">@item.FullName</div>
+                            <div class="text-muted small">@item.Gender, @item.Age</div>
+                            @if (!string.IsNullOrWhiteSpace(item.Address))
+                            {
+                                <div class="text-muted small">@item.Address</div>
+                            }
+                        </td>
+                        <td>@item.Age</td>
+                        <td>@item.Phone</td>
+                        <td>
+                            <span class="badge rounded-pill text-bg-light border">@item.Position?.Title</span>
+                        </td>
+                        <td class="text-end">
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a class="btn btn-outline-secondary" asp-page="./Details" asp-route-id="@item.Id">Просмотр</a>
+                                <a class="btn btn-outline-secondary" asp-page="./Edit" asp-route-id="@item.Id">Изменить</a>
+                                <a class="btn btn-outline-secondary" asp-page="./Delete" asp-route-id="@item.Id">Удалить</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
 }
-    </tbody>
-</table>
+else
+{
+    <div class="support-card">
+        <h2>Пока нет сотрудников</h2>
+        <p>Создайте хотя бы одну должность и добавьте сотрудника, чтобы команда появилась в списке.</p>
+        <a asp-page="Create" class="btn btn-primary">Добавить первого сотрудника</a>
+    </div>
+}

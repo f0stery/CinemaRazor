@@ -2,47 +2,47 @@
 @model CinemaRazor.Pages.Positions.CreateModel
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Новая должность";
 }
 
-<h1>Create</h1>
+<section class="page-header mb-4">
+    <h1 class="page-title">Создание должности</h1>
+    <p class="page-subtitle">Определите обязанности роли, требования к кандидату и уровень заработной платы.</p>
+</section>
 
-<h4>Position</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form method="post">
+<div class="card">
+    <div class="card-body p-4">
+        <form method="post" class="row g-4">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <span class="text-danger">*</span>
-                <label asp-for="Position.Title" class="control-label"></label>
-                <input asp-for="Position.Title" class="form-control" />
-                <span asp-validation-for="Position.Title" class="text-danger"></span>
+            <div class="col-12 col-md-6">
+                <label asp-for="Position.Title" class="form-label">Название должности<span class="text-danger">*</span></label>
+                <input asp-for="Position.Title" class="form-control" placeholder="Администратор зала" />
+                <span asp-validation-for="Position.Title" class="text-danger small"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Position.Salary" class="control-label"></label>
-                <input asp-for="Position.Salary" class="form-control" />
-                <span asp-validation-for="Position.Salary" class="text-danger"></span>
+            <div class="col-12 col-md-6">
+                <label asp-for="Position.Salary" class="form-label">Оклад</label>
+                <div class="input-group">
+                    <span class="input-group-text">₽</span>
+                    <input asp-for="Position.Salary" class="form-control" type="number" step="0.01" min="0" placeholder="40000" />
+                </div>
+                <span asp-validation-for="Position.Salary" class="text-danger small"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Position.Responsibilities" class="control-label"></label>
-                <textarea asp-for="Position.Responsibilities" class="form-control"></textarea>
-                <span asp-validation-for="Position.Responsibilities" class="text-danger"></span>
+            <div class="col-12">
+                <label asp-for="Position.Responsibilities" class="form-label">Обязанности<span class="text-danger">*</span></label>
+                <textarea asp-for="Position.Responsibilities" class="form-control" rows="4" placeholder="Перечислите основные задачи"></textarea>
+                <span asp-validation-for="Position.Responsibilities" class="text-danger small"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Position.Requirements" class="control-label"></label>
-                <textarea asp-for="Position.Requirements" class="form-control"></textarea>
-                <span asp-validation-for="Position.Requirements" class="text-danger"></span>
+            <div class="col-12">
+                <label asp-for="Position.Requirements" class="form-label">Требования<span class="text-danger">*</span></label>
+                <textarea asp-for="Position.Requirements" class="form-control" rows="4" placeholder="Опыт, навыки, образование"></textarea>
+                <span asp-validation-for="Position.Requirements" class="text-danger small"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <div class="col-12 d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+                <a asp-page="Index" class="btn btn-outline-secondary">Отмена</a>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-page="Index">Back to List</a>
 </div>
 
 @section Scripts {

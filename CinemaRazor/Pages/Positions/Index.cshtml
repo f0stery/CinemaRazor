@@ -2,53 +2,60 @@
 @model CinemaRazor.Pages.Positions.IndexModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Должности";
 }
 
-<h1>Index</h1>
+<section class="page-header mb-4">
+    <h1 class="page-title">Должности и оклады</h1>
+    <p class="page-subtitle">Определяйте структуру команды и требования к ролям.</p>
+</section>
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Position[0].Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Position[0].Salary)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Position[0].Responsibilities)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Position[0].Requirements)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Position) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Salary)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Responsibilities)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Requirements)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <span class="text-muted">Всего позиций: @Model.Position.Count</span>
+    <a asp-page="Create" class="btn btn-primary">Создать должность</a>
+</div>
+
+@if (Model.Position.Any())
+{
+    <div class="table-container">
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Должность</th>
+                        <th>Оклад</th>
+                        <th>Обязанности</th>
+                        <th>Требования</th>
+                        <th class="text-end">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model.Position)
+                {
+                    <tr>
+                        <td class="fw-semibold">@item.Title</td>
+                        <td>@item.Salary.ToString("C0", System.Globalization.CultureInfo.GetCultureInfo("ru-RU"))</td>
+                        <td class="text-muted small">@item.Responsibilities</td>
+                        <td class="text-muted small">@item.Requirements</td>
+                        <td class="text-end">
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a class="btn btn-outline-secondary" asp-page="./Details" asp-route-id="@item.Id">Просмотр</a>
+                                <a class="btn btn-outline-secondary" asp-page="./Edit" asp-route-id="@item.Id">Изменить</a>
+                                <a class="btn btn-outline-secondary" asp-page="./Delete" asp-route-id="@item.Id">Удалить</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
 }
-    </tbody>
-</table>
+else
+{
+    <div class="support-card">
+        <h2>Пока нет должностей</h2>
+        <p>Создайте первую должность, чтобы сотрудники могли быть назначены на конкретные роли.</p>
+        <a asp-page="Create" class="btn btn-primary">Добавить должность</a>
+    </div>
+}

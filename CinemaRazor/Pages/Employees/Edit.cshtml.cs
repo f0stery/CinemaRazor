@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,13 +30,13 @@ namespace CinemaRazor.Pages.Employees
                 return NotFound();
             }
 
-            var employee =  await _context.Employees.FirstOrDefaultAsync(m => m.Id == id);
+            var employee =  await _context.Employees.AsNoTracking().FirstOrDefaultAsync(m => m.Id == id);
             if (employee == null)
             {
                 return NotFound();
             }
             Employee = employee;
-           ViewData["PositionId"] = new SelectList(_context.Positions, "Id", "Title");
+            await PopulatePositionsAsync();
             return Page();
         }
 
@@ -46,6 +46,7 @@ namespace CinemaRazor.Pages.Employees
         {
             if (!ModelState.IsValid)
             {
+                await PopulatePositionsAsync();
                 return Page();
             }
 
@@ -73,6 +74,16 @@ namespace CinemaRazor.Pages.Employees
         private bool EmployeeExists(int id)
         {
             return _context.Employees.Any(e => e.Id == id);
+        }
+
+        private async Task PopulatePositionsAsync()
+        {
+            var positions = await _context.Positions
+                .AsNoTracking()
+                .OrderBy(p => p.Title)
+                .ToListAsync();
+
+            ViewData["PositionId"] = new SelectList(positions, "Id", "Title");
         }
     }
 }

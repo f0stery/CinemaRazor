@@ -72,10 +72,6 @@ namespace CinemaRazor.Pages.Tickets
             {
                 ModelState.AddModelError("Ticket.SeatId", "Выбранное место не найдено.");
             }
-            else if (seat.SessionId != Ticket.SessionId)
-            {
-                ModelState.AddModelError("Ticket.SeatId", "Место не относится к выбранному сеансу.");
-            }
             else if (await _context.Tickets.AnyAsync(t => t.SessionId == Ticket.SessionId && t.SeatId == Ticket.SeatId && t.Id != Ticket.Id))
             {
                 ModelState.AddModelError(string.Empty, "Это место уже продано для выбранного сеанса.");
@@ -86,8 +82,6 @@ namespace CinemaRazor.Pages.Tickets
                 await LoadSelectionsAsync(Ticket.SessionId, Ticket.SeatId);
                 return Page();
             }
-
-            var previousSeatId = ticketFromDb.SeatId;
 
             ticketFromDb.SessionId = Ticket.SessionId;
             ticketFromDb.SeatId = Ticket.SeatId;
@@ -141,28 +135,24 @@ namespace CinemaRazor.Pages.Tickets
             // Исключаем текущий билет при редактировании
             var occupiedSeatIds = resolvedSessionId.HasValue
                 ? await _context.Tickets
-                    .Where(t => t.SessionId == resolvedSessionId && (Ticket.Id == 0 || t.Id != Ticket.Id))
+                    .Where(t => t.SessionId == resolvedSessionId.Value && (Ticket.Id == 0 || t.Id != Ticket.Id))
                     .Select(t => t.SeatId)
                     .ToListAsync()
                 : new List<int>();
 
             var seats = await _context.Seats
-                .Include(s => s.Session)
-                    .ThenInclude(sess => sess.Movie)
                 .AsNoTracking()
-                .Where(s => (!resolvedSessionId.HasValue || s.SessionId == resolvedSessionId))
+                .OrderBy(s => s.RowNumber)
+                .ThenBy(s => s.SeatNumber)
                 .ToListAsync();
 
             // Фильтруем места: показываем только свободные или уже выбранное место
             var availableSeats = seats
                 .Where(s => !occupiedSeatIds.Contains(s.Id) || s.Id == selectedSeatId)
-                .OrderBy(s => s.Session.StartTime)
-                .ThenBy(s => s.RowNumber)
-                .ThenBy(s => s.SeatNumber)
                 .Select(s => new
                 {
                     s.Id,
-                    Display = $"{s.Session.Movie.Title} - {s.Session.StartTime:dd.MM HH:mm}, ряд {s.RowNumber}, место {s.SeatNumber}"
+                    Display = $"Ряд {s.RowNumber}, место {s.SeatNumber}"
                 })
                 .ToList();
 

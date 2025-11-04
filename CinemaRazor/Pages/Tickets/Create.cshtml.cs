@@ -98,33 +98,20 @@ namespace CinemaRazor.Pages.Tickets
             // Получаем занятые места для выбранного сеанса (через билеты)
             var occupiedSeatIds = resolvedSessionId.HasValue
                 ? await _context.Tickets
-                    .Where(t => t.SessionId == resolvedSessionId)
+                    .Where(t => t.SessionId == resolvedSessionId.Value)
                     .Select(t => t.SeatId)
                     .ToListAsync()
                 : new List<int>();
-            // Получаем все места, исключая те, которые уже проданы для выбранного сеанса
-            var occupiedSeatIds = new int[] { };
-            if (resolvedSessionId.HasValue)
-            {
-                occupiedSeatIds = await _context.Tickets
-                    .Where(t => t.SessionId == resolvedSessionId.Value)
-                    .Select(t => t.SeatId)
-                    .ToArrayAsync();
-            }
 
             var seats = await _context.Seats
                 .AsNoTracking()
-                .Where(s => (!resolvedSessionId.HasValue || s.SessionId == resolvedSessionId))
-                .ToListAsync();
-
-            // Фильтруем места: показываем только свободные или уже выбранное место
-            var availableSeats = seats
-                .Where(s => !occupiedSeatIds.Contains(s.Id) || s.Id == Ticket.SeatId)
-                .OrderBy(s => s.Session.StartTime)
-                .ThenBy(s => s.RowNumber)
-                .Where(s => !occupiedSeatIds.Contains(s.Id) || s.Id == Ticket.SeatId)
                 .OrderBy(s => s.RowNumber)
                 .ThenBy(s => s.SeatNumber)
+                .ToListAsync();
+
+            // Фильтруем места: показываем только свободные или уже выбранное место (при редактировании формы)
+            var availableSeats = seats
+                .Where(s => !occupiedSeatIds.Contains(s.Id) || s.Id == Ticket.SeatId)
                 .Select(s => new
                 {
                     s.Id,

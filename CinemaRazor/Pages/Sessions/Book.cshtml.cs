@@ -54,9 +54,9 @@ namespace CinemaRazor.Pages.Sessions
                 return Page();
             }
 
-            // Проверяем, что место не занято
+            // Проверяем, что место существует
             var seat = await _context.Seats
-                .FirstOrDefaultAsync(s => s.Id == SelectedSeatId.Value && s.SessionId == SessionId.Value);
+                .FirstOrDefaultAsync(s => s.Id == SelectedSeatId.Value);
 
             if (seat == null)
             {
@@ -126,10 +126,9 @@ namespace CinemaRazor.Pages.Sessions
                 return;
             }
 
-            // Загружаем все места для этого сеанса
+            // Загружаем все места зала
             var seats = await _context.Seats
                 .AsNoTracking()
-                .Where(s => s.SessionId == sessionId)
                 .OrderBy(s => s.RowNumber)
                 .ThenBy(s => s.SeatNumber)
                 .ToListAsync();
@@ -144,9 +143,6 @@ namespace CinemaRazor.Pages.Sessions
             OccupiedSeatIds = new HashSet<int>(occupiedSeats);
 
             // Создаем макет зала
-            var maxRow = seats.Any() ? seats.Max(s => s.RowNumber) : 0;
-            var maxSeat = seats.Any() ? seats.Max(s => s.SeatNumber) : 0;
-
             SeatLayout = seats.Select(s => new SeatInfo
             {
                 SeatId = s.Id,

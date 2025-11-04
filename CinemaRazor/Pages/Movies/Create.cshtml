@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model CinemaRazor.Pages.Movies.CreateModel
 
 @{
@@ -19,11 +19,35 @@
                 <span asp-validation-for="Movie.Title" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
-                <label asp-for="Movie.Description" class="control-label"></label>
-                <textarea asp-for="Movie.Description" class="form-control"></textarea>
-                <span asp-validation-for="Movie.Description" class="text-danger"></span>
-            </div>
+              <div class="form-group">
+                  <label asp-for="Movie.Description" class="control-label"></label>
+                  <textarea asp-for="Movie.Description" class="form-control"></textarea>
+                  <span asp-validation-for="Movie.Description" class="text-danger"></span>
+              </div>
+
+              <div class="form-group">
+                  <label asp-for="Movie.ProducerCompany" class="control-label"></label>
+                  <input asp-for="Movie.ProducerCompany" class="form-control" />
+                  <span asp-validation-for="Movie.ProducerCompany" class="text-danger"></span>
+              </div>
+
+              <div class="form-group">
+                  <label asp-for="Movie.ProductionCountry" class="control-label"></label>
+                  <input asp-for="Movie.ProductionCountry" class="form-control" />
+                  <span asp-validation-for="Movie.ProductionCountry" class="text-danger"></span>
+              </div>
+
+              <div class="form-group">
+                  <label asp-for="Movie.Actors" class="control-label"></label>
+                  <textarea asp-for="Movie.Actors" class="form-control" rows="3"></textarea>
+                  <span asp-validation-for="Movie.Actors" class="text-danger"></span>
+              </div>
+
+              <div class="form-group">
+                  <label asp-for="Movie.AgeRating" class="control-label"></label>
+                  <input asp-for="Movie.AgeRating" class="form-control" />
+                  <span asp-validation-for="Movie.AgeRating" class="text-danger"></span>
+              </div>
 
             <div class="form-group">
                 <label asp-for="Movie.ReleaseDate" class="control-label"></label>

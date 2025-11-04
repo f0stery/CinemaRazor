@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model CinemaRazor.Pages.Genres.IndexModel
 
 @{
@@ -12,18 +12,24 @@
 </p>
 <table class="table">
     <thead>
-        <tr>
+          <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Genre[0].Name)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Genre[0].Description)
+            </th>
             <th></th>
-        </tr>
+          </tr>
     </thead>
     <tbody>
 @foreach (var item in Model.Genre) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
                 <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |

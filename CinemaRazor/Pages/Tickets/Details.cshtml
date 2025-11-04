@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model CinemaRazor.Pages.Tickets.DetailsModel
 
 @{
@@ -10,32 +10,38 @@
 <div>
     <h4>Ticket</h4>
     <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Ticket.Session)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Ticket.Session.Id)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Ticket.Seat)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Ticket.Seat.Id)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Ticket.PurchaseDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Ticket.PurchaseDate)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Ticket.Price)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Ticket.Price)
-        </dd>
-    </dl>
+      <dl class="row">
+          <dt class="col-sm-2">
+              Фильм
+          </dt>
+          <dd class="col-sm-10">
+              @Model.Ticket.Session?.Movie?.Title
+          </dd>
+          <dt class="col-sm-2">
+              Сеанс
+          </dt>
+          <dd class="col-sm-10">
+              @Model.Ticket.Session?.StartTime.ToString("dd.MM.yyyy HH:mm")
+          </dd>
+          <dt class="col-sm-2">
+              Место
+          </dt>
+          <dd class="col-sm-10">
+              Ряд @Model.Ticket.Seat?.RowNumber, место @Model.Ticket.Seat?.SeatNumber
+          </dd>
+          <dt class="col-sm-2">
+              @Html.DisplayNameFor(model => model.Ticket.PurchaseDate)
+          </dt>
+          <dd class="col-sm-10">
+              @Model.Ticket.PurchaseDate.ToString("dd.MM.yyyy HH:mm")
+          </dd>
+          <dt class="col-sm-2">
+              @Html.DisplayNameFor(model => model.Ticket.Price)
+          </dt>
+          <dd class="col-sm-10">
+              @Model.Ticket.Price.ToString("F2")
+          </dd>
+      </dl>
 </div>
 <div>
     <a asp-page="./Edit" asp-route-id="@Model.Ticket.Id">Edit</a> |

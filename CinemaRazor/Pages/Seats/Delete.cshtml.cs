@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,7 +29,10 @@ namespace CinemaRazor.Pages.Seats
                 return NotFound();
             }
 
-            var seat = await _context.Seats.FirstOrDefaultAsync(m => m.Id == id);
+            var seat = await _context.Seats
+                .Include(s => s.Session)
+                .ThenInclude(session => session.Movie)
+                .FirstOrDefaultAsync(m => m.Id == id);
 
             if (seat == null)
             {

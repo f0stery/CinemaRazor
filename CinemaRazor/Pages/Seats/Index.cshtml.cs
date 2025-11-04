@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,6 +19,18 @@ namespace CinemaRazor.Pages.Seats
             _context = context;
         }
 
-        public IList<Seat> Seat { get;set; } = default!;
+        public IList<Seat> Seats { get; private set; } = new List<Seat>();
+
+        public async Task OnGetAsync()
+        {
+            Seats = await _context.Seats
+                .Include(s => s.Session)
+                .ThenInclude(session => session.Movie)
+                .AsNoTracking()
+                .OrderBy(s => s.Session.StartTime)
+                .ThenBy(s => s.RowNumber)
+                .ThenBy(s => s.SeatNumber)
+                .ToListAsync();
+        }
     }
 }

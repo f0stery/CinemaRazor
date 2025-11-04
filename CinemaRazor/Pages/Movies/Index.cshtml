@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model CinemaRazor.Pages.Movies.IndexModel
 
 @{
@@ -7,15 +7,32 @@
 
 <h1>Список фильмов</h1>
 
-<p>
+<div class="d-flex align-items-center justify-content-between mb-3">
     <a asp-page="Create" class="btn btn-primary">Добавить фильм</a>
-</p>
+
+    <form method="get" class="row g-2 align-items-end">
+        <div class="col-auto">
+            <label asp-for="SelectedGenreId" class="form-label mb-0">Жанр</label>
+            <select asp-for="SelectedGenreId" asp-items="Model.GenreOptions" class="form-select">
+                <option value="">Все жанры</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-outline-secondary">Показать</button>
+            <a asp-page="Index" class="btn btn-link">Сбросить</a>
+        </div>
+    </form>
+</div>
 
 <table class="table table-striped">
     <thead>
         <tr>
             <th>Название</th>
             <th>Описание</th>
+            <th>Производитель</th>
+            <th>Страна</th>
+            <th>Актёры</th>
+            <th>Возраст</th>
             <th>Дата выхода</th>
             <th>Длительность (мин)</th>
             <th>Жанр</th>
@@ -28,6 +45,10 @@
             <tr>
                 <td>@movie.Title</td>
                 <td>@movie.Description</td>
+                <td>@movie.ProducerCompany</td>
+                <td>@movie.ProductionCountry</td>
+                <td>@movie.Actors</td>
+                <td>@movie.AgeRating</td>
                 <td>@movie.ReleaseDate.ToString("dd.MM.yyyy")</td>
                 <td>@movie.DurationMinutes</td>
                 <td>@movie.Genre?.Name</td>

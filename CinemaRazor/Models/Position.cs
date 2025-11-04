@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +17,16 @@ namespace CinemaRazor.Models
         [Range(0, 100000)]
         [Display(Name = "Оклад")]
         public decimal Salary { get; set; }
+
+        [Required]
+        [StringLength(500)]
+        [Display(Name = "Обязанности")]
+        public string Responsibilities { get; set; }
+
+        [Required]
+        [StringLength(500)]
+        [Display(Name = "Требования")]
+        public string Requirements { get; set; }
 
         public ICollection<Employee> Employees { get; set; }
     }

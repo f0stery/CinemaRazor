@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -27,6 +27,8 @@ namespace CinemaRazor.Models
         public Movie Movie { get; set; }
 
         public ICollection<Ticket> Tickets { get; set; }
+
+        public ICollection<Seat> Seats { get; set; }
     }
 
     public class Ticket

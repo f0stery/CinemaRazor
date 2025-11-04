@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using CinemaRazor.Models;
 
 namespace CinemaRazor.Data
@@ -51,6 +51,12 @@ namespace CinemaRazor.Data
             modelBuilder.Entity<Ticket>()
                 .Property(t => t.Price)
                 .HasPrecision(10, 2);
+
+            modelBuilder.Entity<Seat>()
+                .HasOne(seat => seat.Session)
+                .WithMany(session => session.Seats)
+                .HasForeignKey(seat => seat.SessionId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

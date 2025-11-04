@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,7 +29,11 @@ namespace CinemaRazor.Pages.Tickets
                 return NotFound();
             }
 
-            var ticket = await _context.Tickets.FirstOrDefaultAsync(m => m.Id == id);
+            var ticket = await _context.Tickets
+                .Include(t => t.Session)
+                    .ThenInclude(s => s.Movie)
+                .Include(t => t.Seat)
+                .FirstOrDefaultAsync(m => m.Id == id);
 
             if (ticket == null)
             {
@@ -49,10 +53,17 @@ namespace CinemaRazor.Pages.Tickets
                 return NotFound();
             }
 
-            var ticket = await _context.Tickets.FindAsync(id);
+            var ticket = await _context.Tickets
+                .Include(t => t.Seat)
+                .FirstOrDefaultAsync(t => t.Id == id);
             if (ticket != null)
             {
                 Ticket = ticket;
+                if (ticket.Seat != null)
+                {
+                    ticket.Seat.IsOccupied = false;
+                }
+
                 _context.Tickets.Remove(Ticket);
                 await _context.SaveChangesAsync();
             }

@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model CinemaRazor.Pages.Movies.DeleteModel
 
 @{
@@ -23,6 +23,30 @@
         </dt>
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Movie.Description)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Movie.ProducerCompany)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Movie.ProducerCompany)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Movie.ProductionCountry)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Movie.ProductionCountry)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Movie.Actors)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Movie.Actors)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Movie.AgeRating)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Movie.AgeRating)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Movie.ReleaseDate)

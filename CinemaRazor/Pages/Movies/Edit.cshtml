@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model CinemaRazor.Pages.Movies.EditModel
 
 @{
@@ -14,32 +14,62 @@
         <form method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Movie.Id" />
+
             <div class="form-group">
                 <span class="text-danger">*</span>
                 <label asp-for="Movie.Title" class="control-label"></label>
                 <input asp-for="Movie.Title" class="form-control" />
                 <span asp-validation-for="Movie.Title" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Movie.Description" class="control-label"></label>
-                <input asp-for="Movie.Description" class="form-control" />
+                <textarea asp-for="Movie.Description" class="form-control"></textarea>
                 <span asp-validation-for="Movie.Description" class="text-danger"></span>
             </div>
+
+            <div class="form-group">
+                <label asp-for="Movie.ProducerCompany" class="control-label"></label>
+                <input asp-for="Movie.ProducerCompany" class="form-control" />
+                <span asp-validation-for="Movie.ProducerCompany" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Movie.ProductionCountry" class="control-label"></label>
+                <input asp-for="Movie.ProductionCountry" class="form-control" />
+                <span asp-validation-for="Movie.ProductionCountry" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Movie.Actors" class="control-label"></label>
+                <textarea asp-for="Movie.Actors" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Movie.Actors" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Movie.AgeRating" class="control-label"></label>
+                <input asp-for="Movie.AgeRating" class="form-control" />
+                <span asp-validation-for="Movie.AgeRating" class="text-danger"></span>
+            </div>
+
             <div class="form-group">
                 <label asp-for="Movie.ReleaseDate" class="control-label"></label>
-                <input asp-for="Movie.ReleaseDate" class="form-control" />
+                <input asp-for="Movie.ReleaseDate" class="form-control" type="date" />
                 <span asp-validation-for="Movie.ReleaseDate" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Movie.DurationMinutes" class="control-label"></label>
                 <input asp-for="Movie.DurationMinutes" class="form-control" />
                 <span asp-validation-for="Movie.DurationMinutes" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Movie.GenreId" class="control-label"></label>
                 <select asp-for="Movie.GenreId" class="form-control" asp-items="ViewBag.GenreId"></select>
                 <span asp-validation-for="Movie.GenreId" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

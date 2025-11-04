@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model CinemaRazor.Pages.Genres.EditModel
 
 @{
@@ -19,6 +19,11 @@
                 <label asp-for="Genre.Name" class="control-label"></label>
                 <input asp-for="Genre.Name" class="form-control" />
                 <span asp-validation-for="Genre.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Genre.Description" class="control-label"></label>
+                <textarea asp-for="Genre.Description" class="form-control"></textarea>
+                <span asp-validation-for="Genre.Description" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

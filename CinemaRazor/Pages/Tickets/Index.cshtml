@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model CinemaRazor.Pages.Tickets.IndexModel
 
 @{
@@ -7,42 +7,50 @@
 
 <h1>Index</h1>
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
-<table class="table">
+<div class="mb-3 d-flex justify-content-between align-items-center">
+    <a asp-page="Create" class="btn btn-primary">Продать билет</a>
+
+    <form method="get" class="row g-2 align-items-end">
+        <div class="col-auto">
+            <label asp-for="SelectedMovieId" class="form-label mb-0">Фильм</label>
+            <select asp-for="SelectedMovieId" class="form-select" asp-items="Model.MovieOptions">
+                <option value="">Все фильмы</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-outline-secondary">Показать</button>
+            <a asp-page="Index" class="btn btn-link">Сбросить</a>
+        </div>
+    </form>
+</div>
+
+@if (Model.SelectedMovieTicketsSold.HasValue)
+{
+    <div class="alert alert-info">
+        Продано билетов для выбранного фильма: <strong>@Model.SelectedMovieTicketsSold</strong>
+    </div>
+}
+
+<table class="table table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Ticket[0].Session)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ticket[0].Seat)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ticket[0].PurchaseDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ticket[0].Price)
-            </th>
+            <th>Фильм</th>
+            <th>Сеанс</th>
+            <th>Место</th>
+            <th>Дата покупки</th>
+            <th>Цена</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Ticket) {
+@foreach (var item in Model.Tickets)
+{
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Session.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Seat.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PurchaseDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
+            <td>@item.Session.Movie.Title</td>
+            <td>@item.Session.StartTime.ToString("dd.MM.yyyy HH:mm")</td>
+            <td>Ряд @item.Seat.RowNumber, место @item.Seat.SeatNumber</td>
+            <td>@item.PurchaseDate.ToString("dd.MM.yyyy HH:mm")</td>
+            <td>@item.Price.ToString("F2")</td>
             <td>
                 <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
@@ -52,3 +60,17 @@
 }
     </tbody>
 </table>
+
+@if (Model.SalesSummary.Any())
+{
+    <h5 class="mt-4">Проданные билеты по фильмам</h5>
+    <ul class="list-group">
+    @foreach (var summary in Model.SalesSummary)
+    {
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span>@summary.MovieTitle</span>
+            <span class="badge bg-primary rounded-pill">@summary.TicketsSold</span>
+        </li>
+    }
+    </ul>
+}

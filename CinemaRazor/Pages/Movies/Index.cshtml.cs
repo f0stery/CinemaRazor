@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using CinemaRazor.Data;
 using CinemaRazor.Models;
 using System.Collections.Generic;
@@ -19,13 +20,31 @@ namespace CinemaRazor.Pages.Movies
 
         public IList<Movie> Movies { get; set; }
 
+        public SelectList GenreOptions { get; private set; }
+
+        [BindProperty(SupportsGet = true)]
+        public int? SelectedGenreId { get; set; }
+
         public async Task OnGetAsync()
         {
-            // Загружаем фильмы вместе с жанрами
-            Movies = await _context.Movies
-                .Include(m => m.Genre)
+            var genres = await _context.Genres
+                .OrderBy(g => g.Name)
                 .AsNoTracking()
                 .ToListAsync();
+
+            GenreOptions = new SelectList(genres, "Id", "Name");
+
+            var moviesQuery = _context.Movies
+                .Include(m => m.Genre)
+                .AsNoTracking()
+                .AsQueryable();
+
+            if (SelectedGenreId.HasValue)
+            {
+                moviesQuery = moviesQuery.Where(m => m.GenreId == SelectedGenreId.Value);
+            }
+
+            Movies = await moviesQuery.ToListAsync();
         }
     }
 }

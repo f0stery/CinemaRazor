@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model CinemaRazor.Pages.Seats.DetailsModel
 
 @{
@@ -8,21 +8,35 @@
 <h1>Details</h1>
 
 <div>
-    <h4>Seat</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Seat.RowNumber)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Seat.RowNumber)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Seat.SeatNumber)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Seat.SeatNumber)
-    </dl>
+      <h4>Seat</h4>
+      <hr />
+      <dl class="row">
+          <dt class="col-sm-2">
+              @Html.DisplayNameFor(model => model.Seat.Session)
+          </dt>
+          <dd class="col-sm-10">
+              <div>@Model.Seat.Session?.Movie?.Title</div>
+              <small>@Model.Seat.Session?.StartTime.ToString("dd.MM.yyyy HH:mm")</small>
+          </dd>
+          <dt class="col-sm-2">
+              @Html.DisplayNameFor(model => model.Seat.RowNumber)
+          </dt>
+          <dd class="col-sm-10">
+              @Html.DisplayFor(model => model.Seat.RowNumber)
+          </dd>
+          <dt class="col-sm-2">
+              @Html.DisplayNameFor(model => model.Seat.SeatNumber)
+          </dt>
+          <dd class="col-sm-10">
+              @Html.DisplayFor(model => model.Seat.SeatNumber)
+          </dd>
+          <dt class="col-sm-2">
+              @Html.DisplayNameFor(model => model.Seat.IsOccupied)
+          </dt>
+          <dd class="col-sm-10">
+              @(Model.Seat.IsOccupied ? "Да" : "Нет")
+          </dd>
+      </dl>
 </div>
 <div>
     <a asp-page="./Edit" asp-route-id="@Model.Seat.Id">Edit</a> |

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using CinemaRazor.Data;
@@ -22,18 +22,31 @@ namespace CinemaRazor.Pages.Movies
         [BindProperty]
         public Movie Movie { get; set; }
 
+        public bool HasGenres { get; private set; }
+
         public IActionResult OnGet()
         {
-            ViewData["GenreId"] = new SelectList(_context.Genres.AsNoTracking().ToList(), "Id", "Name");
+            var genres = _context.Genres.AsNoTracking().ToList();
+            HasGenres = genres.Any();
+            ViewData["GenreId"] = new SelectList(genres, "Id", "Name");
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
+            var genres = await _context.Genres.AsNoTracking().ToListAsync();
+            HasGenres = genres.Any();
+            ViewData["GenreId"] = new SelectList(genres, "Id", "Name");
+
+            if (!HasGenres)
+            {
+                ModelState.AddModelError(string.Empty, "Перед созданием фильма добавьте хотя бы один жанр.");
+                return Page();
+            }
+
             // проверим входные данные
             if (!ModelState.IsValid)
             {
-                ViewData["GenreId"] = new SelectList(_context.Genres.AsNoTracking().ToList(), "Id", "Name");
                 return Page();
             }
 
@@ -41,7 +54,6 @@ namespace CinemaRazor.Pages.Movies
             if (Movie.GenreId == 0)
             {
                 ModelState.AddModelError("Movie.GenreId", "Выберите жанр.");
-                ViewData["GenreId"] = new SelectList(_context.Genres.AsNoTracking().ToList(), "Id", "Name");
                 return Page();
             }
 
@@ -57,7 +69,6 @@ namespace CinemaRazor.Pages.Movies
             if (!genreExists)
             {
                 ModelState.AddModelError("Movie.GenreId", $"Жанр с Id={Movie.GenreId} не существует!");
-                ViewData["GenreId"] = new SelectList(_context.Genres.AsNoTracking().ToList(), "Id", "Name");
                 return Page();
             }
 

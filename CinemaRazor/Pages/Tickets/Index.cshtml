@@ -2,75 +2,170 @@
 @model CinemaRazor.Pages.Tickets.IndexModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Билеты";
 }
 
-<h1>Index</h1>
+<h1 class="page-title">Билеты</h1>
+<p class="page-subtitle">Отслеживайте продажи и доступные места по каждому сеансу.</p>
 
-<div class="mb-3 d-flex justify-content-between align-items-center">
-    <a asp-page="Create" class="btn btn-primary">Продать билет</a>
-
-    <form method="get" class="row g-2 align-items-end">
-        <div class="col-auto">
-            <label asp-for="SelectedMovieId" class="form-label mb-0">Фильм</label>
-            <select asp-for="SelectedMovieId" class="form-select" asp-items="Model.MovieOptions">
-                <option value="">Все фильмы</option>
-            </select>
-        </div>
-        <div class="col-auto">
-            <button type="submit" class="btn btn-outline-secondary">Показать</button>
-            <a asp-page="Index" class="btn btn-link">Сбросить</a>
-        </div>
-    </form>
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-12 col-md-4">
+                <label asp-for="SelectedMovieId" class="form-label">Фильм</label>
+                <select asp-for="SelectedMovieId" class="form-select" asp-items="Model.MovieOptions">
+                    <option value="">Все фильмы</option>
+                </select>
+            </div>
+            <div class="col-12 col-md-4">
+                <label asp-for="SelectedSessionId" class="form-label">Сеанс</label>
+                <select asp-for="SelectedSessionId" class="form-select" asp-items="Model.SessionOptions">
+                    <option value="">Все сеансы</option>
+                </select>
+            </div>
+            <div class="col-12 col-md-4 d-flex gap-2">
+                <button type="submit" class="btn btn-primary flex-grow-1">Показать</button>
+                <a asp-page="Index" class="btn btn-outline-secondary">Сбросить</a>
+                <a asp-page="Create" class="btn btn-outline-primary" title="Оформить новый билет">Продать билет</a>
+            </div>
+        </form>
+    </div>
 </div>
 
-@if (Model.SelectedMovieTicketsSold.HasValue)
+@if (Model.Overview != null)
 {
-    <div class="alert alert-info">
-        Продано билетов для выбранного фильма: <strong>@Model.SelectedMovieTicketsSold</strong>
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                <div>
+                    <h4 class="mb-1">@Model.Overview.Title</h4>
+                    @if (!string.IsNullOrEmpty(Model.Overview.Subtitle))
+                    {
+                        <div class="text-muted">@Model.Overview.Subtitle</div>
+                    }
+                </div>
+                <span class="badge bg-light text-dark">Сеансов: @Model.Overview.SessionsCount</span>
+            </div>
+
+            <div class="row g-3 text-center">
+                <div class="col-12 col-md-4">
+                    <div class="border rounded-3 p-3 h-100">
+                        <div class="text-muted text-uppercase small">Продано билетов</div>
+                        <div class="fs-3 fw-semibold">@Model.Overview.TicketsSold</div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="border rounded-3 p-3 h-100">
+                        <div class="text-muted text-uppercase small">Свободно</div>
+                        <div class="fs-3 fw-semibold">@Model.Overview.SeatsAvailable</div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-4">
+                    <div class="border rounded-3 p-3 h-100">
+                        <div class="text-muted text-uppercase small">Выручка</div>
+                        <div class="fs-3 fw-semibold">@Model.Overview.Revenue.ToString("0.00") ₽</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 }
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Фильм</th>
-            <th>Сеанс</th>
-            <th>Место</th>
-            <th>Дата покупки</th>
-            <th>Цена</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Tickets)
-{
-        <tr>
-            <td>@item.Session.Movie.Title</td>
-            <td>@item.Session.StartTime.ToString("dd.MM.yyyy HH:mm")</td>
-            <td>Ряд @item.Seat.RowNumber, место @item.Seat.SeatNumber</td>
-            <td>@item.PurchaseDate.ToString("dd.MM.yyyy HH:mm")</td>
-            <td>@item.Price.ToString("F2")</td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<section class="mb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0">Сводка по сеансам</h5>
+    </div>
 
-@if (Model.SalesSummary.Any())
-{
-    <h5 class="mt-4">Проданные билеты по фильмам</h5>
-    <ul class="list-group">
-    @foreach (var summary in Model.SalesSummary)
+    @if (Model.SessionSummaries.Any())
     {
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            <span>@summary.MovieTitle</span>
-            <span class="badge bg-primary rounded-pill">@summary.TicketsSold</span>
-        </li>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Сеанс</th>
+                        <th class="text-nowrap">Цена, ₽</th>
+                        <th class="text-nowrap">Продано</th>
+                        <th class="text-nowrap">Свободно</th>
+                        <th class="text-nowrap">Выручка, ₽</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var summary in Model.SessionSummaries)
+                {
+                    var isActive = Model.SelectedSessionId.HasValue && summary.SessionId == Model.SelectedSessionId.Value;
+                    <tr class="@(isActive ? "table-primary" : string.Empty)">
+                        <td>
+                            <div class="fw-semibold">@summary.MovieTitle</div>
+                            <div class="text-muted small">@summary.StartTime.ToString("dd.MM.yyyy HH:mm")</div>
+                        </td>
+                        <td>@summary.Price.ToString("0.00")</td>
+                        <td>@summary.TicketsSold</td>
+                        <td>@summary.SeatsAvailable</td>
+                        <td>@summary.Revenue.ToString("0.00")</td>
+                        <td class="text-end">
+                            <a asp-page="Index"
+                               asp-route-SelectedSessionId="@summary.SessionId"
+                               asp-route-SelectedMovieId="@Model.SelectedMovieId"
+                               class="btn btn-sm btn-outline-primary">Показать билеты</a>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
     }
-    </ul>
-}
+    else
+    {
+        <div class="alert alert-light border">
+            Нет сеансов, удовлетворяющих условиям фильтра.
+        </div>
+    }
+</section>
+
+<section>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0">Билеты</h5>
+    </div>
+
+    @if (!Model.Tickets.Any())
+    {
+        <div class="alert alert-light border">
+            По выбранным условиям билеты не найдены.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped align-middle">
+                <thead>
+                    <tr>
+                        <th>Фильм</th>
+                        <th>Сеанс</th>
+                        <th>Место</th>
+                        <th>Дата покупки</th>
+                        <th>Цена, ₽</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model.Tickets)
+                {
+                    <tr>
+                        <td>@item.Session.Movie.Title</td>
+                        <td>@item.Session.StartTime.ToString("dd.MM.yyyy HH:mm")</td>
+                        <td>Ряд @item.Seat.RowNumber, место @item.Seat.SeatNumber</td>
+                        <td>@item.PurchaseDate.ToString("dd.MM.yyyy HH:mm")</td>
+                        <td>@item.Price.ToString("0.00")</td>
+                        <td class="text-end">
+                            <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-sm btn-link">Подробнее</a>
+                            <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-sm btn-link">Изменить</a>
+                            <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-sm btn-link text-danger">Удалить</a>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>

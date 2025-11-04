@@ -11,7 +11,7 @@ namespace CinemaRazor.Models
 
         [Required, StringLength(50)]
         [Display(Name = "Должность")]
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         [Precision(10, 2)]
         [Range(0, 100000)]
@@ -21,12 +21,12 @@ namespace CinemaRazor.Models
         [Required]
         [StringLength(500)]
         [Display(Name = "Обязанности")]
-        public string Responsibilities { get; set; }
+        public string Responsibilities { get; set; } = string.Empty;
 
         [Required]
         [StringLength(500)]
         [Display(Name = "Требования")]
-        public string Requirements { get; set; }
+        public string Requirements { get; set; } = string.Empty;
 
         public ICollection<Employee> Employees { get; set; }
     }

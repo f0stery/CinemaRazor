@@ -44,7 +44,7 @@
             </p>
         </div>
         <div class="card-body">
-            <form method="post">
+            <form method="post" id="seatBookingForm">
                 <input type="hidden" name="SessionId" value="@Model.Session.Id" />
                 
                 <div class="text-center mb-3">
@@ -124,7 +124,7 @@
                     </div>
 
                     <div class="text-center mt-4">
-                        <button type="submit" class="btn btn-primary btn-lg" id="bookButton" disabled>
+                        <button type="button" class="btn btn-primary btn-lg" id="bookButton" disabled onclick="bookSelectedSeat()">
                             Забронировать место
                         </button>
                     </div>
@@ -142,23 +142,55 @@
 
 @section Scripts {
     <script>
-        // Включаем кнопку бронирования при выборе места
-        document.querySelectorAll('input[name="SelectedSeatId"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                document.getElementById('bookButton').disabled = false;
-            });
-        });
+        document.addEventListener('DOMContentLoaded', function () {
+            const seatRadios = document.querySelectorAll('input[name="SelectedSeatId"]');
+            const bookButton = document.getElementById('bookButton');
+            const bookingForm = document.getElementById('seatBookingForm');
 
-        // Визуальная обратная связь при наведении
-        document.querySelectorAll('.seat.available').forEach(seat => {
-            seat.addEventListener('mouseenter', function() {
-                if (!this.querySelector('input').checked) {
-                    this.classList.add('hover');
+            const clearSelection = () => {
+                document.querySelectorAll('.seat.available.selected').forEach(seat => {
+                    seat.classList.remove('selected');
+                });
+            };
+
+            const applySelection = (radio) => {
+                if (!radio) {
+                    return;
+                }
+
+                if (bookButton) {
+                    bookButton.disabled = false;
+                }
+
+                clearSelection();
+
+                const wrapper = radio.closest('.seat.available');
+                if (wrapper) {
+                    wrapper.classList.add('selected');
+                }
+            };
+
+            seatRadios.forEach(radio => {
+                radio.addEventListener('change', () => applySelection(radio));
+
+                if (radio.checked) {
+                    applySelection(radio);
                 }
             });
-            seat.addEventListener('mouseleave', function() {
-                this.classList.remove('hover');
-            });
+
+            window.bookSelectedSeat = function () {
+                if (!bookingForm) {
+                    return;
+                }
+
+                const selectedSeat = bookingForm.querySelector('input[name="SelectedSeatId"]:checked');
+                if (!selectedSeat) {
+                    alert('Выберите свободное место перед бронированием.');
+                    return;
+                }
+
+                bookingForm.submit();
+            };
         });
     </script>
     <style>
@@ -214,10 +246,18 @@
             box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
         }
         
-        .seat.available input[type="radio"]:checked + .seat-number,
         .seat.selected {
-            background-color: #007bff;
-            border-color: #0056b3;
+            background-color: #0d6efd;
+            border-color: #0a58ca;
+            box-shadow: 0 0 14px rgba(13, 110, 253, 0.45);
+        }
+
+        .seat.selected .seat-number {
+            color: #fff;
+        }
+
+        .seat.available input[type="radio"]:checked + .seat-number {
+            color: #fff;
         }
         
         .seat.occupied {

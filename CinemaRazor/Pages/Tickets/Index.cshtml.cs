@@ -22,16 +22,21 @@ namespace CinemaRazor.Pages.Tickets
 
         public IList<Ticket> Tickets { get; private set; } = new List<Ticket>();
 
-        public IList<TicketSalesInfo> SalesSummary { get; private set; } = new List<TicketSalesInfo>();
-
         public SelectList MovieOptions { get; private set; }
+
+        public SelectList SessionOptions { get; private set; }
 
         [BindProperty(SupportsGet = true)]
         public int? SelectedMovieId { get; set; }
 
-        public int? SelectedMovieTicketsSold => SelectedMovieId.HasValue
-            ? SalesSummary.FirstOrDefault(s => s.MovieId == SelectedMovieId.Value)?.TicketsSold
-            : null;
+        [BindProperty(SupportsGet = true)]
+        public int? SelectedSessionId { get; set; }
+
+        public IList<SessionSummary> SessionSummaries { get; private set; } = new List<SessionSummary>();
+
+        public TicketOverview Overview { get; private set; }
+
+        public int TotalSeats { get; private set; }
 
         public async Task OnGetAsync()
         {
@@ -40,7 +45,9 @@ namespace CinemaRazor.Pages.Tickets
                 .OrderBy(m => m.Title)
                 .ToListAsync();
 
-            MovieOptions = new SelectList(movies, "Id", "Title");
+            MovieOptions = new SelectList(movies, "Id", "Title", SelectedMovieId);
+
+            TotalSeats = await _context.Seats.AsNoTracking().CountAsync();
 
             var ticketsQuery = _context.Tickets
                 .Include(t => t.Seat)
@@ -49,9 +56,52 @@ namespace CinemaRazor.Pages.Tickets
                 .AsNoTracking()
                 .AsQueryable();
 
+            var sessionsQuery = _context.Sessions
+                .AsNoTracking()
+                .Include(s => s.Movie)
+                .Include(s => s.Tickets)
+                .AsQueryable();
+
             if (SelectedMovieId.HasValue)
             {
                 ticketsQuery = ticketsQuery.Where(t => t.Session.MovieId == SelectedMovieId.Value);
+                sessionsQuery = sessionsQuery.Where(s => s.MovieId == SelectedMovieId.Value);
+            }
+
+            SessionSummaries = await sessionsQuery
+                .OrderBy(s => s.StartTime)
+                .Select(s => new SessionSummary
+                {
+                    SessionId = s.Id,
+                    MovieId = s.MovieId,
+                    MovieTitle = s.Movie.Title,
+                    StartTime = s.StartTime,
+                    Price = s.Price,
+                    TicketsSold = s.Tickets.Count,
+                    TotalSeats = TotalSeats,
+                    Revenue = s.Tickets.Sum(t => (decimal?)t.Price) ?? 0m
+                })
+                .ToListAsync();
+
+            if (SelectedSessionId.HasValue && SessionSummaries.All(s => s.SessionId != SelectedSessionId.Value))
+            {
+                SelectedSessionId = null;
+            }
+
+            SessionOptions = new SelectList(
+                SessionSummaries
+                    .Select(s => new SelectListItem
+                    {
+                        Value = s.SessionId.ToString(),
+                        Text = s.DisplayLabel
+                    }),
+                nameof(SelectListItem.Value),
+                nameof(SelectListItem.Text),
+                SelectedSessionId?.ToString());
+
+            if (SelectedSessionId.HasValue)
+            {
+                ticketsQuery = ticketsQuery.Where(t => t.SessionId == SelectedSessionId.Value);
             }
 
             Tickets = await ticketsQuery
@@ -60,27 +110,72 @@ namespace CinemaRazor.Pages.Tickets
                 .ThenBy(t => t.Seat.SeatNumber)
                 .ToListAsync();
 
-            SalesSummary = await _context.Tickets
-                .Include(t => t.Session)
-                    .ThenInclude(s => s.Movie)
-                .AsNoTracking()
-                .GroupBy(t => new { t.Session.MovieId, t.Session.Movie.Title })
-                .Select(g => new TicketSalesInfo
-                {
-                    MovieId = g.Key.MovieId,
-                    MovieTitle = g.Key.Title,
-                    TicketsSold = g.Count()
-                })
-                .OrderByDescending(s => s.TicketsSold)
-                .ThenBy(s => s.MovieTitle)
-                .ToListAsync();
+            Overview = BuildOverview(movies, SessionSummaries);
         }
 
-        public class TicketSalesInfo
+        private TicketOverview BuildOverview(IList<Movie> movies, IList<SessionSummary> sessionSummaries)
         {
+            if (SelectedSessionId.HasValue)
+            {
+                var session = sessionSummaries.FirstOrDefault(s => s.SessionId == SelectedSessionId.Value);
+                if (session != null)
+                {
+                    return new TicketOverview
+                    {
+                        Title = session.MovieTitle,
+                        Subtitle = session.StartTime.ToString("dd.MM.yyyy HH:mm"),
+                        TicketsSold = session.TicketsSold,
+                        SeatsAvailable = session.SeatsAvailable,
+                        Revenue = session.Revenue,
+                        SessionsCount = 1
+                    };
+                }
+            }
+
+            IEnumerable<SessionSummary> filteredSessions = sessionSummaries;
+            string title = "Все билеты";
+
+            if (SelectedMovieId.HasValue)
+            {
+                filteredSessions = sessionSummaries.Where(s => s.MovieId == SelectedMovieId.Value);
+                title = movies.FirstOrDefault(m => m.Id == SelectedMovieId.Value)?.Title ?? "Выбранный фильм";
+            }
+
+            var filteredList = filteredSessions.ToList();
+
+            return new TicketOverview
+            {
+                Title = title,
+                Subtitle = $"Сеансов: {filteredList.Count}",
+                TicketsSold = filteredList.Sum(s => s.TicketsSold),
+                SeatsAvailable = filteredList.Sum(s => s.SeatsAvailable),
+                Revenue = filteredList.Sum(s => s.Revenue),
+                SessionsCount = filteredList.Count
+            };
+        }
+
+        public class SessionSummary
+        {
+            public int SessionId { get; set; }
             public int MovieId { get; set; }
             public string MovieTitle { get; set; }
+            public DateTime StartTime { get; set; }
+            public decimal Price { get; set; }
             public int TicketsSold { get; set; }
+            public int TotalSeats { get; set; }
+            public decimal Revenue { get; set; }
+            public int SeatsAvailable => Math.Max(0, TotalSeats - TicketsSold);
+            public string DisplayLabel => $"{MovieTitle} — {StartTime:dd.MM.yyyy HH:mm}";
+        }
+
+        public class TicketOverview
+        {
+            public string Title { get; set; }
+            public string Subtitle { get; set; }
+            public int TicketsSold { get; set; }
+            public int SeatsAvailable { get; set; }
+            public decimal Revenue { get; set; }
+            public int SessionsCount { get; set; }
         }
     }
 }

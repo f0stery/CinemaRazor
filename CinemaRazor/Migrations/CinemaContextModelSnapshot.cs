@@ -178,21 +178,13 @@ namespace CinemaRazor.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("IsOccupied")
-                        .HasColumnType("bit");
-
                     b.Property<int>("RowNumber")
                         .HasColumnType("int");
 
                     b.Property<int>("SeatNumber")
                         .HasColumnType("int");
 
-                    b.Property<int>("SessionId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("SessionId");
 
                     b.ToTable("Seats");
                 });
@@ -252,6 +244,9 @@ namespace CinemaRazor.Migrations
 
                     b.HasIndex("SessionId");
 
+                    b.HasIndex("SessionId", "SeatId")
+                        .IsUnique();
+
                     b.ToTable("Tickets");
                 });
 
@@ -288,17 +283,6 @@ namespace CinemaRazor.Migrations
                     b.Navigation("Movie");
                 });
 
-              modelBuilder.Entity("CinemaRazor.Models.Seat", b =>
-                  {
-                      b.HasOne("CinemaRazor.Models.Session", "Session")
-                          .WithMany("Seats")
-                          .HasForeignKey("SessionId")
-                          .OnDelete(DeleteBehavior.Cascade)
-                          .IsRequired();
-
-                      b.Navigation("Session");
-                  });
-
             modelBuilder.Entity("CinemaRazor.Models.Ticket", b =>
                 {
                     b.HasOne("CinemaRazor.Models.Seat", "Seat")
@@ -326,7 +310,6 @@ namespace CinemaRazor.Migrations
             modelBuilder.Entity("CinemaRazor.Models.Session", b =>
                 {
                     b.Navigation("Tickets");
-                      b.Navigation("Seats");
                 });
 #pragma warning restore 612, 618
         }

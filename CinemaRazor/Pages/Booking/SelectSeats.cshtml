@@ -1,0 +1,201 @@
+@page
+@model CinemaRazor.Pages.Booking.SelectSeatsModel
+
+@{
+    ViewData["Title"] = "Выбор места";
+}
+
+<h1>🎬 @Model.Session.Movie.Title</h1>
+<p class="lead">
+    <strong>Сеанс:</strong> @Model.Session.StartTime.ToString("dd.MM.yyyy HH:mm") | 
+    <strong>Цена:</strong> @Model.Session.Price.ToString("0.00") ₽
+</p>
+
+<hr />
+
+<div class="mb-4">
+    <h4>Выберите место:</h4>
+    <div class="d-flex gap-3 mb-3">
+        <div>
+            <span class="seat-circle available"></span> Свободно
+        </div>
+        <div>
+            <span class="seat-circle occupied"></span> Занято
+        </div>
+        <div>
+            <span class="seat-circle selected"></span> Выбрано
+        </div>
+    </div>
+</div>
+
+<div class="cinema-screen mb-4">
+    <div class="screen-label">ЭКРАН</div>
+</div>
+
+<div class="seats-container">
+    @for (int row = 1; row <= Model.MaxRow; row++)
+    {
+        <div class="seat-row">
+            <div class="row-label">Ряд @row</div>
+            <div class="seats">
+                @for (int seatNum = 1; seatNum <= Model.MaxSeatInRow; seatNum++)
+                {
+                    var seat = Model.AllSeats.FirstOrDefault(s => s.RowNumber == row && s.SeatNumber == seatNum);
+                    if (seat != null)
+                    {
+                        var isOccupied = Model.OccupiedSeatIds.Contains(seat.Id);
+                        var seatClass = isOccupied ? "occupied" : "available";
+                        
+                        <button type="button" 
+                                class="seat-circle @seatClass" 
+                                data-seat-id="@seat.Id"
+                                data-row="@row"
+                                data-seat="@seatNum"
+                                @(isOccupied ? "disabled" : "")
+                                onclick="selectSeat(this)">
+                            @seatNum
+                        </button>
+                    }
+                    else
+                    {
+                        <div class="seat-circle invisible">-</div>
+                    }
+                }
+            </div>
+        </div>
+    }
+</div>
+
+<div class="mt-4">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Выбранное место:</h5>
+            <p id="selected-info" class="mb-3">Место не выбрано</p>
+            <form method="post">
+                <input type="hidden" name="SessionId" value="@Model.Session.Id" />
+                <input type="hidden" name="SeatId" id="selected-seat-id" value="" />
+                <button type="submit" id="book-btn" class="btn btn-success" disabled>
+                    Забронировать место
+                </button>
+                <a asp-page="./Index" class="btn btn-secondary">Отмена</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .cinema-screen {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .screen-label {
+        background: linear-gradient(to bottom, #333, #555);
+        color: white;
+        padding: 15px;
+        border-radius: 10px 10px 0 0;
+        font-weight: bold;
+        max-width: 600px;
+        margin: 0 auto;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+
+    .seats-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+
+    .seat-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .row-label {
+        min-width: 80px;
+        font-weight: bold;
+        color: #666;
+    }
+
+    .seats {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .seat-circle {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid #ddd;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .seat-circle.available {
+        background-color: #28a745;
+        color: white;
+        border-color: #28a745;
+    }
+
+    .seat-circle.available:hover {
+        background-color: #218838;
+        transform: scale(1.1);
+    }
+
+    .seat-circle.occupied {
+        background-color: #dc3545;
+        color: white;
+        border-color: #dc3545;
+        cursor: not-allowed;
+    }
+
+    .seat-circle.selected {
+        background-color: #ffc107;
+        color: #000;
+        border-color: #ffc107;
+        transform: scale(1.15);
+    }
+
+    .seat-circle.invisible {
+        opacity: 0;
+        cursor: default;
+    }
+
+    .legend {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+</style>
+
+<script>
+    let selectedSeatId = null;
+
+    function selectSeat(button) {
+        // Снять выделение с предыдущего места
+        document.querySelectorAll('.seat-circle.selected').forEach(seat => {
+            seat.classList.remove('selected');
+            seat.classList.add('available');
+        });
+
+        // Выделить новое место
+        button.classList.remove('available');
+        button.classList.add('selected');
+
+        selectedSeatId = button.getAttribute('data-seat-id');
+        const row = button.getAttribute('data-row');
+        const seat = button.getAttribute('data-seat');
+
+        // Обновить информацию о выбранном месте
+        document.getElementById('selected-info').innerText = `Ряд ${row}, Место ${seat}`;
+        document.getElementById('selected-seat-id').value = selectedSeatId;
+        document.getElementById('book-btn').disabled = false;
+    }
+</script>

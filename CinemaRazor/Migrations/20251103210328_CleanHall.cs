@@ -11,213 +11,345 @@ namespace CinemaRazor.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Genres",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Genres", x => x.Id);
-                });
+            if (migrationBuilder.ActiveProvider != "Microsoft.EntityFrameworkCore.SqlServer")
+            {
+                throw new NotSupportedException("This migration relies on SQL Server specific SQL. Switch to SQL Server or adjust the migration manually.");
+            }
 
-            migrationBuilder.CreateTable(
-                name: "Positions",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Salary = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
-                    Responsibilities = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
-                    Requirements = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Positions", x => x.Id);
-                });
+            migrationBuilder.Sql("""
+IF OBJECT_ID(N'[dbo].[Genres]', N'U') IS NULL
+BEGIN
+    CREATE TABLE [dbo].[Genres]
+    (
+        [Id] INT NOT NULL IDENTITY(1, 1),
+        [Name] NVARCHAR(50) NOT NULL,
+        [Description] NVARCHAR(500) NULL,
+        CONSTRAINT [PK_Genres] PRIMARY KEY CLUSTERED ([Id] ASC)
+    );
+END;
+""");
 
-            migrationBuilder.CreateTable(
-                name: "Movies",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
-                    ProducerCompany = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    ProductionCountry = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Actors = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
-                    AgeRating = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    ReleaseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DurationMinutes = table.Column<int>(type: "int", nullable: false),
-                    GenreId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Movies", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Movies_Genres_GenreId",
-                        column: x => x.GenreId,
-                        principalTable: "Genres",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+            migrationBuilder.Sql("""
+IF COL_LENGTH(N'[dbo].[Genres]', N'Description') IS NULL
+BEGIN
+    ALTER TABLE [dbo].[Genres]
+    ADD [Description] NVARCHAR(500) NULL;
+END;
+""");
 
-            migrationBuilder.CreateTable(
-                name: "Employees",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FullName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    Age = table.Column<int>(type: "int", nullable: false),
-                    Gender = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PositionId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Employees", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Employees_Positions_PositionId",
-                        column: x => x.PositionId,
-                        principalTable: "Positions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+            migrationBuilder.Sql("""
+IF OBJECT_ID(N'[dbo].[Positions]', N'U') IS NULL
+BEGIN
+    CREATE TABLE [dbo].[Positions]
+    (
+        [Id] INT NOT NULL IDENTITY(1, 1),
+        [Title] NVARCHAR(50) NOT NULL,
+        [Salary] DECIMAL(10, 2) NOT NULL,
+        [Responsibilities] NVARCHAR(500) NOT NULL,
+        [Requirements] NVARCHAR(500) NOT NULL,
+        CONSTRAINT [PK_Positions] PRIMARY KEY CLUSTERED ([Id] ASC)
+    );
+END;
+""");
 
-            migrationBuilder.CreateTable(
-                name: "Sessions",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
-                    MovieId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Sessions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Sessions_Movies_MovieId",
-                        column: x => x.MovieId,
-                        principalTable: "Movies",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+            migrationBuilder.Sql("""
+IF COL_LENGTH(N'[dbo].[Positions]', N'Responsibilities') IS NULL
+BEGIN
+    ALTER TABLE [dbo].[Positions]
+    ADD [Responsibilities] NVARCHAR(500) NOT NULL CONSTRAINT [DF_Positions_Responsibilities] DEFAULT (N'');
+    ALTER TABLE [dbo].[Positions] DROP CONSTRAINT [DF_Positions_Responsibilities];
+END;
+""");
 
-            migrationBuilder.CreateTable(
-                name: "Seats",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    RowNumber = table.Column<int>(type: "int", nullable: false),
-                    SeatNumber = table.Column<int>(type: "int", nullable: false),
-                    SessionId = table.Column<int>(type: "int", nullable: false),
-                    IsOccupied = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Seats", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Seats_Sessions_SessionId",
-                        column: x => x.SessionId,
-                        principalTable: "Sessions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
+            migrationBuilder.Sql("""
+IF COL_LENGTH(N'[dbo].[Positions]', N'Requirements') IS NULL
+BEGIN
+    ALTER TABLE [dbo].[Positions]
+    ADD [Requirements] NVARCHAR(500) NOT NULL CONSTRAINT [DF_Positions_Requirements] DEFAULT (N'');
+    ALTER TABLE [dbo].[Positions] DROP CONSTRAINT [DF_Positions_Requirements];
+END;
+""");
 
-            migrationBuilder.CreateTable(
-                name: "Tickets",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    SessionId = table.Column<int>(type: "int", nullable: false),
-                    SeatId = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(10,2)", precision: 10, scale: 2, nullable: false),
-                    PurchaseDate = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tickets", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Tickets_Seats_SeatId",
-                        column: x => x.SeatId,
-                        principalTable: "Seats",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Tickets_Sessions_SessionId",
-                        column: x => x.SessionId,
-                        principalTable: "Sessions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
+            migrationBuilder.Sql("""
+IF OBJECT_ID(N'[dbo].[Movies]', N'U') IS NULL
+BEGIN
+    CREATE TABLE [dbo].[Movies]
+    (
+        [Id] INT NOT NULL IDENTITY(1, 1),
+        [Title] NVARCHAR(100) NOT NULL,
+        [Description] NVARCHAR(1000) NOT NULL,
+        [ProducerCompany] NVARCHAR(100) NOT NULL,
+        [ProductionCountry] NVARCHAR(100) NOT NULL,
+        [Actors] NVARCHAR(300) NOT NULL,
+        [AgeRating] NVARCHAR(20) NOT NULL,
+        [ReleaseDate] DATETIME2 NOT NULL,
+        [DurationMinutes] INT NOT NULL,
+        [GenreId] INT NOT NULL,
+        CONSTRAINT [PK_Movies] PRIMARY KEY CLUSTERED ([Id] ASC),
+        CONSTRAINT [FK_Movies_Genres_GenreId] FOREIGN KEY ([GenreId]) REFERENCES [dbo].[Genres] ([Id]) ON DELETE CASCADE
+    );
+END;
+""");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Employees_PositionId",
-                table: "Employees",
-                column: "PositionId");
+            migrationBuilder.Sql("""
+IF COL_LENGTH(N'[dbo].[Movies]', N'ProducerCompany') IS NULL
+BEGIN
+    ALTER TABLE [dbo].[Movies]
+    ADD [ProducerCompany] NVARCHAR(100) NOT NULL CONSTRAINT [DF_Movies_ProducerCompany] DEFAULT (N'');
+    ALTER TABLE [dbo].[Movies] DROP CONSTRAINT [DF_Movies_ProducerCompany];
+END;
+""");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Movies_GenreId",
-                table: "Movies",
-                column: "GenreId");
+            migrationBuilder.Sql("""
+IF COL_LENGTH(N'[dbo].[Movies]', N'ProductionCountry') IS NULL
+BEGIN
+    ALTER TABLE [dbo].[Movies]
+    ADD [ProductionCountry] NVARCHAR(100) NOT NULL CONSTRAINT [DF_Movies_ProductionCountry] DEFAULT (N'');
+    ALTER TABLE [dbo].[Movies] DROP CONSTRAINT [DF_Movies_ProductionCountry];
+END;
+""");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Sessions_MovieId",
-                table: "Sessions",
-                column: "MovieId");
+            migrationBuilder.Sql("""
+IF COL_LENGTH(N'[dbo].[Movies]', N'Actors') IS NULL
+BEGIN
+    ALTER TABLE [dbo].[Movies]
+    ADD [Actors] NVARCHAR(300) NOT NULL CONSTRAINT [DF_Movies_Actors] DEFAULT (N'');
+    ALTER TABLE [dbo].[Movies] DROP CONSTRAINT [DF_Movies_Actors];
+END;
+""");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Seats_SessionId",
-                table: "Seats",
-                column: "SessionId");
+            migrationBuilder.Sql("""
+IF COL_LENGTH(N'[dbo].[Movies]', N'AgeRating') IS NULL
+BEGIN
+    ALTER TABLE [dbo].[Movies]
+    ADD [AgeRating] NVARCHAR(20) NOT NULL CONSTRAINT [DF_Movies_AgeRating] DEFAULT (N'');
+    ALTER TABLE [dbo].[Movies] DROP CONSTRAINT [DF_Movies_AgeRating];
+END;
+""");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Tickets_SeatId",
-                table: "Tickets",
-                column: "SeatId");
+            migrationBuilder.Sql("""
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_Movies_Genres_GenreId')
+BEGIN
+    ALTER TABLE [dbo].[Movies] WITH CHECK ADD CONSTRAINT [FK_Movies_Genres_GenreId]
+    FOREIGN KEY([GenreId]) REFERENCES [dbo].[Genres]([Id]) ON DELETE CASCADE;
+END;
+""");
 
-            migrationBuilder.CreateIndex(
-                name: "IX_Tickets_SessionId",
-                table: "Tickets",
-                column: "SessionId");
+            migrationBuilder.Sql("""
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_Movies_GenreId' AND object_id = OBJECT_ID(N'[dbo].[Movies]'))
+BEGIN
+    CREATE INDEX [IX_Movies_GenreId] ON [dbo].[Movies]([GenreId]);
+END;
+""");
+
+            migrationBuilder.Sql("""
+IF OBJECT_ID(N'[dbo].[Employees]', N'U') IS NULL
+BEGIN
+    CREATE TABLE [dbo].[Employees]
+    (
+        [Id] INT NOT NULL IDENTITY(1, 1),
+        [FullName] NVARCHAR(100) NOT NULL,
+        [Age] INT NOT NULL,
+        [Gender] NVARCHAR(10) NOT NULL,
+        [Address] NVARCHAR(150) NOT NULL,
+        [Phone] NVARCHAR(MAX) NOT NULL,
+        [PositionId] INT NOT NULL,
+        CONSTRAINT [PK_Employees] PRIMARY KEY CLUSTERED ([Id] ASC),
+        CONSTRAINT [FK_Employees_Positions_PositionId] FOREIGN KEY ([PositionId]) REFERENCES [dbo].[Positions] ([Id]) ON DELETE CASCADE
+    );
+END;
+""");
+
+            migrationBuilder.Sql("""
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_Employees_Positions_PositionId')
+BEGIN
+    ALTER TABLE [dbo].[Employees] WITH CHECK ADD CONSTRAINT [FK_Employees_Positions_PositionId]
+    FOREIGN KEY([PositionId]) REFERENCES [dbo].[Positions]([Id]) ON DELETE CASCADE;
+END;
+""");
+
+            migrationBuilder.Sql("""
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_Employees_PositionId' AND object_id = OBJECT_ID(N'[dbo].[Employees]'))
+BEGIN
+    CREATE INDEX [IX_Employees_PositionId] ON [dbo].[Employees]([PositionId]);
+END;
+""");
+
+            migrationBuilder.Sql("""
+IF OBJECT_ID(N'[dbo].[Sessions]', N'U') IS NULL
+BEGIN
+    CREATE TABLE [dbo].[Sessions]
+    (
+        [Id] INT NOT NULL IDENTITY(1, 1),
+        [StartTime] DATETIME2 NOT NULL,
+        [EndTime] DATETIME2 NOT NULL,
+        [Price] DECIMAL(10, 2) NOT NULL,
+        [MovieId] INT NOT NULL,
+        CONSTRAINT [PK_Sessions] PRIMARY KEY CLUSTERED ([Id] ASC),
+        CONSTRAINT [FK_Sessions_Movies_MovieId] FOREIGN KEY ([MovieId]) REFERENCES [dbo].[Movies] ([Id]) ON DELETE CASCADE
+    );
+END;
+""");
+
+            migrationBuilder.Sql("""
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_Sessions_Movies_MovieId')
+BEGIN
+    ALTER TABLE [dbo].[Sessions] WITH CHECK ADD CONSTRAINT [FK_Sessions_Movies_MovieId]
+    FOREIGN KEY([MovieId]) REFERENCES [dbo].[Movies]([Id]) ON DELETE CASCADE;
+END;
+""");
+
+            migrationBuilder.Sql("""
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_Sessions_MovieId' AND object_id = OBJECT_ID(N'[dbo].[Sessions]'))
+BEGIN
+    CREATE INDEX [IX_Sessions_MovieId] ON [dbo].[Sessions]([MovieId]);
+END;
+""");
+
+            migrationBuilder.Sql("""
+IF OBJECT_ID(N'[dbo].[Seats]', N'U') IS NULL
+BEGIN
+    CREATE TABLE [dbo].[Seats]
+    (
+        [Id] INT NOT NULL IDENTITY(1, 1),
+        [RowNumber] INT NOT NULL,
+        [SeatNumber] INT NOT NULL,
+        [SessionId] INT NOT NULL,
+        [IsOccupied] BIT NOT NULL,
+        CONSTRAINT [PK_Seats] PRIMARY KEY CLUSTERED ([Id] ASC),
+        CONSTRAINT [FK_Seats_Sessions_SessionId] FOREIGN KEY ([SessionId]) REFERENCES [dbo].[Sessions] ([Id]) ON DELETE CASCADE
+    );
+END;
+""");
+
+            migrationBuilder.Sql("""
+IF COL_LENGTH(N'[dbo].[Seats]', N'IsOccupied') IS NULL
+BEGIN
+    ALTER TABLE [dbo].[Seats]
+    ADD [IsOccupied] BIT NOT NULL CONSTRAINT [DF_Seats_IsOccupied] DEFAULT (0);
+    ALTER TABLE [dbo].[Seats] DROP CONSTRAINT [DF_Seats_IsOccupied];
+END;
+""");
+
+            migrationBuilder.Sql("""
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_Seats_Sessions_SessionId')
+BEGIN
+    ALTER TABLE [dbo].[Seats] WITH CHECK ADD CONSTRAINT [FK_Seats_Sessions_SessionId]
+    FOREIGN KEY([SessionId]) REFERENCES [dbo].[Sessions]([Id]) ON DELETE CASCADE;
+END;
+""");
+
+            migrationBuilder.Sql("""
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_Seats_SessionId' AND object_id = OBJECT_ID(N'[dbo].[Seats]'))
+BEGIN
+    CREATE INDEX [IX_Seats_SessionId] ON [dbo].[Seats]([SessionId]);
+END;
+""");
+
+            migrationBuilder.Sql("""
+IF OBJECT_ID(N'[dbo].[Tickets]', N'U') IS NULL
+BEGIN
+    CREATE TABLE [dbo].[Tickets]
+    (
+        [Id] INT NOT NULL IDENTITY(1, 1),
+        [SessionId] INT NOT NULL,
+        [SeatId] INT NOT NULL,
+        [Price] DECIMAL(10, 2) NOT NULL,
+        [PurchaseDate] DATETIME2 NOT NULL,
+        CONSTRAINT [PK_Tickets] PRIMARY KEY CLUSTERED ([Id] ASC),
+        CONSTRAINT [FK_Tickets_Seats_SeatId] FOREIGN KEY ([SeatId]) REFERENCES [dbo].[Seats] ([Id]) ON DELETE CASCADE,
+        CONSTRAINT [FK_Tickets_Sessions_SessionId] FOREIGN KEY ([SessionId]) REFERENCES [dbo].[Sessions] ([Id]) ON DELETE NO ACTION
+    );
+END;
+""");
+
+            migrationBuilder.Sql("""
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_Tickets_Seats_SeatId')
+BEGIN
+    ALTER TABLE [dbo].[Tickets] WITH CHECK ADD CONSTRAINT [FK_Tickets_Seats_SeatId]
+    FOREIGN KEY([SeatId]) REFERENCES [dbo].[Seats]([Id]) ON DELETE CASCADE;
+END;
+""");
+
+            migrationBuilder.Sql("""
+IF NOT EXISTS (SELECT 1 FROM sys.foreign_keys WHERE name = N'FK_Tickets_Sessions_SessionId')
+BEGIN
+    ALTER TABLE [dbo].[Tickets] WITH CHECK ADD CONSTRAINT [FK_Tickets_Sessions_SessionId]
+    FOREIGN KEY([SessionId]) REFERENCES [dbo].[Sessions]([Id]) ON DELETE NO ACTION;
+END;
+""");
+
+            migrationBuilder.Sql("""
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_Tickets_SeatId' AND object_id = OBJECT_ID(N'[dbo].[Tickets]'))
+BEGIN
+    CREATE INDEX [IX_Tickets_SeatId] ON [dbo].[Tickets]([SeatId]);
+END;
+""");
+
+            migrationBuilder.Sql("""
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_Tickets_SessionId' AND object_id = OBJECT_ID(N'[dbo].[Tickets]'))
+BEGIN
+    CREATE INDEX [IX_Tickets_SessionId] ON [dbo].[Tickets]([SessionId]);
+END;
+""");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Employees");
+            if (migrationBuilder.ActiveProvider != "Microsoft.EntityFrameworkCore.SqlServer")
+            {
+                throw new NotSupportedException("This migration relies on SQL Server specific SQL. Switch to SQL Server or adjust the migration manually.");
+            }
 
-            migrationBuilder.DropTable(
-                name: "Tickets");
+            migrationBuilder.Sql("""
+IF OBJECT_ID(N'[dbo].[Tickets]', N'U') IS NOT NULL
+BEGIN
+    DROP TABLE [dbo].[Tickets];
+END;
+""");
 
-            migrationBuilder.DropTable(
-                name: "Positions");
+            migrationBuilder.Sql("""
+IF OBJECT_ID(N'[dbo].[Seats]', N'U') IS NOT NULL
+BEGIN
+    DROP TABLE [dbo].[Seats];
+END;
+""");
 
-            migrationBuilder.DropTable(
-                name: "Seats");
+            migrationBuilder.Sql("""
+IF OBJECT_ID(N'[dbo].[Employees]', N'U') IS NOT NULL
+BEGIN
+    DROP TABLE [dbo].[Employees];
+END;
+""");
 
-            migrationBuilder.DropTable(
-                name: "Sessions");
+            migrationBuilder.Sql("""
+IF OBJECT_ID(N'[dbo].[Sessions]', N'U') IS NOT NULL
+BEGIN
+    DROP TABLE [dbo].[Sessions];
+END;
+""");
 
-            migrationBuilder.DropTable(
-                name: "Movies");
+            migrationBuilder.Sql("""
+IF OBJECT_ID(N'[dbo].[Movies]', N'U') IS NOT NULL
+BEGIN
+    DROP TABLE [dbo].[Movies];
+END;
+""");
 
-            migrationBuilder.DropTable(
-                name: "Genres");
+            migrationBuilder.Sql("""
+IF OBJECT_ID(N'[dbo].[Positions]', N'U') IS NOT NULL
+BEGIN
+    DROP TABLE [dbo].[Positions];
+END;
+""");
+
+            migrationBuilder.Sql("""
+IF OBJECT_ID(N'[dbo].[Genres]', N'U') IS NOT NULL
+BEGIN
+    DROP TABLE [dbo].[Genres];
+END;
+""");
         }
     }
 }

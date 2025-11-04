@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Net.Sockets;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
 namespace CinemaRazor.Models
 {
@@ -24,10 +24,13 @@ namespace CinemaRazor.Models
         [Required]
         public int MovieId { get; set; }
         [ForeignKey("MovieId")]
+        [ValidateNever]
         public Movie Movie { get; set; }
 
+        [ValidateNever]
         public ICollection<Ticket> Tickets { get; set; }
 
+        [ValidateNever]
         public ICollection<Seat> Seats { get; set; }
     }
 

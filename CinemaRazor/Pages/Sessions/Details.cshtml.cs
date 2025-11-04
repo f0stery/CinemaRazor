@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,6 +20,11 @@ namespace CinemaRazor.Pages.Sessions
         }
 
         public Session Session { get; set; } = default!;
+        public List<SeatInfo> SeatLayout { get; set; } = new List<SeatInfo>();
+        public HashSet<int> OccupiedSeatIds { get; set; } = new HashSet<int>();
+        public int TotalSeats { get; set; }
+        public int OccupiedSeats { get; set; }
+        public int AvailableSeats { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? id)
         {
@@ -28,16 +33,54 @@ namespace CinemaRazor.Pages.Sessions
                 return NotFound();
             }
 
-            var session = await _context.Sessions.FirstOrDefaultAsync(m => m.Id == id);
+            var session = await _context.Sessions
+                .Include(s => s.Movie)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            
             if (session == null)
             {
                 return NotFound();
             }
-            else
+
+            Session = session;
+
+            // Загружаем места для этого сеанса
+            var seats = await _context.Seats
+                .AsNoTracking()
+                .Where(s => s.SessionId == id.Value)
+                .OrderBy(s => s.RowNumber)
+                .ThenBy(s => s.SeatNumber)
+                .ToListAsync();
+
+            // Загружаем занятые места
+            var occupiedSeats = await _context.Tickets
+                .AsNoTracking()
+                .Where(t => t.SessionId == id.Value)
+                .Select(t => t.SeatId)
+                .ToListAsync();
+
+            OccupiedSeatIds = new HashSet<int>(occupiedSeats);
+            TotalSeats = seats.Count;
+            OccupiedSeats = occupiedSeats.Count;
+            AvailableSeats = TotalSeats - OccupiedSeats;
+
+            SeatLayout = seats.Select(s => new SeatInfo
             {
-                Session = session;
-            }
+                SeatId = s.Id,
+                RowNumber = s.RowNumber,
+                SeatNumber = s.SeatNumber,
+                IsOccupied = OccupiedSeatIds.Contains(s.Id)
+            }).ToList();
+
             return Page();
+        }
+
+        public class SeatInfo
+        {
+            public int SeatId { get; set; }
+            public int RowNumber { get; set; }
+            public int SeatNumber { get; set; }
+            public bool IsOccupied { get; set; }
         }
     }
 }

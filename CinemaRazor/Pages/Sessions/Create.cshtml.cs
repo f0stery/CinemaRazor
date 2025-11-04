@@ -64,6 +64,28 @@ namespace CinemaRazor.Pages.Sessions
             _context.Sessions.Add(Session);
             await _context.SaveChangesAsync();
 
+            // 🎯 Автоматически создаем места для сеанса (стандартный зал: 10 рядов по 15 мест)
+            const int rows = 10;
+            const int seatsPerRow = 15;
+            var seats = new List<Seat>();
+            
+            for (int row = 1; row <= rows; row++)
+            {
+                for (int seatNum = 1; seatNum <= seatsPerRow; seatNum++)
+                {
+                    seats.Add(new Seat
+                    {
+                        SessionId = Session.Id,
+                        RowNumber = row,
+                        SeatNumber = seatNum,
+                        IsOccupied = false
+                    });
+                }
+            }
+            
+            _context.Seats.AddRange(seats);
+            await _context.SaveChangesAsync();
+
             // 🔙 Возврат на страницу списка
             return RedirectToPage("./Index");
         }

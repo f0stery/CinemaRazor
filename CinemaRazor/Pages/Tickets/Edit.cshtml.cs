@@ -94,19 +94,7 @@ namespace CinemaRazor.Pages.Tickets
             ticketFromDb.Price = Ticket.Price <= 0 && session != null ? session.Price : Ticket.Price;
             ticketFromDb.PurchaseDate = Ticket.PurchaseDate == default ? DateTime.Now : Ticket.PurchaseDate;
 
-            if (previousSeatId != Ticket.SeatId)
-            {
-                var previousSeat = await _context.Seats.FirstOrDefaultAsync(s => s.Id == previousSeatId);
-                if (previousSeat != null)
-                {
-                    previousSeat.IsOccupied = false;
-                }
-            }
-
-            if (seat != null)
-            {
-                seat.IsOccupied = true;
-            }
+            // Не обновляем IsOccupied - проверяем наличие билета напрямую
 
             try
             {
@@ -149,26 +137,36 @@ namespace CinemaRazor.Pages.Tickets
 
             SessionOptions = new SelectList(sessionItems, "Id", "Display", resolvedSessionId);
 
-            var seatsQuery = _context.Seats
+            // Получаем занятые места для выбранного сеанса (через билеты)
+            // Исключаем текущий билет при редактировании
+            var occupiedSeatIds = resolvedSessionId.HasValue
+                ? await _context.Tickets
+                    .Where(t => t.SessionId == resolvedSessionId && (Ticket.Id == 0 || t.Id != Ticket.Id))
+                    .Select(t => t.SeatId)
+                    .ToListAsync()
+                : new List<int>();
+
+            var seats = await _context.Seats
                 .Include(s => s.Session)
                     .ThenInclude(sess => sess.Movie)
                 .AsNoTracking()
+                .Where(s => (!resolvedSessionId.HasValue || s.SessionId == resolvedSessionId))
+                .ToListAsync();
+
+            // Фильтруем места: показываем только свободные или уже выбранное место
+            var availableSeats = seats
+                .Where(s => !occupiedSeatIds.Contains(s.Id) || s.Id == selectedSeatId)
                 .OrderBy(s => s.Session.StartTime)
                 .ThenBy(s => s.RowNumber)
                 .ThenBy(s => s.SeatNumber)
                 .Select(s => new
                 {
                     s.Id,
-                    s.IsOccupied,
-                    s.SessionId,
                     Display = $"{s.Session.Movie.Title} - {s.Session.StartTime:dd.MM HH:mm}, ряд {s.RowNumber}, место {s.SeatNumber}"
-                });
+                })
+                .ToList();
 
-            var seats = await seatsQuery
-                .Where(s => (!s.IsOccupied || s.Id == selectedSeatId) && (!resolvedSessionId.HasValue || s.SessionId == resolvedSessionId))
-                .ToListAsync();
-
-            SeatOptions = new SelectList(seats, "Id", "Display", selectedSeatId);
+            SeatOptions = new SelectList(availableSeats, "Id", "Display", selectedSeatId);
         }
     }
 }

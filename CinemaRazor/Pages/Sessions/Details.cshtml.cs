@@ -44,10 +44,9 @@ namespace CinemaRazor.Pages.Sessions
 
             Session = session;
 
-            // Загружаем места для этого сеанса
+            // Загружаем полный список мест
             var seats = await _context.Seats
                 .AsNoTracking()
-                .Where(s => s.SessionId == id.Value)
                 .OrderBy(s => s.RowNumber)
                 .ThenBy(s => s.SeatNumber)
                 .ToListAsync();
@@ -61,7 +60,7 @@ namespace CinemaRazor.Pages.Sessions
 
             OccupiedSeatIds = new HashSet<int>(occupiedSeats);
             TotalSeats = seats.Count;
-            OccupiedSeats = occupiedSeats.Count;
+            OccupiedSeats = OccupiedSeatIds.Count;
             AvailableSeats = TotalSeats - OccupiedSeats;
 
             SeatLayout = seats.Select(s => new SeatInfo

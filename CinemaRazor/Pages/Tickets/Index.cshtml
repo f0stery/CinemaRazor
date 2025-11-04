@@ -8,6 +8,14 @@
 <h1 class="page-title">Билеты</h1>
 <p class="page-subtitle">Отслеживайте продажи и доступные места по каждому сеансу.</p>
 
+@if (TempData["SuccessMessage"] is string successMessage)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @successMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 <div class="card mb-4">
     <div class="card-body">
         <form method="get" class="row g-3 align-items-end">

@@ -123,8 +123,8 @@
     </div>
 }
 
-<div class="mt-4">
-    <a asp-page="./Book" asp-route-SessionId="@Model.Session.Id" class="btn btn-success">Забронировать место</a>
+<div class="mt-4 d-flex gap-2 flex-wrap">
+    <a asp-page="/Tickets/Create" asp-route-SessionId="@Model.Session.Id" class="btn btn-success">Продать билет</a>
     <a asp-page="./Edit" asp-route-id="@Model.Session.Id" class="btn btn-primary">Редактировать</a>
     <a asp-page="./Index" class="btn btn-secondary">Назад к списку</a>
 </div>

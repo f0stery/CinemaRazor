@@ -59,11 +59,7 @@ namespace CinemaRazor.Pages.Tickets
             if (ticket != null)
             {
                 Ticket = ticket;
-                if (ticket.Seat != null)
-                {
-                    ticket.Seat.IsOccupied = false;
-                }
-
+                // Не обновляем IsOccupied - проверяем наличие билета напрямую
                 _context.Tickets.Remove(Ticket);
                 await _context.SaveChangesAsync();
             }

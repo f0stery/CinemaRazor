@@ -1,0 +1,255 @@
+@page
+@model CinemaRazor.Pages.Sessions.BookModel
+
+@{
+    ViewData["Title"] = "Бронирование мест";
+}
+
+<h1>🎫 Бронирование мест</h1>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <form method="get" class="mb-3">
+            <div class="form-group">
+                <label for="SessionId">Выберите сеанс:</label>
+                <select name="SessionId" id="SessionId" class="form-control" onchange="this.form.submit()">
+                    <option value="">-- Выберите сеанс --</option>
+                    @foreach (var session in Model.SessionOptions)
+                    {
+                        <option value="@session.Value" selected="@(session.Selected ? "selected" : null)">@session.Text</option>
+                    }
+                </select>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (Model.Session != null)
+{
+    <div class="card mb-4">
+        <div class="card-header">
+            <h4>@Model.Session.Movie?.Title</h4>
+            <p class="mb-0">
+                <strong>Начало:</strong> @Model.Session.StartTime.ToString("dd.MM.yyyy HH:mm")<br>
+                <strong>Конец:</strong> @Model.Session.EndTime.ToString("dd.MM.yyyy HH:mm")<br>
+                <strong>Цена:</strong> @Model.Session.Price.ToString("0.00") ₽
+            </p>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                <input type="hidden" name="SessionId" value="@Model.Session.Id" />
+                
+                <div class="text-center mb-3">
+                    <div class="d-inline-block bg-dark text-white px-3 py-1 rounded">
+                        ЭКРАН
+                    </div>
+                </div>
+
+                <div class="row justify-content-center mb-3">
+                    <div class="col-auto">
+                        <div class="d-flex gap-2 mb-2">
+                            <div class="d-flex align-items-center">
+                                <div class="seat-legend available"></div>
+                                <span class="ms-2">Свободно</span>
+                            </div>
+                            <div class="d-flex align-items-center ms-3">
+                                <div class="seat-legend occupied"></div>
+                                <span class="ms-2">Занято</span>
+                            </div>
+                            <div class="d-flex align-items-center ms-3">
+                                <div class="seat-legend selected"></div>
+                                <span class="ms-2">Выбрано</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @if (Model.SeatLayout.Any())
+                {
+                    var maxRow = Model.SeatLayout.Max(s => s.RowNumber);
+                    var maxSeat = Model.SeatLayout.Max(s => s.SeatNumber);
+                    
+                    <div class="table-responsive">
+                        <table class="table table-borderless seat-map">
+                            <thead>
+                                <tr>
+                                    <th style="width: 60px;">Ряд</th>
+                                    <th colspan="@maxSeat"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int row = 1; row <= maxRow; row++)
+                                {
+                                    var rowSeats = Model.SeatLayout.Where(s => s.RowNumber == row).OrderBy(s => s.SeatNumber).ToList();
+                                    <tr>
+                                        <td class="row-label"><strong>@row</strong></td>
+                                        @for (int seatNum = 1; seatNum <= maxSeat; seatNum++)
+                                        {
+                                            var seat = rowSeats.FirstOrDefault(s => s.SeatNumber == seatNum);
+                                            if (seat != null)
+                                            {
+                                                <td class="seat-cell">
+                                                    @if (seat.IsOccupied)
+                                                    {
+                                                        <div class="seat occupied" title="Ряд @seat.RowNumber, Место @seat.SeatNumber - Занято">
+                                                            <span class="seat-number">@seat.SeatNumber</span>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <label class="seat available" title="Ряд @seat.RowNumber, Место @seat.SeatNumber - Свободно">
+                                                            <input type="radio" name="SelectedSeatId" value="@seat.SeatId" required />
+                                                            <span class="seat-number">@seat.SeatNumber</span>
+                                                        </label>
+                                                    }
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td class="seat-cell empty"></td>
+                                            }
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg" id="bookButton" disabled>
+                            Забронировать место
+                        </button>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-info">
+                        Места для этого сеанса еще не созданы.
+                    </div>
+                }
+            </form>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        // Включаем кнопку бронирования при выборе места
+        document.querySelectorAll('input[name="SelectedSeatId"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                document.getElementById('bookButton').disabled = false;
+            });
+        });
+
+        // Визуальная обратная связь при наведении
+        document.querySelectorAll('.seat.available').forEach(seat => {
+            seat.addEventListener('mouseenter', function() {
+                if (!this.querySelector('input').checked) {
+                    this.classList.add('hover');
+                }
+            });
+            seat.addEventListener('mouseleave', function() {
+                this.classList.remove('hover');
+            });
+        });
+    </script>
+    <style>
+        .seat-map {
+            margin: 0 auto;
+        }
+        
+        .seat-cell {
+            padding: 5px;
+            text-align: center;
+        }
+        
+        .row-label {
+            font-weight: bold;
+            text-align: right;
+            vertical-align: middle;
+            padding-right: 15px;
+        }
+        
+        .seat {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            border: 2px solid #333;
+        }
+        
+        .seat input[type="radio"] {
+            display: none;
+        }
+        
+        .seat-number {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .seat.available {
+            background-color: #28a745;
+            border-color: #1e7e34;
+        }
+        
+        .seat.available:hover {
+            background-color: #218838;
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+        }
+        
+        .seat.available input[type="radio"]:checked + .seat-number,
+        .seat.selected {
+            background-color: #007bff;
+            border-color: #0056b3;
+        }
+        
+        .seat.occupied {
+            background-color: #dc3545;
+            border-color: #c82333;
+            cursor: not-allowed;
+        }
+        
+        .seat-legend {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid #333;
+        }
+        
+        .seat-legend.available {
+            background-color: #28a745;
+            border-color: #1e7e34;
+        }
+        
+        .seat-legend.occupied {
+            background-color: #dc3545;
+            border-color: #c82333;
+        }
+        
+        .seat-legend.selected {
+            background-color: #007bff;
+            border-color: #0056b3;
+        }
+        
+        .empty {
+            width: 40px;
+        }
+    </style>
+}

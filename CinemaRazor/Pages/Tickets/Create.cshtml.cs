@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using CinemaRazor.Data;
 using CinemaRazor.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -67,6 +68,7 @@ namespace CinemaRazor.Pages.Tickets
             }
 
             _context.Tickets.Add(Ticket);
+            // Не обновляем IsOccupied - проверяем наличие билета напрямую
             await _context.SaveChangesAsync();
             return RedirectToPage("./Index");
         }
@@ -93,6 +95,13 @@ namespace CinemaRazor.Pages.Tickets
 
             SessionOptions = new SelectList(sessionItems, "Id", "Display", resolvedSessionId);
 
+            // Получаем занятые места для выбранного сеанса (через билеты)
+            var occupiedSeatIds = resolvedSessionId.HasValue
+                ? await _context.Tickets
+                    .Where(t => t.SessionId == resolvedSessionId)
+                    .Select(t => t.SeatId)
+                    .ToListAsync()
+                : new List<int>();
             // Получаем все места, исключая те, которые уже проданы для выбранного сеанса
             var occupiedSeatIds = new int[] { };
             if (resolvedSessionId.HasValue)
@@ -105,6 +114,14 @@ namespace CinemaRazor.Pages.Tickets
 
             var seats = await _context.Seats
                 .AsNoTracking()
+                .Where(s => (!resolvedSessionId.HasValue || s.SessionId == resolvedSessionId))
+                .ToListAsync();
+
+            // Фильтруем места: показываем только свободные или уже выбранное место
+            var availableSeats = seats
+                .Where(s => !occupiedSeatIds.Contains(s.Id) || s.Id == Ticket.SeatId)
+                .OrderBy(s => s.Session.StartTime)
+                .ThenBy(s => s.RowNumber)
                 .Where(s => !occupiedSeatIds.Contains(s.Id) || s.Id == Ticket.SeatId)
                 .OrderBy(s => s.RowNumber)
                 .ThenBy(s => s.SeatNumber)
@@ -113,9 +130,9 @@ namespace CinemaRazor.Pages.Tickets
                     s.Id,
                     Display = $"Ряд {s.RowNumber}, место {s.SeatNumber}"
                 })
-                .ToListAsync();
+                .ToList();
 
-            SeatOptions = new SelectList(seats, "Id", "Display", Ticket.SeatId == 0 ? null : Ticket.SeatId);
+            SeatOptions = new SelectList(availableSeats, "Id", "Display", Ticket.SeatId == 0 ? null : Ticket.SeatId);
         }
     }
 }

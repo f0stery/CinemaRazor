@@ -5,75 +5,73 @@
     ViewData["Title"] = "Билеты";
 }
 
-<h1 class="page-title">Билеты</h1>
-<p class="page-subtitle">Отслеживайте продажи и доступные места по каждому сеансу.</p>
+<section class="page-header mb-4">
+    <h1 class="page-title">Билеты</h1>
+    <p class="page-subtitle">Отслеживайте продажи и доступные места по каждому сеансу.</p>
+</section>
 
 @if (TempData["SuccessMessage"] is string successMessage)
 {
     <div class="alert alert-success alert-dismissible fade show" role="alert">
         @successMessage
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
     </div>
 }
 
-<div class="card mb-4">
-    <div class="card-body">
-        <form method="get" class="row g-3 align-items-end">
-            <div class="col-12 col-md-6">
-                <label asp-for="SelectedMovieId" class="form-label">Фильм</label>
-                <select asp-for="SelectedMovieId" class="form-select" asp-items="Model.MovieOptions">
-                    <option value="">Все фильмы</option>
-                </select>
-            </div>
-            <div class="col-12 col-md-6 d-flex gap-2">
-                <button type="submit" class="btn btn-primary flex-grow-1">Показать</button>
-                <a asp-page="Index" class="btn btn-outline-secondary">Сбросить</a>
-                <a asp-page="Create" class="btn btn-outline-primary" title="Оформить новый билет">Продать билет</a>
-            </div>
-        </form>
-    </div>
+<div class="table-container mb-4">
+    <form method="get" class="row g-3 align-items-end">
+        <div class="col-12 col-md-6">
+            <label asp-for="SelectedMovieId" class="form-label">Фильм</label>
+            <select asp-for="SelectedMovieId" class="form-select" asp-items="Model.MovieOptions">
+                <option value="">Все фильмы</option>
+            </select>
+        </div>
+        <div class="col-12 col-md-6 d-flex gap-2">
+            <button type="submit" class="btn btn-primary flex-grow-1">Показать</button>
+            <a asp-page="Index" class="btn btn-outline-secondary">Сбросить</a>
+            <a asp-page="Create" class="btn btn-outline-primary" title="Оформить новый билет">Продать билет</a>
+        </div>
+    </form>
 </div>
 
 @if (Model.Overview != null)
 {
-    <div class="card mb-4">
-        <div class="card-body">
-            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
-                <div>
-                    <h4 class="mb-1">@Model.Overview.Title</h4>
-                    @if (!string.IsNullOrEmpty(Model.Overview.Subtitle))
-                    {
-                        <div class="text-muted">@Model.Overview.Subtitle</div>
-                    }
-                </div>
-                <span class="badge bg-light text-dark">Сеансов: @Model.Overview.SessionsCount</span>
+    <div class="table-container mb-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+            <div>
+                <h4 class="mb-1">@Model.Overview.Title</h4>
+                @if (!string.IsNullOrEmpty(Model.Overview.Subtitle))
+                {
+                    <div class="text-muted">@Model.Overview.Subtitle</div>
+                }
             </div>
+            <span class="badge bg-light text-dark">Сеансов: @Model.Overview.SessionsCount</span>
+        </div>
 
-            <div class="row g-3 text-center">
-                <div class="col-12 col-md-4">
-                    <div class="border rounded-3 p-3 h-100">
-                        <div class="text-muted text-uppercase small">Продано билетов</div>
-                        <div class="fs-3 fw-semibold">@Model.Overview.TicketsSold</div>
-                    </div>
+        <div class="row g-3 text-center">
+            <div class="col-12 col-md-4">
+                <div class="border rounded-3 p-3 h-100">
+                    <div class="text-muted text-uppercase small">Продано билетов</div>
+                    <div class="fs-3 fw-semibold">@Model.Overview.TicketsSold</div>
                 </div>
-                <div class="col-12 col-md-4">
-                    <div class="border rounded-3 p-3 h-100">
-                        <div class="text-muted text-uppercase small">Свободно</div>
-                        <div class="fs-3 fw-semibold">@Model.Overview.SeatsAvailable</div>
-                    </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="border rounded-3 p-3 h-100">
+                    <div class="text-muted text-uppercase small">Свободно</div>
+                    <div class="fs-3 fw-semibold">@Model.Overview.SeatsAvailable</div>
                 </div>
-                <div class="col-12 col-md-4">
-                    <div class="border rounded-3 p-3 h-100">
-                        <div class="text-muted text-uppercase small">Выручка</div>
-                        <div class="fs-3 fw-semibold">@Model.Overview.Revenue.ToString("0") BYN</div>
-                    </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="border rounded-3 p-3 h-100">
+                    <div class="text-muted text-uppercase small">Выручка</div>
+                    <div class="fs-3 fw-semibold">@Model.Overview.Revenue.ToString("0") BYN</div>
                 </div>
             </div>
         </div>
     </div>
 }
 
-<section class="mb-5">
+<div class="table-container mb-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="mb-0">Сводка по сеансам</h5>
     </div>
@@ -81,8 +79,8 @@
     @if (Model.SessionSummaries.Any())
     {
         <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead class="table-light">
+            <table class="table align-middle">
+                <thead>
                       <tr>
                           <th>Сеанс</th>
                           <th class="text-nowrap">Цена, BYN</th>
@@ -141,27 +139,23 @@
     }
     else
     {
-        <div class="alert alert-light border">
-            Нет сеансов, удовлетворяющих условиям фильтра.
-        </div>
+        <p class="text-muted mb-0">Нет сеансов, удовлетворяющих условиям фильтра.</p>
     }
-</section>
+</div>
 
-<section>
+<div class="table-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="mb-0">Билеты</h5>
     </div>
 
     @if (!Model.Tickets.Any())
     {
-        <div class="alert alert-light border">
-            По выбранным условиям билеты не найдены.
-        </div>
+        <p class="text-muted mb-0">По выбранным условиям билеты не найдены.</p>
     }
     else
     {
         <div class="table-responsive">
-            <table class="table table-striped align-middle">
+            <table class="table align-middle">
                 <thead>
                     <tr>
                         <th>Фильм</th>
@@ -169,22 +163,24 @@
                         <th>Место</th>
                         <th>Дата покупки</th>
                           <th>Цена, BYN</th>
-                        <th></th>
+                        <th class="text-end">Действия</th>
                     </tr>
                 </thead>
                 <tbody>
                 @foreach (var item in Model.Tickets)
                 {
                     <tr>
-                        <td>@item.Session.Movie.Title</td>
+                        <td class="fw-semibold">@item.Session.Movie.Title</td>
                         <td>@item.Session.StartTime.ToString("dd.MM.yyyy HH:mm")</td>
-                        <td>Ряд @item.Seat.RowNumber, место @item.Seat.SeatNumber</td>
-                        <td>@item.PurchaseDate.ToString("dd.MM.yyyy HH:mm")</td>
+                        <td class="text-muted">Ряд @item.Seat.RowNumber, место @item.Seat.SeatNumber</td>
+                        <td class="text-muted small">@item.PurchaseDate.ToString("dd.MM.yyyy HH:mm")</td>
                           <td>@item.Price.ToString("0")</td>
                         <td class="text-end">
-                            <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-sm btn-link">Подробнее</a>
-                            <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-sm btn-link">Изменить</a>
-                            <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-sm btn-link text-danger">Удалить</a>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a class="btn btn-outline-secondary" asp-page="./Details" asp-route-id="@item.Id">Просмотр</a>
+                                <a class="btn btn-outline-secondary" asp-page="./Edit" asp-route-id="@item.Id">Изменить</a>
+                                <a class="btn btn-outline-secondary" asp-page="./Delete" asp-route-id="@item.Id">Удалить</a>
+                            </div>
                         </td>
                     </tr>
                 }
@@ -192,4 +188,4 @@
             </table>
         </div>
     }
-</section>
+</div>

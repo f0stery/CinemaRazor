@@ -5,59 +5,78 @@
     ViewData["Title"] = "Список фильмов";
 }
 
-<h1>Список фильмов</h1>
+<section class="page-header mb-4">
+    <h1 class="page-title">Каталог фильмов</h1>
+    <p class="page-subtitle">Управляйте репертуаром кинотеатра: добавляйте новые фильмы, редактируйте информацию и планируйте показы.</p>
+</section>
 
-<div class="d-flex align-items-center justify-content-between mb-3">
-    <a asp-page="Create" class="btn btn-primary">Добавить фильм</a>
-
-    <form method="get" class="row g-2 align-items-end">
-        <div class="col-auto">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <form method="get" class="d-flex gap-2 align-items-end flex-wrap">
+        <div>
             <label asp-for="SelectedGenreId" class="form-label mb-0">Жанр</label>
             <select asp-for="SelectedGenreId" asp-items="Model.GenreOptions" class="form-select">
                 <option value="">Все жанры</option>
             </select>
         </div>
-        <div class="col-auto">
+        <div>
             <button type="submit" class="btn btn-outline-secondary">Показать</button>
-            <a asp-page="Index" class="btn btn-link">Сбросить</a>
+            <a asp-page="Index" class="btn btn-outline-secondary">Сбросить</a>
         </div>
     </form>
+    <a asp-page="Create" class="btn btn-primary">Добавить фильм</a>
 </div>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Название</th>
-            <th>Описание</th>
-            <th>Производитель</th>
-            <th>Страна</th>
-            <th>Актёры</th>
-            <th>Возраст</th>
-            <th>Дата выхода</th>
-            <th>Длительность (мин)</th>
-            <th>Жанр</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var movie in Model.Movies)
-        {
-            <tr>
-                <td>@movie.Title</td>
-                <td>@movie.Description</td>
-                <td>@movie.ProducerCompany</td>
-                <td>@movie.ProductionCountry</td>
-                <td>@movie.Actors</td>
-                <td>@movie.AgeRating</td>
-                <td>@movie.ReleaseDate.ToString("dd.MM.yyyy")</td>
-                <td>@movie.DurationMinutes</td>
-                <td>@movie.Genre?.Name</td>
-                <td>
-                    <a asp-page="Edit" asp-route-id="@movie.Id" class="btn btn-sm btn-warning">Изменить</a>
-                    <a asp-page="Details" asp-route-id="@movie.Id" class="btn btn-sm btn-info">Подробнее</a>
-                    <a asp-page="Delete" asp-route-id="@movie.Id" class="btn btn-sm btn-danger">Удалить</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+@if (Model.Movies.Any())
+{
+    <div class="table-container">
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Описание</th>
+                        <th>Производитель</th>
+                        <th>Страна</th>
+                        <th>Актёры</th>
+                        <th>Возраст</th>
+                        <th>Дата выхода</th>
+                        <th>Длительность (мин)</th>
+                        <th>Жанр</th>
+                        <th class="text-end">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var movie in Model.Movies)
+                {
+                    <tr>
+                        <td class="fw-semibold">@movie.Title</td>
+                        <td class="text-muted small">@movie.Description</td>
+                        <td>@movie.ProducerCompany</td>
+                        <td>@movie.ProductionCountry</td>
+                        <td class="text-muted small">@movie.Actors</td>
+                        <td>@movie.AgeRating</td>
+                        <td>@movie.ReleaseDate.ToString("dd.MM.yyyy")</td>
+                        <td>@movie.DurationMinutes</td>
+                        <td>@movie.Genre?.Name</td>
+                        <td class="text-end">
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a class="btn btn-outline-secondary" asp-page="./Details" asp-route-id="@movie.Id">Просмотр</a>
+                                <a class="btn btn-outline-secondary" asp-page="./Edit" asp-route-id="@movie.Id">Изменить</a>
+                                <a class="btn btn-outline-secondary" asp-page="./Delete" asp-route-id="@movie.Id">Удалить</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+else
+{
+    <div class="support-card">
+        <h2>Фильмы не найдены</h2>
+        <p>Добавьте первый фильм в каталог, чтобы начать планировать сеансы.</p>
+        <a asp-page="Create" class="btn btn-primary">Добавить фильм</a>
+    </div>
+}

@@ -125,15 +125,13 @@ else
                         var maxRow = Model.SeatLayout.Max(s => s.RowNumber);
                         var maxSeat = Model.SeatLayout.Max(s => s.SeatNumber);
 
-                        <div class="table-responsive">
-                            <table class="table table-borderless seat-map">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 70px;">Ряд</th>
-                                        <th colspan="@maxSeat" class="text-center">Экран</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+                          <div class="cinema-screen mb-4">
+                              <div class="screen-label">ЭКРАН</div>
+                          </div>
+
+                          <div class="table-responsive">
+                              <table class="table table-borderless seat-map">
+                                  <tbody>
                                 @for (int row = 1; row <= maxRow; row++)
                                 {
                                     var rowSeats = Model.SeatLayout.Where(s => s.RowNumber == row).OrderBy(s => s.SeatNumber).ToList();
@@ -245,6 +243,22 @@ else
     </script>
 
     <style>
+        .cinema-screen {
+            width: 100%;
+            text-align: center;
+        }
+
+        .screen-label {
+            display: inline-block;
+            background: linear-gradient(to bottom, #333, #555);
+            color: #fff;
+            padding: 14px 48px;
+            border-radius: 12px 12px 4px 4px;
+            font-weight: 600;
+            letter-spacing: 0.16em;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
         .seat-map {
             margin: 0 auto;
         }

@@ -44,7 +44,9 @@
                         <td>@item.Age</td>
                         <td>@item.Phone</td>
                         <td>
-                            <span class="badge rounded-pill text-bg-light border">@item.Position?.Title</span>
+                            <span class="badge rounded-pill text-bg-light border">
+                                @(string.IsNullOrWhiteSpace(item.Position?.Title) ? "Не указана" : item.Position!.Title)
+                            </span>
                         </td>
                         <td class="text-end">
                             <div class="btn-group btn-group-sm" role="group">

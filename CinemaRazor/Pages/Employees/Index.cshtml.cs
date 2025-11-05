@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -24,7 +24,10 @@ namespace CinemaRazor.Pages.Employees
         public async Task OnGetAsync()
         {
             Employee = await _context.Employees
-                .Include(e => e.Position).ToListAsync();
+                .AsNoTracking()
+                .Include(e => e.Position)
+                .OrderBy(e => e.FullName)
+                .ToListAsync();
         }
     }
 }

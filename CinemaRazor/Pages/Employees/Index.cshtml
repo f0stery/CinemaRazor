@@ -55,9 +55,14 @@
                         </td>
                         <td>@(string.IsNullOrWhiteSpace(item.Phone) ? "—" : item.Phone)</td>
                         <td>
-                            <span class="badge rounded-pill text-bg-light border">
-                                @(string.IsNullOrWhiteSpace(item.Position?.Title) ? "Не указана" : item.Position!.Title)
-                            </span>
+                            @if (item.Position != null && !string.IsNullOrWhiteSpace(item.Position.Title))
+                            {
+                                <span class="badge rounded-pill text-bg-light border">@item.Position.Title</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Не указана</span>
+                            }
                         </td>
                         <td class="text-end">
                             <div class="btn-group btn-group-sm" role="group">

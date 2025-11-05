@@ -5,8 +5,10 @@
     ViewData["Title"] = "Билеты";
 }
 
-<h1 class="page-title">Билеты</h1>
-<p class="page-subtitle">Отслеживайте продажи и доступные места по каждому сеансу.</p>
+<section class="page-header mb-4">
+    <h1 class="page-title">Билеты</h1>
+    <p class="page-subtitle">Отслеживайте продажи и доступные места по каждому сеансу.</p>
+</section>
 
 @if (TempData["SuccessMessage"] is string successMessage)
 {
@@ -182,9 +184,11 @@
                         <td>@item.PurchaseDate.ToString("dd.MM.yyyy HH:mm")</td>
                           <td>@item.Price.ToString("0")</td>
                         <td class="text-end">
-                            <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-sm btn-link">Подробнее</a>
-                            <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-sm btn-link">Изменить</a>
-                            <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-sm btn-link text-danger">Удалить</a>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-outline-secondary">Просмотр</a>
+                                <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-outline-secondary">Изменить</a>
+                                <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-outline-secondary">Удалить</a>
+                            </div>
                         </td>
                     </tr>
                 }

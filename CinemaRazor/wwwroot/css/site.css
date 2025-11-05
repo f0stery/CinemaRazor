@@ -1,4 +1,4 @@
-﻿:root {
+:root {
     --background: #f5f6fb;
     --surface: #ffffff;
     --surface-alt: #f9fafc;
@@ -17,35 +17,38 @@
 }
 
 /* === Общая структура страницы === */
-html, body {
+html {
     height: 100%;
+    font-family: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+body {
+    min-height: 100vh;
     margin: 0;
+    padding: 0;
     display: flex;
     flex-direction: column;
-    font-family: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--background);
     color: var(--text-primary);
 }
 
-    body > .container {
-        flex: 1 0 auto; /* Контент растягивается, футер прижимается вниз */
-    }
-
 /* === Основная часть === */
 main {
     flex: 1 0 auto;
-    padding-top: 2.5rem;
-    padding-bottom: 6rem; /* безопасный отступ под футер и кнопки */
+    padding-top: 2rem;
+    padding-bottom: 3rem;
 }
 
 /* === Футер === */
 footer.footer {
     flex-shrink: 0;
+    margin-top: auto;
     background: var(--surface);
     border-top: 1px solid var(--border);
-    padding-block: 1.5rem;
+    padding: 1.5rem 0;
     color: var(--text-secondary);
     text-align: center;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
 }
 
 /* === Остальные стили === */

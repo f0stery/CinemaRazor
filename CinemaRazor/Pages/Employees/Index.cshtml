@@ -23,7 +23,6 @@
                 <thead>
                     <tr>
                         <th>ФИО</th>
-                        <th>Возраст</th>
                         <th>Телефон</th>
                         <th>Должность</th>
                         <th class="text-end">Действия</th>
@@ -35,14 +34,26 @@
                     <tr>
                         <td>
                             <div class="fw-semibold">@item.FullName</div>
-                            <div class="text-muted small">@item.Gender, @item.Age</div>
+                            <div class="text-muted small">
+                                @if (!string.IsNullOrWhiteSpace(item.Gender))
+                                {
+                                    <span>@item.Gender</span>
+                                }
+                                @if (item.Age > 0)
+                                {
+                                    @if (!string.IsNullOrWhiteSpace(item.Gender))
+                                    {
+                                        <span>, </span>
+                                    }
+                                    <span>@item.Age лет</span>
+                                }
+                            </div>
                             @if (!string.IsNullOrWhiteSpace(item.Address))
                             {
                                 <div class="text-muted small">@item.Address</div>
                             }
                         </td>
-                        <td>@item.Age</td>
-                        <td>@item.Phone</td>
+                        <td>@(string.IsNullOrWhiteSpace(item.Phone) ? "—" : item.Phone)</td>
                         <td>
                             <span class="badge rounded-pill text-bg-light border">
                                 @(string.IsNullOrWhiteSpace(item.Position?.Title) ? "Не указана" : item.Position!.Title)

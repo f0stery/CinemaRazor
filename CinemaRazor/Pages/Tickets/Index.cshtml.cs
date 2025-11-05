@@ -24,8 +24,6 @@ namespace CinemaRazor.Pages.Tickets
 
         public SelectList MovieOptions { get; private set; }
 
-        public SelectList SessionOptions { get; private set; }
-
         [BindProperty(SupportsGet = true)]
         public int? SelectedMovieId { get; set; }
 
@@ -79,7 +77,7 @@ namespace CinemaRazor.Pages.Tickets
                     Price = s.Price,
                     TicketsSold = s.Tickets.Count,
                     TotalSeats = TotalSeats,
-                    Revenue = s.Tickets.Sum(t => (decimal?)t.Price) ?? 0m
+                    Revenue = s.Tickets.Sum(t => (int?)t.Price) ?? 0
                 })
                 .ToListAsync();
 
@@ -87,17 +85,6 @@ namespace CinemaRazor.Pages.Tickets
             {
                 SelectedSessionId = null;
             }
-
-            SessionOptions = new SelectList(
-                SessionSummaries
-                    .Select(s => new SelectListItem
-                    {
-                        Value = s.SessionId.ToString(),
-                        Text = s.DisplayLabel
-                    }),
-                nameof(SelectListItem.Value),
-                nameof(SelectListItem.Text),
-                SelectedSessionId?.ToString());
 
             if (SelectedSessionId.HasValue)
             {
@@ -147,9 +134,9 @@ namespace CinemaRazor.Pages.Tickets
             {
                 Title = title,
                 Subtitle = $"Сеансов: {filteredList.Count}",
-                TicketsSold = filteredList.Sum(s => s.TicketsSold),
-                SeatsAvailable = filteredList.Sum(s => s.SeatsAvailable),
-                Revenue = filteredList.Sum(s => s.Revenue),
+                  TicketsSold = filteredList.Sum(s => s.TicketsSold),
+                  SeatsAvailable = filteredList.Sum(s => s.SeatsAvailable),
+                  Revenue = filteredList.Sum(s => s.Revenue),
                 SessionsCount = filteredList.Count
             };
         }
@@ -160,10 +147,10 @@ namespace CinemaRazor.Pages.Tickets
             public int MovieId { get; set; }
             public string MovieTitle { get; set; }
             public DateTime StartTime { get; set; }
-            public decimal Price { get; set; }
+            public int Price { get; set; }
             public int TicketsSold { get; set; }
             public int TotalSeats { get; set; }
-            public decimal Revenue { get; set; }
+            public int Revenue { get; set; }
             public int SeatsAvailable => Math.Max(0, TotalSeats - TicketsSold);
             public string DisplayLabel => $"{MovieTitle} — {StartTime:dd.MM.yyyy HH:mm}";
         }
@@ -174,7 +161,7 @@ namespace CinemaRazor.Pages.Tickets
             public string Subtitle { get; set; }
             public int TicketsSold { get; set; }
             public int SeatsAvailable { get; set; }
-            public decimal Revenue { get; set; }
+            public int Revenue { get; set; }
             public int SessionsCount { get; set; }
         }
     }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -66,6 +66,7 @@ namespace CinemaRazor.Pages.Positions
                 }
             }
 
+            TempData["SuccessMessage"] = $"Должность '{Position.Title}' обновлена.";
             return RedirectToPage("./Index");
         }
 

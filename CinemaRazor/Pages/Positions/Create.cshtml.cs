@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -37,6 +37,8 @@ namespace CinemaRazor.Pages.Positions
 
             _context.Positions.Add(Position);
             await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = $"Должность '{Position.Title}' успешно создана.";
 
             return RedirectToPage("./Index");
         }

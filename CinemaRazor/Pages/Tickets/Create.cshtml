@@ -7,16 +7,16 @@
 
 <section class="page-header mb-4">
     <h1 class="page-title">Продажа билета</h1>
-    <p class="page-subtitle">Выберите сеанс, отметьте свободное место и подтвердите продажу билета.</p>
+    <p class="page-subtitle">Выберите фильм, затем сеанс и свободное место, чтобы оформить билет.</p>
 </section>
 
 <div class="card">
     <div class="card-body">
         <form method="get" class="row g-3 align-items-end">
             <div class="col-12 col-md-8">
-                <label asp-for="SessionId" class="form-label">Сеанс</label>
-                <select asp-for="SessionId" class="form-select" asp-items="Model.SessionOptions" onchange="this.form.submit()">
-                    <option value="">Выберите сеанс</option>
+                <label asp-for="MovieId" class="form-label">Фильм</label>
+                <select asp-for="MovieId" class="form-select" asp-items="Model.MovieOptions" onchange="this.form.submit()">
+                    <option value="">Выберите фильм</option>
                 </select>
             </div>
             <div class="col-12 col-md-4 text-md-end">
@@ -26,114 +26,165 @@
     </div>
 </div>
 
-@if (!Model.HasSessions)
+@if (!Model.HasAnySessions)
 {
     <div class="alert alert-info mt-4">
         Нет доступных сеансов. Создайте сеанс, прежде чем оформлять продажу билета.
     </div>
 }
-else if (Model.Session != null)
+else
 {
-    <div class="card mt-4">
-        <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
-            <div>
-                <h4 class="mb-1">@Model.Session.Movie?.Title</h4>
-                <div class="text-muted small">
-                    Начало: @Model.Session.StartTime.ToString("dd.MM.yyyy HH:mm")<br />
-                    Конец: @Model.Session.EndTime.ToString("dd.MM.yyyy HH:mm")
-                </div>
+    if (!Model.MovieId.HasValue)
+    {
+        <div class="alert alert-light border mt-4">
+            Выберите фильм, чтобы увидеть доступные сеансы.
+        </div>
+    }
+    else if (!Model.HasSessionsForSelectedMovie)
+    {
+        <div class="alert alert-warning mt-4">
+            Для выбранного фильма пока нет запланированных сеансов. Создайте новый сеанс, чтобы оформить билет.
+        </div>
+    }
+    else
+    {
+        <div class="card mt-4">
+            <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <h4 class="mb-0">Сеансы фильма</h4>
+                <small class="text-muted">Нажмите на сеанс, чтобы выбрать место</small>
             </div>
-            <div class="text-end">
-                <div class="fw-semibold">Цена билета</div>
-                <div class="fs-4">@Model.Session.Price.ToString("0.00") ₽</div>
+            <div class="list-group list-group-flush">
+                @foreach (var option in Model.MovieSessions)
+                {
+                    var isSelected = Model.Session != null && option.Id == Model.Session.Id;
+                    var mutedClass = isSelected ? "text-white-50" : "text-muted";
+                    <a asp-page="Create"
+                       asp-route-MovieId="@Model.MovieId"
+                       asp-route-SessionId="@option.Id"
+                       class="list-group-item list-group-item-action d-flex justify-content-between align-items-center gap-3 @(isSelected ? "active" : string.Empty)">
+                        <div>
+                            <div class="fw-semibold">@option.StartTime.ToString("dd.MM.yyyy HH:mm")</div>
+                            <div class="small @mutedClass">Свободно: @option.SeatsAvailable</div>
+                        </div>
+                        <div class="text-end">
+                            <div class="badge @(isSelected ? "bg-light text-dark" : "bg-primary")">@option.Price.ToString("0") BYN</div>
+                            <div class="small @mutedClass">Продано: @option.TicketsSold</div>
+                        </div>
+                    </a>
+                }
             </div>
         </div>
-        <div class="card-body">
-            <form method="post" id="sellTicketForm" class="d-flex flex-column gap-4">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="SessionId" value="@Model.Session.Id" />
-                <div asp-validation-summary="All" class="text-danger"></div>
+    }
 
-                <div class="row justify-content-center">
-                    <div class="col-auto">
-                        <div class="d-flex gap-3 mb-3">
-                            <span class="d-flex align-items-center gap-2"><span class="seat-legend available"></span>Свободно</span>
-                            <span class="d-flex align-items-center gap-2"><span class="seat-legend occupied"></span>Занято</span>
-                            <span class="d-flex align-items-center gap-2"><span class="seat-legend selected"></span>Выбрано</span>
-                        </div>
+    if (Model.Session == null)
+    {
+        <div class="alert alert-light border mt-4">
+            Выберите сеанс, чтобы увидеть доступные места.
+        </div>
+    }
+    else
+    {
+        <div class="card mt-4">
+            <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <div>
+                    <h4 class="mb-1">@Model.Session.Movie?.Title</h4>
+                    <div class="text-muted small">
+                        Начало: @Model.Session.StartTime.ToString("dd.MM.yyyy HH:mm")<br />
+                        @{
+                            DateTime? endTime = Model.Session.EndTime > DateTime.MinValue && Model.Session.EndTime >= Model.Session.StartTime
+                                ? Model.Session.EndTime
+                                : (DateTime?)null;
+                        }
+                        Окончание: @(endTime.HasValue ? endTime.Value.ToString("dd.MM.yyyy HH:mm") : "—")
                     </div>
                 </div>
+                <div class="text-end">
+                    <div class="fw-semibold">Цена билета</div>
+                    <div class="fs-4">@Model.Session.Price.ToString("0") BYN</div>
+                </div>
+            </div>
+            <div class="card-body">
+                <form method="post" id="sellTicketForm" class="d-flex flex-column gap-4">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="SessionId" value="@Model.Session.Id" />
+                    <input type="hidden" name="MovieId" value="@Model.MovieId" />
+                    <div asp-validation-summary="All" class="text-danger"></div>
 
-                @if (Model.SeatLayout.Any())
-                {
-                    var maxRow = Model.SeatLayout.Max(s => s.RowNumber);
-                    var maxSeat = Model.SeatLayout.Max(s => s.SeatNumber);
+                    <div class="row justify-content-center">
+                        <div class="col-auto">
+                            <div class="d-flex gap-3 mb-3">
+                                <span class="d-flex align-items-center gap-2"><span class="seat-legend available"></span>Свободно</span>
+                                <span class="d-flex align-items-center gap-2"><span class="seat-legend occupied"></span>Занято</span>
+                                <span class="d-flex align-items-center gap-2"><span class="seat-legend selected"></span>Выбрано</span>
+                            </div>
+                        </div>
+                    </div>
 
-                    <div class="table-responsive">
-                        <table class="table table-borderless seat-map">
-                            <thead>
-                                <tr>
-                                    <th style="width: 70px;">Ряд</th>
-                                    <th colspan="@maxSeat" class="text-center">Экран</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                    @if (Model.SeatLayout.Any())
+                    {
+                        var maxRow = Model.SeatLayout.Max(s => s.RowNumber);
+                        var maxSeat = Model.SeatLayout.Max(s => s.SeatNumber);
+
+                        <div class="table-responsive">
+                            <table class="table table-borderless seat-map">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 70px;">Ряд</th>
+                                        <th colspan="@maxSeat" class="text-center">Экран</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
                                 @for (int row = 1; row <= maxRow; row++)
                                 {
                                     var rowSeats = Model.SeatLayout.Where(s => s.RowNumber == row).OrderBy(s => s.SeatNumber).ToList();
                                     <tr>
                                         <td class="row-label"><strong>@row</strong></td>
-                                        @for (int seatNumber = 1; seatNumber <= maxSeat; seatNumber++)
+                                    @for (int seatNumber = 1; seatNumber <= maxSeat; seatNumber++)
+                                    {
+                                        var seat = rowSeats.FirstOrDefault(s => s.SeatNumber == seatNumber);
+                                        if (seat != null)
                                         {
-                                            var seat = rowSeats.FirstOrDefault(s => s.SeatNumber == seatNumber);
-                                            if (seat != null)
+                                            <td class="seat-cell">
+                                            @if (seat.IsOccupied)
                                             {
-                                                <td class="seat-cell">
-                                                    @if (seat.IsOccupied)
-                                                    {
-                                                        <div class="seat occupied" title="Ряд @seat.RowNumber, Место @seat.SeatNumber - Занято">
-                                                            <span class="seat-number">@seat.SeatNumber</span>
-                                                        </div>
-                                                    }
-                                                    else
-                                                    {
-                                                        <label class="seat available" title="Ряд @seat.RowNumber, Место @seat.SeatNumber - Свободно">
-                                                            <input type="radio" name="SelectedSeatId" value="@seat.SeatId" @(Model.SelectedSeatId == seat.SeatId ? "checked" : null) />
-                                                            <span class="seat-number">@seat.SeatNumber</span>
-                                                        </label>
-                                                    }
-                                                </td>
+                                                <div class="seat occupied" title="Ряд @seat.RowNumber, Место @seat.SeatNumber - Занято">
+                                                    <span class="seat-number">@seat.SeatNumber</span>
+                                                </div>
                                             }
                                             else
                                             {
-                                                <td class="seat-cell empty"></td>
+                                                <label class="seat available" title="Ряд @seat.RowNumber, Место @seat.SeatNumber - Свободно">
+                                                    <input type="radio" name="SelectedSeatId" value="@seat.SeatId" @(Model.SelectedSeatId == seat.SeatId ? "checked" : null) />
+                                                    <span class="seat-number">@seat.SeatNumber</span>
+                                                </label>
                                             }
+                                            </td>
                                         }
+                                        else
+                                        {
+                                            <td class="seat-cell empty"></td>
+                                        }
+                                    }
                                     </tr>
                                 }
-                            </tbody>
-                        </table>
-                    </div>
+                                </tbody>
+                            </table>
+                        </div>
 
-                    <div class="text-center">
-                        <button type="button" class="btn btn-primary btn-lg" id="sellTicketButton" disabled>Продать билет</button>
-                    </div>
-                }
-                else
-                {
-                    <div class="alert alert-warning">
-                        Для этого сеанса ещё не настроены места. Настройте схему зала перед продажей билетов.
-                    </div>
-                }
-            </form>
+                        <div class="text-center">
+                            <button type="button" class="btn btn-primary btn-lg" id="sellTicketButton" disabled>Продать билет</button>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            Для этого сеанса ещё не настроены места. Настройте схему зала перед продажей билетов.
+                        </div>
+                    }
+                </form>
+            </div>
         </div>
-    </div>
-}
-else
-{
-    <div class="alert alert-light border mt-4">
-        Выберите сеанс, чтобы увидеть доступные места.
-    </div>
+    }
 }
 
 @section Scripts {
@@ -155,6 +206,7 @@ else
 
             const applySelection = (radio) => {
                 if (!radio) {
+                    sellButton.disabled = true;
                     return;
                 }
 
@@ -185,6 +237,10 @@ else
 
                 sellForm.submit();
             });
+
+            if (!sellForm.querySelector('input[type="radio"][name="SelectedSeatId"]:checked')) {
+                sellButton.disabled = true;
+            }
         });
     </script>
 

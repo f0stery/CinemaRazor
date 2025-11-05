@@ -21,26 +21,56 @@ namespace CinemaRazor.Pages.Tickets
         }
 
         [BindProperty(SupportsGet = true)]
+        public int? MovieId { get; set; }
+
+        [BindProperty(SupportsGet = true)]
         public int? SessionId { get; set; }
 
         [BindProperty]
         public int? SelectedSeatId { get; set; }
 
-        public SelectList SessionOptions { get; private set; }
+        public SelectList MovieOptions { get; private set; }
+
+        public List<SessionOption> MovieSessions { get; private set; } = new();
 
         public Session Session { get; private set; }
 
         public List<SeatInfo> SeatLayout { get; private set; } = new();
 
-        public bool HasSessions => SessionOptions?.Any() == true;
+        public bool HasAnySessions { get; private set; }
+
+        private int SeatCapacity { get; set; }
+
+        public bool HasSessionsForSelectedMovie => MovieSessions.Any();
 
         public async Task<IActionResult> OnGetAsync()
         {
-            await LoadSessionsAsync();
+            await LoadSeatCapacityAsync();
+            await LoadMoviesAsync();
+
+            if (SessionId.HasValue && !MovieId.HasValue)
+            {
+                MovieId = await _context.Sessions
+                    .AsNoTracking()
+                    .Where(s => s.Id == SessionId.Value)
+                    .Select(s => (int?)s.MovieId)
+                    .FirstOrDefaultAsync();
+            }
+
+            if (MovieId.HasValue)
+            {
+                await LoadSessionsForMovieAsync(MovieId.Value);
+            }
 
             if (SessionId.HasValue)
             {
                 await LoadSessionDetailsAsync(SessionId.Value);
+
+                if (Session != null && MovieId != Session.MovieId)
+                {
+                    MovieId = Session.MovieId;
+                    await LoadSessionsForMovieAsync(Session.MovieId);
+                }
             }
 
             return Page();
@@ -48,7 +78,22 @@ namespace CinemaRazor.Pages.Tickets
 
         public async Task<IActionResult> OnPostAsync()
         {
-            await LoadSessionsAsync();
+            await LoadSeatCapacityAsync();
+            await LoadMoviesAsync();
+
+            if (SessionId.HasValue && !MovieId.HasValue)
+            {
+                MovieId = await _context.Sessions
+                    .AsNoTracking()
+                    .Where(s => s.Id == SessionId.Value)
+                    .Select(s => (int?)s.MovieId)
+                    .FirstOrDefaultAsync();
+            }
+
+            if (MovieId.HasValue)
+            {
+                await LoadSessionsForMovieAsync(MovieId.Value);
+            }
 
             if (!SessionId.HasValue)
             {
@@ -96,28 +141,54 @@ namespace CinemaRazor.Pages.Tickets
 
             TempData["SuccessMessage"] = $"Продан билет: {Session.Movie?.Title ?? "Сеанс"}, ряд {seat.RowNumber}, место {seat.SeatNumber}.";
 
-            return RedirectToPage("./Index", new { SelectedSessionId = Session.Id });
+            return RedirectToPage("./Index", new { SelectedSessionId = Session.Id, SelectedMovieId = Session.MovieId });
         }
 
-        private async Task LoadSessionsAsync()
+        private async Task LoadSeatCapacityAsync()
         {
-            var sessions = await _context.Sessions
+            SeatCapacity = await _context.Seats.AsNoTracking().CountAsync();
+        }
+
+        private async Task LoadMoviesAsync()
+        {
+            var movies = await _context.Sessions
                 .Include(s => s.Movie)
                 .AsNoTracking()
-                .OrderBy(s => s.StartTime)
-                .Select(s => new
+                .GroupBy(s => new { s.MovieId, s.Movie.Title })
+                .OrderBy(g => g.Key.Title)
+                .Select(g => new MovieOption
                 {
-                    s.Id,
-                    Display = $"{s.Movie.Title} ({s.StartTime:dd.MM.yyyy HH:mm})"
+                    Id = g.Key.MovieId,
+                    Title = g.Key.Title
                 })
                 .ToListAsync();
 
-            if (!SessionId.HasValue && sessions.Any())
-            {
-                SessionId = sessions.First().Id;
-            }
+            MovieOptions = new SelectList(movies, nameof(MovieOption.Id), nameof(MovieOption.Title), MovieId);
+            HasAnySessions = movies.Any();
+        }
 
-            SessionOptions = new SelectList(sessions, "Id", "Display", SessionId);
+        private async Task LoadSessionsForMovieAsync(int movieId)
+        {
+            MovieSessions = await _context.Sessions
+                .AsNoTracking()
+                .Where(s => s.MovieId == movieId)
+                .OrderBy(s => s.StartTime)
+                .Select(s => new SessionOption
+                {
+                    Id = s.Id,
+                    StartTime = s.StartTime,
+                    EndTime = s.EndTime,
+                    Price = s.Price,
+                    TicketsSold = s.Tickets.Count
+                })
+                .ToListAsync();
+
+            foreach (var option in MovieSessions)
+            {
+                option.SeatsAvailable = SeatCapacity > 0
+                    ? Math.Max(0, SeatCapacity - option.TicketsSold)
+                    : 0;
+            }
         }
 
         private async Task LoadSessionDetailsAsync(int sessionId)
@@ -129,9 +200,12 @@ namespace CinemaRazor.Pages.Tickets
 
             if (Session == null)
             {
+                SessionId = null;
                 SeatLayout = new List<SeatInfo>();
                 return;
             }
+
+            SessionId = Session.Id;
 
             var occupiedSeatIds = new HashSet<int>(await _context.Tickets
                 .AsNoTracking()
@@ -160,6 +234,22 @@ namespace CinemaRazor.Pages.Tickets
             public int RowNumber { get; set; }
             public int SeatNumber { get; set; }
             public bool IsOccupied { get; set; }
+        }
+
+        public class SessionOption
+        {
+            public int Id { get; set; }
+            public DateTime StartTime { get; set; }
+            public DateTime EndTime { get; set; }
+            public int Price { get; set; }
+            public int TicketsSold { get; set; }
+            public int SeatsAvailable { get; set; }
+        }
+
+        private class MovieOption
+        {
+            public int Id { get; set; }
+            public string Title { get; set; }
         }
     }
 }

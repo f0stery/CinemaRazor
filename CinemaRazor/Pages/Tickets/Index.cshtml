@@ -19,19 +19,13 @@
 <div class="card mb-4">
     <div class="card-body">
         <form method="get" class="row g-3 align-items-end">
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-6">
                 <label asp-for="SelectedMovieId" class="form-label">Фильм</label>
                 <select asp-for="SelectedMovieId" class="form-select" asp-items="Model.MovieOptions">
                     <option value="">Все фильмы</option>
                 </select>
             </div>
-            <div class="col-12 col-md-4">
-                <label asp-for="SelectedSessionId" class="form-label">Сеанс</label>
-                <select asp-for="SelectedSessionId" class="form-select" asp-items="Model.SessionOptions">
-                    <option value="">Все сеансы</option>
-                </select>
-            </div>
-            <div class="col-12 col-md-4 d-flex gap-2">
+            <div class="col-12 col-md-6 d-flex gap-2">
                 <button type="submit" class="btn btn-primary flex-grow-1">Показать</button>
                 <a asp-page="Index" class="btn btn-outline-secondary">Сбросить</a>
                 <a asp-page="Create" class="btn btn-outline-primary" title="Оформить новый билет">Продать билет</a>
@@ -71,7 +65,7 @@
                 <div class="col-12 col-md-4">
                     <div class="border rounded-3 p-3 h-100">
                         <div class="text-muted text-uppercase small">Выручка</div>
-                        <div class="fs-3 fw-semibold">@Model.Overview.Revenue.ToString("0.00") ₽</div>
+                        <div class="fs-3 fw-semibold">@Model.Overview.Revenue.ToString("0") BYN</div>
                     </div>
                 </div>
             </div>
@@ -89,36 +83,58 @@
         <div class="table-responsive">
             <table class="table table-hover align-middle">
                 <thead class="table-light">
-                    <tr>
-                        <th>Сеанс</th>
-                        <th class="text-nowrap">Цена, ₽</th>
-                        <th class="text-nowrap">Продано</th>
-                        <th class="text-nowrap">Свободно</th>
-                        <th class="text-nowrap">Выручка, ₽</th>
-                        <th></th>
-                    </tr>
+                      <tr>
+                          <th>Сеанс</th>
+                          <th class="text-nowrap">Цена, BYN</th>
+                          <th class="text-nowrap">Продано</th>
+                          <th class="text-nowrap">Свободно</th>
+                          <th class="text-nowrap">Выручка, BYN</th>
+                          <th class="text-nowrap text-end">Действия</th>
+                      </tr>
                 </thead>
                 <tbody>
                 @foreach (var summary in Model.SessionSummaries)
                 {
                     var isActive = Model.SelectedSessionId.HasValue && summary.SessionId == Model.SelectedSessionId.Value;
-                    <tr class="@(isActive ? "table-primary" : string.Empty)">
-                        <td>
-                            <div class="fw-semibold">@summary.MovieTitle</div>
-                            <div class="text-muted small">@summary.StartTime.ToString("dd.MM.yyyy HH:mm")</div>
-                        </td>
-                        <td>@summary.Price.ToString("0.00")</td>
-                        <td>@summary.TicketsSold</td>
-                        <td>@summary.SeatsAvailable</td>
-                        <td>@summary.Revenue.ToString("0.00")</td>
-                        <td class="text-end">
-                            <a asp-page="Index"
-                               asp-route-SelectedSessionId="@summary.SessionId"
-                               asp-route-SelectedMovieId="@Model.SelectedMovieId"
-                               class="btn btn-sm btn-outline-primary">Показать билеты</a>
-                        </td>
-                    </tr>
-                }
+                      <tr class="@(isActive ? "table-primary" : string.Empty)">
+                          <td>
+                              <div class="fw-semibold">@summary.MovieTitle</div>
+                              <div class="text-muted small">@summary.StartTime.ToString("dd.MM.yyyy HH:mm")</div>
+                          </td>
+                          <td>@summary.Price.ToString("0")</td>
+                          <td>@summary.TicketsSold</td>
+                          <td>@summary.SeatsAvailable</td>
+                          <td>@summary.Revenue.ToString("0")</td>
+                          <td class="text-end">
+                              <div class="btn-group btn-group-sm" role="group">
+                                  <a asp-page="Index"
+                                     asp-route-SelectedSessionId="@summary.SessionId"
+                                     asp-route-SelectedMovieId="@Model.SelectedMovieId"
+                                     class="btn btn-outline-secondary">Показать билеты</a>
+                                  <a asp-page="Create"
+                                     asp-route-MovieId="@summary.MovieId"
+                                     asp-route-SessionId="@summary.SessionId"
+                                     class="btn btn-outline-primary">Продать билет</a>
+                              </div>
+                          </td>
+                      </tr>
+                  }
+                  @{ 
+                      var totalTickets = Model.SessionSummaries.Sum(s => s.TicketsSold);
+                      var totalSeats = Model.SessionSummaries.Sum(s => s.SeatsAvailable);
+                      var totalRevenue = Model.SessionSummaries.Sum(s => s.Revenue);
+                  }
+                  @if (Model.SessionSummaries.Count > 1)
+                  {
+                      <tr class="table-light fw-semibold">
+                          <td>Итого по выбранным сеансам</td>
+                          <td></td>
+                          <td>@totalTickets</td>
+                          <td>@totalSeats</td>
+                          <td>@totalRevenue.ToString("0")</td>
+                          <td></td>
+                      </tr>
+                  }
                 </tbody>
             </table>
         </div>
@@ -152,7 +168,7 @@
                         <th>Сеанс</th>
                         <th>Место</th>
                         <th>Дата покупки</th>
-                        <th>Цена, ₽</th>
+                          <th>Цена, BYN</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -164,7 +180,7 @@
                         <td>@item.Session.StartTime.ToString("dd.MM.yyyy HH:mm")</td>
                         <td>Ряд @item.Seat.RowNumber, место @item.Seat.SeatNumber</td>
                         <td>@item.PurchaseDate.ToString("dd.MM.yyyy HH:mm")</td>
-                        <td>@item.Price.ToString("0.00")</td>
+                          <td>@item.Price.ToString("0")</td>
                         <td class="text-end">
                             <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-sm btn-link">Подробнее</a>
                             <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-sm btn-link">Изменить</a>

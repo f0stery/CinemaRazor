@@ -18,8 +18,8 @@ namespace CinemaRazor.Models
         public DateTime EndTime { get; set; }
 
         [Display(Name = "Цена билета")]
-        [Column(TypeName = "decimal(10,2)")]
-        public decimal Price { get; set; }
+        [Range(0, 100000)]
+        public int Price { get; set; }
 
         [Required]
         public int MovieId { get; set; }
@@ -49,8 +49,8 @@ namespace CinemaRazor.Models
         public Seat Seat { get; set; }
 
         [Display(Name = "Цена")]
-        [Column(TypeName = "decimal(10,2)")]
-        public decimal Price { get; set; }
+        [Range(0, 100000)]
+        public int Price { get; set; }
 
         [Display(Name = "Дата покупки")]
         public DateTime PurchaseDate { get; set; } = DateTime.Now;

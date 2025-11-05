@@ -27,9 +27,15 @@ namespace CinemaRazor.Pages.Employees
 
         public async Task<IActionResult> OnPostAsync()
         {
+            var hasPositions = await PopulatePositionsAsync();
+            if (!hasPositions)
+            {
+                ModelState.AddModelError(string.Empty, "Сначала создайте хотя бы одну должность.");
+                return Page();
+            }
+
             if (!ModelState.IsValid)
             {
-                await PopulatePositionsAsync();
                 return Page();
             }
 
@@ -38,7 +44,7 @@ namespace CinemaRazor.Pages.Employees
             return RedirectToPage("./Index");
         }
 
-        private async Task PopulatePositionsAsync()
+        private async Task<bool> PopulatePositionsAsync()
         {
             var positions = await _context.Positions
                 .AsNoTracking()
@@ -46,6 +52,8 @@ namespace CinemaRazor.Pages.Employees
                 .ToListAsync();
 
             ViewData["PositionId"] = new SelectList(positions, "Id", "Title");
+            ViewData["HasPositions"] = positions.Any();
+            return positions.Any();
         }
     }
 }

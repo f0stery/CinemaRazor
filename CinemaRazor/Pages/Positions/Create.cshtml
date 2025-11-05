@@ -13,6 +13,7 @@
 <div class="card">
     <div class="card-body p-4">
         <form method="post" class="row g-4">
+            @Html.AntiForgeryToken()
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="col-12 col-md-6">
                 <label asp-for="Position.Title" class="form-label">Название должности<span class="text-danger">*</span></label>

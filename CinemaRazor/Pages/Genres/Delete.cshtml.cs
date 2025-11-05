@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -52,9 +52,11 @@ namespace CinemaRazor.Pages.Genres
             var genre = await _context.Genres.FindAsync(id);
             if (genre != null)
             {
-                Genre = genre;
-                _context.Genres.Remove(Genre);
+                var genreName = genre.Name;
+                _context.Genres.Remove(genre);
                 await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = $"Жанр '{genreName}' удалён.";
             }
 
             return RedirectToPage("./Index");

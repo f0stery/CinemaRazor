@@ -22,10 +22,10 @@
             </div>
             <div class="col-12 col-md-6">
                 <label asp-for="Position.Salary" class="form-label">Оклад</label>
-                <div class="input-group">
-                    <span class="input-group-text">BYN</span>
-                    <input asp-for="Position.Salary" class="form-control" type="number" step="1" min="0" />
-                </div>
+                    <div class="input-group">
+                        <span class="input-group-text">BYN</span>
+                        <input asp-for="Position.Salary" class="form-control" type="number" inputmode="decimal" step="0.01" min="0" />
+                    </div>
                 <span asp-validation-for="Position.Salary" class="text-danger small"></span>
             </div>
             <div class="col-12">

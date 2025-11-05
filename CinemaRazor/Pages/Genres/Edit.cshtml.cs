@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -48,7 +48,14 @@ namespace CinemaRazor.Pages.Genres
                 return Page();
             }
 
-            _context.Attach(Genre).State = EntityState.Modified;
+            var genreToUpdate = await _context.Genres.FirstOrDefaultAsync(g => g.Id == Genre.Id);
+            if (genreToUpdate == null)
+            {
+                return NotFound();
+            }
+
+            genreToUpdate.Name = Genre.Name;
+            genreToUpdate.Description = Genre.Description;
 
             try
             {
@@ -56,22 +63,17 @@ namespace CinemaRazor.Pages.Genres
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!GenreExists(Genre.Id))
+                if (!await _context.Genres.AnyAsync(e => e.Id == Genre.Id))
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
+
+                throw;
             }
 
-            return RedirectToPage("./Index");
-        }
+            TempData["SuccessMessage"] = $"Жанр '{genreToUpdate.Name}' обновлён.";
 
-        private bool GenreExists(int id)
-        {
-            return _context.Genres.Any(e => e.Id == id);
+            return RedirectToPage("./Index");
         }
     }
 }

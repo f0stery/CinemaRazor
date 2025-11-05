@@ -1,11 +1,12 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CinemaRazor.Data;
 using CinemaRazor.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CinemaRazor.Pages.Sessions
 {
@@ -21,6 +22,10 @@ namespace CinemaRazor.Pages.Sessions
         [BindProperty]
         public Session Session { get; set; } = default!;
 
+        public List<SelectListItem> MovieOptions { get; private set; } = new();
+
+        public Dictionary<int, int> MovieDurations { get; private set; } = new();
+
         public async Task<IActionResult> OnGetAsync(int? id)
         {
             if (id == null)
@@ -28,6 +33,7 @@ namespace CinemaRazor.Pages.Sessions
 
             var session = await _context.Sessions
                 .Include(s => s.Movie)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (session == null)
@@ -35,19 +41,37 @@ namespace CinemaRazor.Pages.Sessions
 
             Session = session;
 
-            ViewData["MovieId"] = new SelectList(_context.Movies, "Id", "Title");
+            await LoadMoviesAsync();
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
+            await LoadMoviesAsync();
+
             if (!ModelState.IsValid)
             {
-                ViewData["MovieId"] = new SelectList(_context.Movies, "Id", "Title");
                 return Page();
             }
-                        
-            _context.Attach(Session).State = EntityState.Modified;
+
+            var sessionToUpdate = await _context.Sessions.FirstOrDefaultAsync(s => s.Id == Session.Id);
+            if (sessionToUpdate == null)
+            {
+                return NotFound();
+            }
+
+            sessionToUpdate.MovieId = Session.MovieId;
+            sessionToUpdate.StartTime = Session.StartTime;
+            sessionToUpdate.Price = Session.Price;
+
+            var movie = await _context.Movies.AsNoTracking().FirstOrDefaultAsync(m => m.Id == Session.MovieId);
+            if (movie == null)
+            {
+                ModelState.AddModelError("Session.MovieId", "Выбранный фильм не найден.");
+                return Page();
+            }
+
+            sessionToUpdate.EndTime = sessionToUpdate.StartTime.AddMinutes(movie.DurationMinutes);
 
             try
             {
@@ -62,6 +86,26 @@ namespace CinemaRazor.Pages.Sessions
             }
 
             return RedirectToPage("./Index");
+        }
+
+        private async Task LoadMoviesAsync()
+        {
+            var movies = await _context.Movies
+                .AsNoTracking()
+                .OrderBy(m => m.Title)
+                .Select(m => new
+                {
+                    m.Id,
+                    m.Title,
+                    m.DurationMinutes
+                })
+                .ToListAsync();
+
+            MovieOptions = movies
+                .Select(m => new SelectListItem(m.Title, m.Id.ToString()))
+                .ToList();
+
+            MovieDurations = movies.ToDictionary(m => m.Id, m => m.DurationMinutes);
         }
     }
 }

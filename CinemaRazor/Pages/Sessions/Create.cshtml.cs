@@ -4,8 +4,9 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CinemaRazor.Data;
 using CinemaRazor.Models;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CinemaRazor.Pages.Sessions
 {
@@ -21,51 +22,79 @@ namespace CinemaRazor.Pages.Sessions
         [BindProperty]
         public Session Session { get; set; } = new Session();
 
-        public IActionResult OnGet()
+        public List<SelectListItem> MovieOptions { get; private set; } = new();
+
+        public Dictionary<int, int> MovieDurations { get; private set; } = new();
+
+        public async Task<IActionResult> OnGetAsync()
         {
-            // Загружаем список фильмов (залы не нужны, так как их только один)
-            ViewData["MovieId"] = new SelectList(_context.Movies.AsNoTracking().ToList(), "Id", "Title");
+            await LoadMoviesAsync();
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
+            await LoadMoviesAsync();
+
             // Проверяем, что Session был правильно привязан
             if (Session == null)
             {
-                ModelState.AddModelError("", "Ошибка при обработке данных формы.");
-                ViewData["MovieId"] = new SelectList(_context.Movies.AsNoTracking().ToList(), "Id", "Title");
+                ModelState.AddModelError(string.Empty, "Ошибка при обработке данных формы.");
                 return Page();
             }
 
-            // Проверяем, что MovieId выбран
             if (Session.MovieId == 0)
             {
                 ModelState.AddModelError("Session.MovieId", "Выберите фильм.");
             }
-            else
-            {
-                // Проверяем, что фильм существует
-                var movieExists = await _context.Movies.AnyAsync(m => m.Id == Session.MovieId);
-                if (!movieExists)
-                {
-                    ModelState.AddModelError("Session.MovieId", $"Фильм с Id={Session.MovieId} не существует!");
-                }
-            }
 
-            // Проверяем валидность модели
             if (!ModelState.IsValid)
             {
-                ViewData["MovieId"] = new SelectList(_context.Movies.AsNoTracking().ToList(), "Id", "Title");
                 return Page();
             }
 
-            // 💾 Добавляем сеанс и сохраняем изменения
+            var movie = await _context.Movies
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.Id == Session.MovieId);
+
+            if (movie == null)
+            {
+                ModelState.AddModelError("Session.MovieId", "Выбранный фильм не найден.");
+                return Page();
+            }
+
+            if (Session.StartTime == default)
+            {
+                ModelState.AddModelError("Session.StartTime", "Укажите дату и время начала сеанса.");
+                return Page();
+            }
+
+            Session.EndTime = Session.StartTime.AddMinutes(movie.DurationMinutes);
+
             _context.Sessions.Add(Session);
             await _context.SaveChangesAsync();
 
-            // 🔙 Возврат на страницу списка
             return RedirectToPage("./Index");
+        }
+
+        private async Task LoadMoviesAsync()
+        {
+            var movies = await _context.Movies
+                .AsNoTracking()
+                .OrderBy(m => m.Title)
+                .Select(m => new
+                {
+                    m.Id,
+                    m.Title,
+                    m.DurationMinutes
+                })
+                .ToListAsync();
+
+            MovieOptions = movies
+                .Select(m => new SelectListItem(m.Title, m.Id.ToString()))
+                .ToList();
+
+            MovieDurations = movies.ToDictionary(m => m.Id, m => m.DurationMinutes);
         }
     }
 }

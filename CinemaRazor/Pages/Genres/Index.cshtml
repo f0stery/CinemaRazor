@@ -2,41 +2,64 @@
 @model CinemaRazor.Pages.Genres.IndexModel
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Жанры";
 }
 
-<h1>Index</h1>
+<section class="page-header mb-4">
+    <h1 class="page-title">Жанры фильмов</h1>
+    <p class="page-subtitle">Управляйте тематическими направлениями репертуара кинотеатра.</p>
+</section>
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-          <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Genre[0].Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Genre[0].Description)
-            </th>
-            <th></th>
-          </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Genre) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+@if (TempData["SuccessMessage"] is string successMessage)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @successMessage
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
+    </div>
 }
-    </tbody>
-</table>
+
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <span class="text-muted">Всего жанров: @Model.Genre.Count</span>
+    <a asp-page="Create" class="btn btn-primary">Добавить жанр</a>
+</div>
+
+@if (Model.Genre.Any())
+{
+    <div class="table-container">
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Описание</th>
+                        <th class="text-end">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model.Genre)
+                {
+                    <tr>
+                        <td class="fw-semibold">@item.Name</td>
+                        <td class="text-muted small">@item.Description</td>
+                        <td class="text-end">
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a class="btn btn-outline-secondary" asp-page="./Details" asp-route-id="@item.Id">Просмотр</a>
+                                <a class="btn btn-outline-secondary" asp-page="./Edit" asp-route-id="@item.Id">Изменить</a>
+                                <a class="btn btn-outline-secondary" asp-page="./Delete" asp-route-id="@item.Id">Удалить</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+else
+{
+    <div class="support-card">
+        <h2>Жанры не найдены</h2>
+        <p>Добавьте хотя бы один жанр, чтобы сортировать фильмы по настроению и тематике.</p>
+        <a asp-page="Create" class="btn btn-primary">Создать жанр</a>
+    </div>
+}

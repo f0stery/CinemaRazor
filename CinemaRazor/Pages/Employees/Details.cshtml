@@ -26,37 +26,44 @@
     </p>
 </section>
 
-<div class="card">
-    <div class="card-body p-4">
-        <div class="row g-4">
-            <div class="col-12 col-lg-6">
-                <h2 class="h5 mb-3">Основная информация</h2>
-                <dl class="row gy-2 mb-0">
-                    <dt class="col-sm-4">Возраст</dt>
-                    <dd class="col-sm-8">@(employee.Age > 0 ? employee.Age : "—")</dd>
-
-                    <dt class="col-sm-4">Пол</dt>
-                    <dd class="col-sm-8">@(string.IsNullOrWhiteSpace(employee.Gender) ? "—" : employee.Gender)</dd>
-
-                    <dt class="col-sm-4">Должность</dt>
-                    <dd class="col-sm-8">@positionTitle</dd>
-                </dl>
+<div class="details-container">
+    <div class="row">
+        <div class="col-md-6">
+            <h3 class="h5 mb-3">Основная информация</h3>
+            <div class="details-row">
+                <div class="details-label">Возраст:</div>
+                <div class="details-value">@(employee.Age > 0 ? $"{employee.Age} лет" : "Не указан")</div>
             </div>
-            <div class="col-12 col-lg-6">
-                <h2 class="h5 mb-3">Контакты</h2>
-                <dl class="row gy-2 mb-0">
-                    <dt class="col-sm-4">Телефон</dt>
-                    <dd class="col-sm-8">@(string.IsNullOrWhiteSpace(employee.Phone) ? "—" : employee.Phone)</dd>
 
-                    <dt class="col-sm-4">Адрес</dt>
-                    <dd class="col-sm-8">@(string.IsNullOrWhiteSpace(employee.Address) ? "—" : employee.Address)</dd>
-                </dl>
+            <div class="details-row">
+                <div class="details-label">Пол:</div>
+                <div class="details-value">@(string.IsNullOrWhiteSpace(employee.Gender) ? "Не указан" : employee.Gender)</div>
+            </div>
+
+            <div class="details-row">
+                <div class="details-label">Должность:</div>
+                <div class="details-value">
+                    <span class="badge rounded-pill text-bg-light border">@positionTitle</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h3 class="h5 mb-3">Контакты</h3>
+            <div class="details-row">
+                <div class="details-label">Телефон:</div>
+                <div class="details-value">@(string.IsNullOrWhiteSpace(employee.Phone) ? "Не указан" : employee.Phone)</div>
+            </div>
+
+            <div class="details-row">
+                <div class="details-label">Адрес:</div>
+                <div class="details-value">@(string.IsNullOrWhiteSpace(employee.Address) ? "Не указан" : employee.Address)</div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="mt-4 d-flex gap-2 flex-wrap">
-    <a asp-page="./Edit" asp-route-id="@employee.Id" class="btn btn-primary">Редактировать</a>
-    <a asp-page="./Index" class="btn btn-outline-secondary">Назад к списку</a>
+    <div class="details-actions">
+        <a asp-page="./Edit" asp-route-id="@employee.Id" class="btn btn-primary">Редактировать</a>
+        <a asp-page="./Delete" asp-route-id="@employee.Id" class="btn btn-outline-secondary">Удалить</a>
+        <a asp-page="./Index" class="btn btn-outline-secondary">Назад к списку</a>
+    </div>
 </div>

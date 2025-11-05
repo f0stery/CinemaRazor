@@ -2,72 +2,75 @@
 @model CinemaRazor.Pages.Movies.DetailsModel
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Детали фильма";
 }
 
-<h1>Details</h1>
+<section class="page-header mb-4">
+    <h1 class="page-title">Детали фильма</h1>
+    <p class="page-subtitle">Просмотр подробной информации о фильме</p>
+</section>
 
-<div>
-    <h4>Movie</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Movie.Title)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Movie.Title)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Movie.Description)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Movie.Description)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Movie.ProducerCompany)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Movie.ProducerCompany)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Movie.ProductionCountry)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Movie.ProductionCountry)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Movie.Actors)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Movie.Actors)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Movie.AgeRating)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Movie.AgeRating)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Movie.ReleaseDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Movie.ReleaseDate)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Movie.DurationMinutes)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Movie.DurationMinutes)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Movie.Genre)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Movie.Genre.Name)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-page="./Edit" asp-route-id="@Model.Movie.Id">Edit</a> |
-    <a asp-page="./Index">Back to List</a>
+<div class="details-container">
+    <div class="details-header">
+        <h2 class="details-title">@Model.Movie.Title</h2>
+        @if (Model.Movie.Genre != null)
+        {
+            <p class="details-subtitle">
+                <span class="badge rounded-pill text-bg-light border">@Model.Movie.Genre.Name</span>
+            </p>
+        }
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.Movie.Description))
+    {
+        <div class="details-row">
+            <div class="details-label">Описание:</div>
+            <div class="details-value">@Model.Movie.Description</div>
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Model.Movie.ProducerCompany))
+    {
+        <div class="details-row">
+            <div class="details-label">Производитель:</div>
+            <div class="details-value">@Model.Movie.ProducerCompany</div>
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Model.Movie.ProductionCountry))
+    {
+        <div class="details-row">
+            <div class="details-label">Страна производства:</div>
+            <div class="details-value">@Model.Movie.ProductionCountry</div>
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(Model.Movie.Actors))
+    {
+        <div class="details-row">
+            <div class="details-label">Актеры:</div>
+            <div class="details-value">@Model.Movie.Actors</div>
+        </div>
+    }
+
+    <div class="details-row">
+        <div class="details-label">Возрастной рейтинг:</div>
+        <div class="details-value">@(Model.Movie.AgeRating > 0 ? $"{Model.Movie.AgeRating}+" : "Не указан")</div>
+    </div>
+
+    <div class="details-row">
+        <div class="details-label">Дата выхода:</div>
+        <div class="details-value">@Model.Movie.ReleaseDate.ToString("dd.MM.yyyy")</div>
+    </div>
+
+    <div class="details-row">
+        <div class="details-label">Длительность:</div>
+        <div class="details-value">@Model.Movie.DurationMinutes минут</div>
+    </div>
+
+    <div class="details-actions">
+        <a asp-page="./Edit" asp-route-id="@Model.Movie.Id" class="btn btn-primary">Изменить</a>
+        <a asp-page="./Delete" asp-route-id="@Model.Movie.Id" class="btn btn-outline-secondary">Удалить</a>
+        <a asp-page="./Index" class="btn btn-outline-secondary">Назад к списку</a>
+    </div>
 </div>

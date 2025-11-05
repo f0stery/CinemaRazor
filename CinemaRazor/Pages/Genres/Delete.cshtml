@@ -6,23 +6,35 @@
 }
 
 <section class="page-header mb-4">
-    <h1 class="page-title">Удаление жанра</h1>
-    <p class="page-subtitle">Проверьте информацию перед удалением — действие нельзя отменить.</p>
+    <h1 class="page-title">Удалить жанр</h1>
+    <p class="page-subtitle">Вы уверены, что хотите удалить этот жанр?</p>
 </section>
 
-<div class="card border-danger">
-    <div class="card-body p-4">
-        <dl class="row mb-4">
-            <dt class="col-sm-3 text-muted">Название</dt>
-            <dd class="col-sm-9 fw-semibold">@Model.Genre.Name</dd>
-            <dt class="col-sm-3 text-muted">Описание</dt>
-            <dd class="col-sm-9 text-muted">@(!string.IsNullOrWhiteSpace(Model.Genre.Description) ? Model.Genre.Description : "Описание отсутствует")</dd>
-        </dl>
+<div class="delete-warning mb-4">
+    <h3>Внимание!</h3>
+    <p>Это действие необратимо. Удаление жанра может повлиять на связанные с ним фильмы.</p>
+</div>
 
-        <form method="post" class="d-flex gap-2">
-            <input type="hidden" asp-for="Genre.Id" />
-            <button type="submit" class="btn btn-danger">Удалить</button>
-            <a asp-page="Index" class="btn btn-outline-secondary">Отмена</a>
-        </form>
+<div class="details-container">
+    <div class="details-header">
+        <h2 class="details-title">@Model.Genre.Name</h2>
     </div>
+
+    <div class="details-row">
+        <div class="details-label">Название:</div>
+        <div class="details-value fw-semibold">@Model.Genre.Name</div>
+    </div>
+
+    <div class="details-row">
+        <div class="details-label">Описание:</div>
+        <div class="details-value">@(!string.IsNullOrWhiteSpace(Model.Genre.Description) ? Model.Genre.Description : "Описание отсутствует")</div>
+    </div>
+
+    <form method="post">
+        <input type="hidden" asp-for="Genre.Id" />
+        <div class="details-actions">
+            <button type="submit" class="btn btn-danger">Удалить жанр</button>
+            <a asp-page="Index" class="btn btn-outline-secondary">Отмена</a>
+        </div>
+    </form>
 </div>

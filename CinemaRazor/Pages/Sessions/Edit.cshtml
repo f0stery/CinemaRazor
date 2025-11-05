@@ -14,45 +14,59 @@
     <p class="page-subtitle">Измените параметры — время завершения пересчитается автоматически.</p>
 </section>
 
-<div class="card">
-    <div class="card-body p-4">
-        <form method="post" class="row g-4">
-            <div asp-validation-summary="All" class="text-danger"></div>
-            <input type="hidden" asp-for="Session.Id" />
+<div class="form-container">
+    <form method="post">
+        <div asp-validation-summary="All" class="alert alert-danger"></div>
+        <input type="hidden" asp-for="Session.Id" />
 
-            <div class="col-12 col-md-6">
-                <label asp-for="Session.MovieId" class="form-label">Фильм<span class="text-danger">*</span></label>
-                <select asp-for="Session.MovieId" class="form-select" asp-items="Model.MovieOptions"></select>
-                <span asp-validation-for="Session.MovieId" class="text-danger small"></span>
-            </div>
-
-            <div class="col-12 col-md-6">
-                <label asp-for="Session.Price" class="form-label">Цена билета</label>
-                <div class="input-group">
-                    <span class="input-group-text">BYN</span>
-                    <input asp-for="Session.Price" class="form-control" type="number" min="0" step="1" />
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Session.MovieId" class="form-label">
+                        <span class="text-danger">*</span> Фильм
+                    </label>
+                    <select asp-for="Session.MovieId" class="form-select" asp-items="Model.MovieOptions"></select>
+                    <span asp-validation-for="Session.MovieId" class="text-danger"></span>
                 </div>
-                <span asp-validation-for="Session.Price" class="text-danger small"></span>
             </div>
 
-            <div class="col-12 col-md-6">
-                <label asp-for="Session.StartTime" class="form-label">Дата и время начала<span class="text-danger">*</span></label>
-                <input asp-for="Session.StartTime" class="form-control" type="datetime-local" />
-                <span asp-validation-for="Session.StartTime" class="text-danger small"></span>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Session.Price" class="form-label">Цена билета</label>
+                    <div class="input-group">
+                        <span class="input-group-text">BYN</span>
+                        <input asp-for="Session.Price" class="form-control" type="number" min="0" step="1" />
+                    </div>
+                    <span asp-validation-for="Session.Price" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Session.StartTime" class="form-label">
+                        <span class="text-danger">*</span> Дата и время начала
+                    </label>
+                    <input asp-for="Session.StartTime" class="form-control" type="datetime-local" />
+                    <span asp-validation-for="Session.StartTime" class="text-danger"></span>
+                </div>
             </div>
 
-            <div class="col-12 col-md-6">
-                <label class="form-label">Время окончания</label>
-                <input id="edit-calculated-end-time" class="form-control" type="text" readonly value="@Model.Session.EndTime.ToString("dd.MM.yyyy HH:mm")" />
-                <small class="text-muted">Перерасчитывается из длительности фильма.</small>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label">Время окончания</label>
+                    <input id="edit-calculated-end-time" class="form-control" type="text" readonly value="@Model.Session.EndTime.ToString("dd.MM.yyyy HH:mm")" />
+                    <small class="text-muted">Перерасчитывается из длительности фильма.</small>
+                </div>
             </div>
+        </div>
 
-            <div class="col-12 d-flex gap-2">
-                <button type="submit" class="btn btn-primary">Сохранить</button>
-                <a asp-page="Index" class="btn btn-outline-secondary">Назад к списку</a>
-            </div>
-        </form>
-    </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+            <a asp-page="Index" class="btn btn-outline-secondary">Отмена</a>
+        </div>
+    </form>
 </div>
 
 @section Scripts {

@@ -24,59 +24,73 @@
     </div>
 }
 
-<div class="card">
-    <div class="card-body p-4">
-        <form method="post" novalidate>
-            @Html.AntiForgeryToken()
+<div class="form-container">
+    <form method="post" novalidate>
+        @Html.AntiForgeryToken()
 
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-            <fieldset class="row g-4" @(hasPositions ? string.Empty : "disabled")>
-                <div class="col-12 col-md-6">
-                    <label asp-for="Employee.FullName" class="form-label">ФИО<span class="text-danger">*</span></label>
-                    <input asp-for="Employee.FullName" class="form-control" />
-                    <span asp-validation-for="Employee.FullName" class="text-danger small"></span>
-                </div>
-
-                <div class="col-6 col-md-3">
-                    <label asp-for="Employee.Age" class="form-label">Возраст</label>
-                    <input asp-for="Employee.Age" class="form-control" type="number" min="16" max="100" />
-                    <span asp-validation-for="Employee.Age" class="text-danger small"></span>
-                </div>
-
-                <div class="col-6 col-md-3">
-                    <label asp-for="Employee.Gender" class="form-label">Пол</label>
-                    <input asp-for="Employee.Gender" class="form-control" maxlength="10" />
-                    <span asp-validation-for="Employee.Gender" class="text-danger small"></span>
-                </div>
-
-                <div class="col-12">
-                    <label asp-for="Employee.Address" class="form-label">Адрес</label>
-                    <input asp-for="Employee.Address" class="form-control" />
-                    <span asp-validation-for="Employee.Address" class="text-danger small"></span>
-                </div>
-
-                <div class="col-12 col-md-6">
-                    <label asp-for="Employee.Phone" class="form-label">Телефон</label>
-                    <input asp-for="Employee.Phone" class="form-control" />
-                    <span asp-validation-for="Employee.Phone" class="text-danger small"></span>
-                </div>
-
-                <div class="col-12 col-md-6">
-                    <label asp-for="Employee.PositionId" class="form-label">Должность<span class="text-danger">*</span></label>
-                    <select asp-for="Employee.PositionId" class="form-select" asp-items="ViewBag.PositionId">
-                        <option value="">Выберите должность</option>
-                    </select>
-                    <span asp-validation-for="Employee.PositionId" class="text-danger small"></span>
-                </div>
-            </fieldset>
-
-            <div class="col-12 d-flex gap-2 mt-3">
-                <button type="submit" class="btn btn-primary" @(hasPositions ? string.Empty : "disabled")>Сохранить</button>
-                <a asp-page="Index" class="btn btn-outline-secondary">Отмена</a>
+        <fieldset @(hasPositions ? string.Empty : "disabled")>
+            <div class="form-group">
+                <label asp-for="Employee.FullName" class="form-label">
+                    <span class="text-danger">*</span> ФИО
+                </label>
+                <input asp-for="Employee.FullName" class="form-control" />
+                <span asp-validation-for="Employee.FullName" class="text-danger"></span>
             </div>
-        </form>
-    </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Employee.Age" class="form-label">Возраст</label>
+                        <input asp-for="Employee.Age" class="form-control" type="number" min="16" max="100" />
+                        <span asp-validation-for="Employee.Age" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Employee.Gender" class="form-label">Пол</label>
+                        <input asp-for="Employee.Gender" class="form-control" maxlength="10" />
+                        <span asp-validation-for="Employee.Gender" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Employee.Address" class="form-label">Адрес</label>
+                <input asp-for="Employee.Address" class="form-control" />
+                <span asp-validation-for="Employee.Address" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Employee.Phone" class="form-label">Телефон</label>
+                        <input asp-for="Employee.Phone" class="form-control" />
+                        <span asp-validation-for="Employee.Phone" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Employee.PositionId" class="form-label">
+                            <span class="text-danger">*</span> Должность
+                        </label>
+                        <select asp-for="Employee.PositionId" class="form-select" asp-items="ViewBag.PositionId">
+                            <option value="">Выберите должность</option>
+                        </select>
+                        <span asp-validation-for="Employee.PositionId" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary" @(hasPositions ? string.Empty : "disabled")>Создать сотрудника</button>
+            <a asp-page="Index" class="btn btn-outline-secondary">Отмена</a>
+        </div>
+    </form>
 </div>
 
 @section Scripts {

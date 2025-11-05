@@ -5,80 +5,95 @@
     ViewData["Title"] = "Добавить фильм";
 }
 
-<h1 class="mb-4">Добавить фильм</h1>
+<section class="page-header mb-4">
+    <h1 class="page-title">Добавить фильм</h1>
+    <p class="page-subtitle">Создайте новый фильм в репертуаре кинотеатра</p>
+</section>
 
 @if (!Model.HasGenres)
 {
     <div class="alert alert-warning">
         <h5 class="alert-heading">Необходимо добавить жанр</h5>
         <p class="mb-2">Перед созданием фильма добавьте хотя бы один жанр.</p>
-        <a asp-page="/Genres/Create" class="btn btn-outline-primary">Добавить жанр</a>
-        <a asp-page="Index" class="btn btn-secondary ms-2">Назад</a>
+        <div class="mt-3">
+            <a asp-page="/Genres/Create" class="btn btn-primary">Добавить жанр</a>
+            <a asp-page="Index" class="btn btn-outline-secondary">Назад</a>
+        </div>
     </div>
 }
 else
 {
-    <div class="card shadow-sm p-4 mb-5 bg-white rounded">
+    <div class="form-container">
         <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-            <div class="mb-3">
+            <div class="form-group">
                 <label asp-for="Movie.Title" class="form-label"></label>
                 <input asp-for="Movie.Title" class="form-control" />
                 <span asp-validation-for="Movie.Title" class="text-danger"></span>
             </div>
 
-            <div class="mb-3">
+            <div class="form-group">
                 <label asp-for="Movie.Description" class="form-label"></label>
-                <textarea asp-for="Movie.Description" class="form-control" rows="3"></textarea>
+                <textarea asp-for="Movie.Description" class="form-control" rows="4"></textarea>
                 <span asp-validation-for="Movie.Description" class="text-danger"></span>
             </div>
 
-            <div class="mb-3">
+            <div class="form-group">
                 <label asp-for="Movie.ProducerCompany" class="form-label"></label>
                 <input asp-for="Movie.ProducerCompany" class="form-control" />
                 <span asp-validation-for="Movie.ProducerCompany" class="text-danger"></span>
             </div>
 
-            <div class="mb-3">
+            <div class="form-group">
                 <label asp-for="Movie.ProductionCountry" class="form-label"></label>
                 <input asp-for="Movie.ProductionCountry" class="form-control" />
                 <span asp-validation-for="Movie.ProductionCountry" class="text-danger"></span>
             </div>
 
-            <div class="mb-3">
+            <div class="form-group">
                 <label asp-for="Movie.Actors" class="form-label"></label>
                 <textarea asp-for="Movie.Actors" class="form-control" rows="3"></textarea>
                 <span asp-validation-for="Movie.Actors" class="text-danger"></span>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="Movie.AgeRating" class="form-label"></label>
-                <input asp-for="Movie.AgeRating" class="form-control" />
-                <span asp-validation-for="Movie.AgeRating" class="text-danger"></span>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Movie.AgeRating" class="form-label"></label>
+                        <input asp-for="Movie.AgeRating" class="form-control" type="number" />
+                        <span asp-validation-for="Movie.AgeRating" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Movie.DurationMinutes" class="form-label"></label>
+                        <input asp-for="Movie.DurationMinutes" class="form-control" type="number" />
+                        <span asp-validation-for="Movie.DurationMinutes" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="Movie.ReleaseDate" class="form-label"></label>
-                <input asp-for="Movie.ReleaseDate" type="date" class="form-control" />
-                <span asp-validation-for="Movie.ReleaseDate" class="text-danger"></span>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Movie.ReleaseDate" class="form-label"></label>
+                        <input asp-for="Movie.ReleaseDate" type="date" class="form-control" />
+                        <span asp-validation-for="Movie.ReleaseDate" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Movie.GenreId" class="form-label"></label>
+                        <select asp-for="Movie.GenreId" class="form-select" asp-items="ViewBag.GenreId"></select>
+                        <span asp-validation-for="Movie.GenreId" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
 
-            <div class="mb-3">
-                <label asp-for="Movie.DurationMinutes" class="form-label"></label>
-                <input asp-for="Movie.DurationMinutes" class="form-control" />
-                <span asp-validation-for="Movie.DurationMinutes" class="text-danger"></span>
-            </div>
-
-            <div class="mb-4">
-                <label asp-for="Movie.GenreId" class="form-label"></label>
-                <select asp-for="Movie.GenreId" class="form-select" asp-items="ViewBag.GenreId"></select>
-                <span asp-validation-for="Movie.GenreId" class="text-danger"></span>
-            </div>
-
-            <div class="d-flex gap-2">
-                <input type="submit" value="Создать" class="btn btn-primary" />
-                <a asp-page="Index" class="btn btn-secondary">Назад</a>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Создать фильм</button>
+                <a asp-page="Index" class="btn btn-outline-secondary">Отмена</a>
             </div>
         </form>
     </div>

@@ -5,25 +5,28 @@
     ViewData["Title"] = "Выбор места";
 }
 
-<h1>🎬 @Model.Session.Movie.Title</h1>
-<p class="lead">
-    <strong>Сеанс:</strong> @Model.Session.StartTime.ToString("dd.MM.yyyy HH:mm") | 
-    <strong>Цена:</strong> @Model.Session.Price.ToString("0") BYN
-</p>
-
-<hr />
+<section class="page-header mb-4">
+    <h1 class="page-title">@Model.Session.Movie.Title</h1>
+    <p class="page-subtitle">
+        <strong>Сеанс:</strong> @Model.Session.StartTime.ToString("dd.MM.yyyy HH:mm") | 
+        <strong>Цена:</strong> @Model.Session.Price.ToString("0") BYN
+    </p>
+</section>
 
 <div class="mb-4">
-    <h4>Выберите место:</h4>
-    <div class="d-flex gap-3 mb-3">
-        <div>
-            <span class="seat-circle available"></span> Свободно
+    <h4 class="mb-3">Легенда мест:</h4>
+    <div class="d-flex gap-4 mb-4 flex-wrap">
+        <div class="legend-item">
+            <span class="seat-circle available"></span>
+            <span>Свободно</span>
         </div>
-        <div>
-            <span class="seat-circle occupied"></span> Занято
+        <div class="legend-item">
+            <span class="seat-circle occupied"></span>
+            <span>Занято</span>
         </div>
-        <div>
-            <span class="seat-circle selected"></span> Выбрано
+        <div class="legend-item">
+            <span class="seat-circle selected"></span>
+            <span>Выбрано</span>
         </div>
     </div>
 </div>
@@ -67,114 +70,21 @@
 </div>
 
 <div class="mt-4">
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Выбранное место:</h5>
-            <p id="selected-info" class="mb-3">Место не выбрано</p>
-            <form method="post">
-                <input type="hidden" name="SessionId" value="@Model.Session.Id" />
-                <input type="hidden" name="SeatId" id="selected-seat-id" value="" />
-                <button type="submit" id="book-btn" class="btn btn-success" disabled>
+    <div class="details-container">
+        <h5 class="mb-3">Выбранное место:</h5>
+        <p id="selected-info" class="text-muted mb-4">Место не выбрано</p>
+        <form method="post">
+            <input type="hidden" name="SessionId" value="@Model.Session.Id" />
+            <input type="hidden" name="SeatId" id="selected-seat-id" value="" />
+            <div class="d-flex gap-2 flex-wrap">
+                <button type="submit" id="book-btn" class="btn btn-primary" disabled>
                     Забронировать место
                 </button>
-                <a asp-page="./Index" class="btn btn-secondary">Отмена</a>
-            </form>
-        </div>
+                <a asp-page="./Index" class="btn btn-outline-secondary">Отмена</a>
+            </div>
+        </form>
     </div>
 </div>
-
-<style>
-    .cinema-screen {
-        width: 100%;
-        text-align: center;
-        margin-bottom: 30px;
-    }
-
-    .screen-label {
-        background: linear-gradient(to bottom, #333, #555);
-        color: white;
-        padding: 15px;
-        border-radius: 10px 10px 0 0;
-        font-weight: bold;
-        max-width: 600px;
-        margin: 0 auto;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-    }
-
-    .seats-container {
-        max-width: 900px;
-        margin: 0 auto;
-    }
-
-    .seat-row {
-        display: flex;
-        align-items: center;
-        margin-bottom: 15px;
-    }
-
-    .row-label {
-        min-width: 80px;
-        font-weight: bold;
-        color: #666;
-    }
-
-    .seats {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-    }
-
-    .seat-circle {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        border: 2px solid #ddd;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .seat-circle.available {
-        background-color: #28a745;
-        color: white;
-        border-color: #28a745;
-    }
-
-    .seat-circle.available:hover {
-        background-color: #218838;
-        transform: scale(1.1);
-    }
-
-    .seat-circle.occupied {
-        background-color: #dc3545;
-        color: white;
-        border-color: #dc3545;
-        cursor: not-allowed;
-    }
-
-    .seat-circle.selected {
-        background-color: #0d6efd;
-        color: #fff;
-        border-color: #0a58ca;
-        transform: scale(1.15);
-        box-shadow: 0 0 14px rgba(13, 110, 253, 0.45);
-    }
-
-    .seat-circle.invisible {
-        opacity: 0;
-        cursor: default;
-    }
-
-    .legend {
-        display: flex;
-        gap: 20px;
-        margin-bottom: 20px;
-    }
-</style>
 
 <script>
     let selectedSeatId = null;

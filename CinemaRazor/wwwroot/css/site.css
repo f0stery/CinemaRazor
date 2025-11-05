@@ -354,10 +354,327 @@ a {
     border-radius: 999px;
 }
 
+/* === Booking & Cinema Specific === */
+.cinema-screen {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.screen-label {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    color: var(--text-inverse);
+    padding: 1.25rem 2rem;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    font-weight: 700;
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: 0.95rem;
+}
+
+.seats-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.seat-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    gap: 0.75rem;
+}
+
+.row-label {
+    min-width: 80px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.seats {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.seat-circle {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    background: var(--surface);
+}
+
+.seat-circle.available {
+    background: #22c55e;
+    color: white;
+    border-color: #16a34a;
+}
+
+.seat-circle.available:hover {
+    background: #16a34a;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+.seat-circle.occupied {
+    background: #ef4444;
+    color: white;
+    border-color: #dc2626;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.seat-circle.selected {
+    background: var(--primary);
+    color: var(--text-inverse);
+    border-color: var(--primary-hover);
+    transform: scale(1.15);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+}
+
+.seat-circle.invisible {
+    opacity: 0;
+    cursor: default;
+    pointer-events: none;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+/* === Details Pages === */
+.details-container {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    padding: 2rem;
+}
+
+.details-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.details-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.details-subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.details-row {
+    display: grid;
+    grid-template-columns: minmax(200px, 1fr) 2fr;
+    gap: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.details-row:last-child {
+    border-bottom: none;
+}
+
+.details-label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.details-value {
+    color: var(--text-primary);
+}
+
+.details-actions {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+/* === Form Layouts === */
+.form-container {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    padding: 2rem;
+    max-width: 800px;
+}
+
+.form-header {
+    margin-bottom: 2rem;
+}
+
+.form-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.form-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: block;
+    color: var(--text-primary);
+}
+
+.form-actions {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+/* === Delete Confirmation === */
+.delete-warning {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.08), rgba(239, 68, 68, 0.04));
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.delete-warning h3 {
+    color: #dc2626;
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+}
+
+.delete-warning p {
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* === Cards === */
+.session-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.session-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-xs), 0 12px 32px rgba(0, 0, 0, 0.08);
+}
+
+.session-card .card-body {
+    padding: 1.5rem;
+}
+
+.session-card .card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.session-card .card-text {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.session-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 1rem 0;
+}
+
+.info-item {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.info-label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    min-width: 100px;
+}
+
+.info-value {
+    color: var(--text-primary);
+}
+
+.price-badge {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    display: inline-block;
+}
+
+/* === Responsive === */
 @media (max-width: 991.98px) {
     .app-navbar .nav-link {
         margin-inline: 0;
         padding-block: 0.65rem;
         border-radius: var(--radius-md);
+    }
+
+    .details-row {
+        grid-template-columns: 1fr;
+        gap: 0.25rem;
+    }
+
+    .details-label {
+        font-weight: 700;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .form-container,
+    .details-container {
+        padding: 1.5rem;
+    }
+
+    .seat-circle {
+        width: 38px;
+        height: 38px;
+        font-size: 0.7rem;
+    }
+
+    .row-label {
+        min-width: 60px;
+        font-size: 0.85rem;
     }
 }

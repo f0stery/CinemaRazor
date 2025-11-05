@@ -2,83 +2,90 @@
 @model CinemaRazor.Pages.Movies.EditModel
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Редактировать фильм";
 }
 
-<h1>Edit</h1>
+<section class="page-header mb-4">
+    <h1 class="page-title">Редактировать фильм</h1>
+    <p class="page-subtitle">Обновите информацию о фильме</p>
+</section>
 
-<h4>Movie</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Movie.Id" />
+<div class="form-container">
+    <form method="post">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+        <input type="hidden" asp-for="Movie.Id" />
 
-            <div class="form-group">
-                <span class="text-danger">*</span>
-                <label asp-for="Movie.Title" class="control-label"></label>
-                <input asp-for="Movie.Title" class="form-control" />
-                <span asp-validation-for="Movie.Title" class="text-danger"></span>
+        <div class="form-group">
+            <label asp-for="Movie.Title" class="form-label">
+                <span class="text-danger">*</span> @Html.DisplayNameFor(model => model.Movie.Title)
+            </label>
+            <input asp-for="Movie.Title" class="form-control" />
+            <span asp-validation-for="Movie.Title" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Movie.Description" class="form-label"></label>
+            <textarea asp-for="Movie.Description" class="form-control" rows="4"></textarea>
+            <span asp-validation-for="Movie.Description" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Movie.ProducerCompany" class="form-label"></label>
+            <input asp-for="Movie.ProducerCompany" class="form-control" />
+            <span asp-validation-for="Movie.ProducerCompany" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Movie.ProductionCountry" class="form-label"></label>
+            <input asp-for="Movie.ProductionCountry" class="form-control" />
+            <span asp-validation-for="Movie.ProductionCountry" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Movie.Actors" class="form-label"></label>
+            <textarea asp-for="Movie.Actors" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Movie.Actors" class="text-danger"></span>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Movie.AgeRating" class="form-label"></label>
+                    <input asp-for="Movie.AgeRating" class="form-control" type="number" />
+                    <span asp-validation-for="Movie.AgeRating" class="text-danger"></span>
+                </div>
             </div>
-
-            <div class="form-group">
-                <label asp-for="Movie.Description" class="control-label"></label>
-                <textarea asp-for="Movie.Description" class="form-control"></textarea>
-                <span asp-validation-for="Movie.Description" class="text-danger"></span>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Movie.DurationMinutes" class="form-label"></label>
+                    <input asp-for="Movie.DurationMinutes" class="form-control" type="number" />
+                    <span asp-validation-for="Movie.DurationMinutes" class="text-danger"></span>
+                </div>
             </div>
+        </div>
 
-            <div class="form-group">
-                <label asp-for="Movie.ProducerCompany" class="control-label"></label>
-                <input asp-for="Movie.ProducerCompany" class="form-control" />
-                <span asp-validation-for="Movie.ProducerCompany" class="text-danger"></span>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Movie.ReleaseDate" class="form-label"></label>
+                    <input asp-for="Movie.ReleaseDate" class="form-control" type="date" />
+                    <span asp-validation-for="Movie.ReleaseDate" class="text-danger"></span>
+                </div>
             </div>
-
-            <div class="form-group">
-                <label asp-for="Movie.ProductionCountry" class="control-label"></label>
-                <input asp-for="Movie.ProductionCountry" class="form-control" />
-                <span asp-validation-for="Movie.ProductionCountry" class="text-danger"></span>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Movie.GenreId" class="form-label"></label>
+                    <select asp-for="Movie.GenreId" class="form-select" asp-items="ViewBag.GenreId"></select>
+                    <span asp-validation-for="Movie.GenreId" class="text-danger"></span>
+                </div>
             </div>
+        </div>
 
-            <div class="form-group">
-                <label asp-for="Movie.Actors" class="control-label"></label>
-                <textarea asp-for="Movie.Actors" class="form-control" rows="3"></textarea>
-                <span asp-validation-for="Movie.Actors" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Movie.AgeRating" class="control-label"></label>
-                <input asp-for="Movie.AgeRating" class="form-control" />
-                <span asp-validation-for="Movie.AgeRating" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Movie.ReleaseDate" class="control-label"></label>
-                <input asp-for="Movie.ReleaseDate" class="form-control" type="date" />
-                <span asp-validation-for="Movie.ReleaseDate" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Movie.DurationMinutes" class="control-label"></label>
-                <input asp-for="Movie.DurationMinutes" class="form-control" />
-                <span asp-validation-for="Movie.DurationMinutes" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Movie.GenreId" class="control-label"></label>
-                <select asp-for="Movie.GenreId" class="form-control" asp-items="ViewBag.GenreId"></select>
-                <span asp-validation-for="Movie.GenreId" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
-
-<div>
-    <a asp-page="./Index">Back to List</a>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+            <a asp-page="./Index" class="btn btn-outline-secondary">Отмена</a>
+        </div>
+    </form>
 </div>
 
 @section Scripts {

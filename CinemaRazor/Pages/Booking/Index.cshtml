@@ -5,40 +5,47 @@
     ViewData["Title"] = "Бронирование билетов";
 }
 
-<h1>🎫 Бронирование билетов</h1>
-<p class="lead">Выберите сеанс для бронирования места</p>
+<section class="page-header mb-4">
+    <h1 class="page-title">Бронирование билетов</h1>
+    <p class="page-subtitle">Выберите сеанс для бронирования места в кинозале</p>
+</section>
 
 @if (!Model.Sessions.Any())
 {
-    <div class="alert alert-info">
-        <strong>Нет доступных сеансов.</strong> Пожалуйста, вернитесь позже или обратитесь к администратору.
+    <div class="support-card">
+        <h2>Нет доступных сеансов</h2>
+        <p>К сожалению, в данный момент нет доступных сеансов для бронирования. Пожалуйста, вернитесь позже или обратитесь к администратору.</p>
+        <a asp-page="/Index" class="btn btn-primary">Вернуться на главную</a>
     </div>
 }
 else
 {
-    <div class="row">
+    <div class="row g-4 mb-4">
         @foreach (var session in Model.Sessions)
         {
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card h-100 shadow-sm">
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="session-card h-100">
                     <div class="card-body">
-                        <h5 class="card-title">🎬 @session.Movie.Title</h5>
-                        <p class="card-text text-muted mb-1">
-                            <small>@session.Movie.Genre.Name</small>
+                        <h5 class="card-title">@session.Movie.Title</h5>
+                        <p class="card-text">
+                            <span class="badge rounded-pill text-bg-light border">@session.Movie.Genre.Name</span>
                         </p>
-                        <hr />
-                        <p class="mb-2">
-                            <strong>🕒 Время:</strong><br />
-                            @session.StartTime.ToString("dd.MM.yyyy HH:mm")
-                        </p>
-                        <p class="mb-2">
-                            <strong>⏱ Длительность:</strong> @session.Movie.DurationMinutes мин
-                        </p>
-                        <p class="mb-3">
-                            <strong>💰 Цена:</strong> 
-                            <span class="badge bg-success fs-6">@session.Price.ToString("0") BYN</span>
-                        </p>
-                        <a asp-page="./SelectSeats" asp-route-sessionId="@session.Id" class="btn btn-primary w-100">
+                        <hr class="my-3" />
+                        <div class="session-info">
+                            <div class="info-item">
+                                <span class="info-label">Время:</span>
+                                <span class="info-value">@session.StartTime.ToString("dd.MM.yyyy HH:mm")</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Длительность:</span>
+                                <span class="info-value">@session.Movie.DurationMinutes мин</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Цена:</span>
+                                <span class="price-badge">@session.Price.ToString("0") BYN</span>
+                            </div>
+                        </div>
+                        <a asp-page="./SelectSeats" asp-route-sessionId="@session.Id" class="btn btn-primary w-100 mt-3">
                             Выбрать место
                         </a>
                     </div>
@@ -49,5 +56,5 @@ else
 }
 
 <div class="mt-4">
-    <a asp-page="/Index" class="btn btn-secondary">← Назад на главную</a>
+    <a asp-page="/Index" class="btn btn-outline-secondary">Назад на главную</a>
 </div>

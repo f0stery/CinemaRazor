@@ -5,194 +5,101 @@
     ViewData["Title"] = "Детали сеанса";
 }
 
-<h1>Детали сеанса</h1>
+<section class="page-header mb-4">
+    <h1 class="page-title">Детали сеанса</h1>
+    <p class="page-subtitle">Просмотр подробной информации о сеансе и схемы зала</p>
+</section>
 
-<div>
-    <h4>Сеанс</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            Фильм
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Session.Movie.Title)
-        </dd>
+<div class="details-container mb-4">
+    <div class="details-header">
+        <h2 class="details-title">@Model.Session.Movie.Title</h2>
+        <p class="details-subtitle">Сеанс в основном зале</p>
+    </div>
 
-        <dt class="col-sm-2">
-            Время начала
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Session.StartTime)
-        </dd>
+    <div class="details-row">
+        <div class="details-label">Время начала:</div>
+        <div class="details-value">@Model.Session.StartTime.ToString("dd.MM.yyyy HH:mm")</div>
+    </div>
 
-        <dt class="col-sm-2">
-            Время окончания
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Session.EndTime)
-        </dd>
+    <div class="details-row">
+        <div class="details-label">Время окончания:</div>
+        <div class="details-value">@Model.Session.EndTime.ToString("dd.MM.yyyy HH:mm")</div>
+    </div>
 
-        <dt class="col-sm-2">
-            Цена билета
-        </dt>
-        <dd class="col-sm-10">
-            @Model.Session.Price.ToString("0") BYN
-        </dd>
+    <div class="details-row">
+        <div class="details-label">Цена билета:</div>
+        <div class="details-value">
+            <span class="price-badge">@Model.Session.Price.ToString("0") BYN</span>
+        </div>
+    </div>
 
-        <dt class="col-sm-2">
-            Статистика мест
-        </dt>
-        <dd class="col-sm-10">
-            Всего мест: <strong>@Model.TotalSeats</strong> | 
-            Свободно: <strong class="text-success">@Model.AvailableSeats</strong> | 
-            Занято: <strong class="text-danger">@Model.OccupiedSeats</strong>
-        </dd>
-    </dl>
+    <div class="details-row">
+        <div class="details-label">Статистика мест:</div>
+        <div class="details-value">
+            <span class="badge bg-light text-dark me-2">Всего: @Model.TotalSeats</span>
+            <span class="badge bg-success me-2">Свободно: @Model.AvailableSeats</span>
+            <span class="badge bg-danger">Занято: @Model.OccupiedSeats</span>
+        </div>
+    </div>
+
+    <div class="details-actions">
+        <a asp-page="/Tickets/Create" asp-route-SessionId="@Model.Session.Id" class="btn btn-primary">Продать билет</a>
+        <a asp-page="./Edit" asp-route-id="@Model.Session.Id" class="btn btn-outline-primary">Редактировать</a>
+        <a asp-page="./Delete" asp-route-id="@Model.Session.Id" class="btn btn-outline-secondary">Удалить</a>
+        <a asp-page="./Index" class="btn btn-outline-secondary">Назад к списку</a>
+    </div>
 </div>
 
 @if (Model.SeatLayout.Any())
 {
-    <div class="card mt-4">
-        <div class="card-header">
-            <h5>Схема зала</h5>
-        </div>
-        <div class="card-body">
-            <div class="text-center mb-3">
-                <div class="d-inline-block bg-dark text-white px-3 py-1 rounded">
-                    ЭКРАН
-                </div>
-            </div>
+    <div class="details-container">
+        <h3 class="mb-4">Схема зала</h3>
 
-            <div class="row justify-content-center mb-3">
-                <div class="col-auto">
-                    <div class="d-flex gap-2 mb-2">
-                        <div class="d-flex align-items-center">
-                            <div class="seat-legend available"></div>
-                            <span class="ms-2">Свободно</span>
-                        </div>
-                        <div class="d-flex align-items-center ms-3">
-                            <div class="seat-legend occupied"></div>
-                            <span class="ms-2">Занято</span>
-                        </div>
+        <div class="cinema-screen mb-4">
+            <div class="screen-label">ЭКРАН</div>
+        </div>
+
+        <div class="d-flex gap-4 mb-4 flex-wrap justify-content-center">
+            <div class="legend-item">
+                <span class="seat-circle available"></span>
+                <span>Свободно</span>
+            </div>
+            <div class="legend-item">
+                <span class="seat-circle occupied"></span>
+                <span>Занято</span>
+            </div>
+        </div>
+
+        @{
+            var maxRow = Model.SeatLayout.Max(s => s.RowNumber);
+            var maxSeat = Model.SeatLayout.Max(s => s.SeatNumber);
+        }
+
+        <div class="seats-container">
+            @for (int row = 1; row <= maxRow; row++)
+            {
+                var rowSeats = Model.SeatLayout.Where(s => s.RowNumber == row).OrderBy(s => s.SeatNumber).ToList();
+                <div class="seat-row">
+                    <div class="row-label">Ряд @row</div>
+                    <div class="seats">
+                        @for (int seatNum = 1; seatNum <= maxSeat; seatNum++)
+                        {
+                            var seat = rowSeats.FirstOrDefault(s => s.SeatNumber == seatNum);
+                            if (seat != null)
+                            {
+                                <div class="seat-circle @(seat.IsOccupied ? "occupied" : "available")" 
+                                     title="Ряд @seat.RowNumber, Место @seat.SeatNumber - @(seat.IsOccupied ? "Занято" : "Свободно")">
+                                    @seat.SeatNumber
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="seat-circle invisible">-</div>
+                            }
+                        }
                     </div>
                 </div>
-            </div>
-
-            @{
-                var maxRow = Model.SeatLayout.Max(s => s.RowNumber);
-                var maxSeat = Model.SeatLayout.Max(s => s.SeatNumber);
             }
-
-            <div class="table-responsive">
-                <table class="table table-borderless seat-map">
-                    <thead>
-                        <tr>
-                            <th style="width: 60px;">Ряд</th>
-                            <th colspan="@maxSeat"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for (int row = 1; row <= maxRow; row++)
-                        {
-                            var rowSeats = Model.SeatLayout.Where(s => s.RowNumber == row).OrderBy(s => s.SeatNumber).ToList();
-                            <tr>
-                                <td class="row-label"><strong>@row</strong></td>
-                                @for (int seatNum = 1; seatNum <= maxSeat; seatNum++)
-                                {
-                                    var seat = rowSeats.FirstOrDefault(s => s.SeatNumber == seatNum);
-                                    if (seat != null)
-                                    {
-                                        <td class="seat-cell">
-                                            <div class="seat @(seat.IsOccupied ? "occupied" : "available")" 
-                                                 title="Ряд @seat.RowNumber, Место @seat.SeatNumber - @(seat.IsOccupied ? "Занято" : "Свободно")">
-                                                <span class="seat-number">@seat.SeatNumber</span>
-                                            </div>
-                                        </td>
-                                    }
-                                    else
-                                    {
-                                        <td class="seat-cell empty"></td>
-                                    }
-                                }
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
         </div>
     </div>
 }
-
-<div class="mt-4 d-flex gap-2 flex-wrap">
-    <a asp-page="/Tickets/Create" asp-route-SessionId="@Model.Session.Id" class="btn btn-success">Продать билет</a>
-    <a asp-page="./Edit" asp-route-id="@Model.Session.Id" class="btn btn-primary">Редактировать</a>
-    <a asp-page="./Index" class="btn btn-secondary">Назад к списку</a>
-</div>
-
-<style>
-    .seat-map {
-        margin: 0 auto;
-    }
-    
-    .seat-cell {
-        padding: 5px;
-        text-align: center;
-    }
-    
-    .row-label {
-        font-weight: bold;
-        text-align: right;
-        vertical-align: middle;
-        padding-right: 15px;
-    }
-    
-    .seat {
-        display: inline-block;
-        width: 35px;
-        height: 35px;
-        border-radius: 50%;
-        position: relative;
-        border: 2px solid #333;
-    }
-    
-    .seat-number {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 11px;
-        font-weight: bold;
-        color: white;
-    }
-    
-    .seat.available {
-        background-color: #28a745;
-        border-color: #1e7e34;
-    }
-    
-    .seat.occupied {
-        background-color: #dc3545;
-        border-color: #c82333;
-    }
-    
-    .seat-legend {
-        width: 25px;
-        height: 25px;
-        border-radius: 50%;
-        border: 2px solid #333;
-    }
-    
-    .seat-legend.available {
-        background-color: #28a745;
-        border-color: #1e7e34;
-    }
-    
-    .seat-legend.occupied {
-        background-color: #dc3545;
-        border-color: #c82333;
-    }
-    
-    .empty {
-        width: 35px;
-    }
-</style>

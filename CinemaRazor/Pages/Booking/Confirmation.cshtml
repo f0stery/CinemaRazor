@@ -5,70 +5,69 @@
     ViewData["Title"] = "Подтверждение бронирования";
 }
 
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-lg">
-                <div class="card-header bg-success text-white text-center">
-                    <h2>✅ Билет успешно забронирован!</h2>
+<section class="page-header mb-4">
+    <h1 class="page-title">Билет успешно забронирован</h1>
+    <p class="page-subtitle">Ваше бронирование подтверждено и сохранено в системе</p>
+</section>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="details-container">
+            <div class="details-header">
+                <h2 class="details-title">Детали вашего билета</h2>
+                <p class="details-subtitle">Сохраните номер билета для получения на кассе</p>
+            </div>
+
+            <div class="details-row">
+                <div class="details-label">Фильм:</div>
+                <div class="details-value fw-semibold">@Model.Ticket.Session.Movie.Title</div>
+            </div>
+
+            <div class="details-row">
+                <div class="details-label">Жанр:</div>
+                <div class="details-value">
+                    <span class="badge rounded-pill text-bg-light border">@Model.Ticket.Session.Movie.Genre.Name</span>
                 </div>
-                <div class="card-body p-4">
-                    <div class="text-center mb-4">
-                        <div class="display-1">🎫</div>
-                    </div>
+            </div>
 
-                    <h4 class="text-center mb-4">Детали вашего билета:</h4>
+            <div class="details-row">
+                <div class="details-label">Дата и время:</div>
+                <div class="details-value">@Model.Ticket.Session.StartTime.ToString("dd.MM.yyyy HH:mm")</div>
+            </div>
 
-                    <table class="table table-borderless">
-                        <tbody>
-                            <tr>
-                                <td class="fw-bold text-end" style="width: 40%;">Фильм:</td>
-                                <td>@Model.Ticket.Session.Movie.Title</td>
-                            </tr>
-                            <tr>
-                                <td class="fw-bold text-end">Жанр:</td>
-                                <td>@Model.Ticket.Session.Movie.Genre.Name</td>
-                            </tr>
-                            <tr>
-                                <td class="fw-bold text-end">Дата и время:</td>
-                                <td>@Model.Ticket.Session.StartTime.ToString("dd.MM.yyyy HH:mm")</td>
-                            </tr>
-                            <tr>
-                                <td class="fw-bold text-end">Место:</td>
-                                <td>Ряд @Model.Ticket.Seat.RowNumber, Место @Model.Ticket.Seat.SeatNumber</td>
-                            </tr>
-                            <tr>
-                                <td class="fw-bold text-end">Цена:</td>
-                                <td>
-                                    <span class="badge bg-success fs-5">@Model.Ticket.Price.ToString("0") BYN</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="fw-bold text-end">Дата покупки:</td>
-                                <td>@Model.Ticket.PurchaseDate.ToString("dd.MM.yyyy HH:mm")</td>
-                            </tr>
-                            <tr>
-                                <td class="fw-bold text-end">Номер билета:</td>
-                                <td><code>#@Model.Ticket.Id</code></td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <div class="details-row">
+                <div class="details-label">Место:</div>
+                <div class="details-value fw-semibold">Ряд @Model.Ticket.Seat.RowNumber, Место @Model.Ticket.Seat.SeatNumber</div>
+            </div>
 
-                    <hr class="my-4" />
-
-                    <div class="alert alert-info">
-                        <strong>📌 Важно:</strong> Пожалуйста, сохраните номер билета. Приходите за 15 минут до начала сеанса.
-                    </div>
-
-                    <div class="text-center mt-4">
-                        <a asp-page="./Index" class="btn btn-primary btn-lg me-2">
-                            Забронировать еще билет
-                        </a>
-                        <a asp-page="/Index" class="btn btn-secondary btn-lg">
-                            На главную
-                        </a>
-                    </div>
+            <div class="details-row">
+                <div class="details-label">Цена:</div>
+                <div class="details-value">
+                    <span class="price-badge">@Model.Ticket.Price.ToString("0") BYN</span>
                 </div>
+            </div>
+
+            <div class="details-row">
+                <div class="details-label">Дата покупки:</div>
+                <div class="details-value">@Model.Ticket.PurchaseDate.ToString("dd.MM.yyyy HH:mm")</div>
+            </div>
+
+            <div class="details-row">
+                <div class="details-label">Номер билета:</div>
+                <div class="details-value"><code class="fs-5">#@Model.Ticket.Id</code></div>
+            </div>
+
+            <div class="alert alert-info mt-4">
+                <strong>Важная информация:</strong> Пожалуйста, сохраните номер билета. Приходите за 15 минут до начала сеанса для получения билета на кассе.
+            </div>
+
+            <div class="details-actions">
+                <a asp-page="./Index" class="btn btn-primary">
+                    Забронировать еще билет
+                </a>
+                <a asp-page="/Index" class="btn btn-outline-secondary">
+                    На главную
+                </a>
             </div>
         </div>
     </div>

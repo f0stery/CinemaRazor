@@ -10,7 +10,7 @@ namespace CinemaRazor.Models
 
         [Required, StringLength(100)]
         [Display(Name = "ФИО")]
-        public string FullName { get; set; }
+        public string FullName { get; set; } = string.Empty;
 
         [Range(16, 100)]
         [Display(Name = "Возраст")]
@@ -18,19 +18,22 @@ namespace CinemaRazor.Models
 
         [StringLength(10)]
         [Display(Name = "Пол")]
-        public string Gender { get; set; }
+        public string? Gender { get; set; }
 
         [StringLength(150)]
         [Display(Name = "Адрес")]
-        public string Address { get; set; }
+        public string? Address { get; set; }
 
         [Phone]
         [Display(Name = "Телефон")]
-        public string Phone { get; set; }
+        public string? Phone { get; set; }
 
+        [Required]
         [Display(Name = "Должность")]
         public int PositionId { get; set; }
-        [ForeignKey("PositionId")]
-        public Position Position { get; set; }
+
+        [ForeignKey(nameof(PositionId))]
+        [Display(Name = "Должность")]
+        public Position? Position { get; set; }   // ← вот тут добавили "?" и убрали обязательность
     }
 }

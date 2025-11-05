@@ -28,6 +28,6 @@ namespace CinemaRazor.Models
         [Display(Name = "Требования")]
         public string Requirements { get; set; } = string.Empty;
 
-        public ICollection<Employee> Employees { get; set; }
+        public ICollection<Employee>? Employees { get; set; } = new List<Employee>();
     }
 }

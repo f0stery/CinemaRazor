@@ -1,9 +1,12 @@
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using CinemaRazor.Data;
 using CinemaRazor.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace CinemaRazor.Pages.Employees
 {
@@ -17,7 +20,9 @@ namespace CinemaRazor.Pages.Employees
         }
 
         [BindProperty]
-        public Employee Employee { get; set; } = default!;
+        public Employee Employee { get; set; } = new Employee();
+
+        public SelectList? PositionsList { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -27,6 +32,8 @@ namespace CinemaRazor.Pages.Employees
 
         public async Task<IActionResult> OnPostAsync()
         {
+            Console.WriteLine("=== [DEBUG] OnPostAsync (Employee) called ===");
+
             var hasPositions = await PopulatePositionsAsync();
             if (!hasPositions)
             {
@@ -34,14 +41,47 @@ namespace CinemaRazor.Pages.Employees
                 return Page();
             }
 
+            // Проверка — выбрал ли пользователь должность
+            if (Employee.PositionId == 0)
+            {
+                ModelState.AddModelError("Employee.PositionId", "Выберите должность.");
+            }
+
             if (!ModelState.IsValid)
             {
+                Console.WriteLine("❌ ModelState invalid!");
+                foreach (var kv in ModelState)
+                {
+                    foreach (var err in kv.Value.Errors)
+                        Console.WriteLine($"[VALIDATION ERROR] {kv.Key}: {err.ErrorMessage}");
+                }
+
+                await PopulatePositionsAsync(); // повторно загружаем select
                 return Page();
             }
 
-            _context.Employees.Add(Employee);
-            await _context.SaveChangesAsync();
-            return RedirectToPage("./Index");
+            try
+            {
+                Console.WriteLine($"👤 Добавляется сотрудник: {Employee.FullName}, должность ID = {Employee.PositionId}");
+                _context.Employees.Add(Employee);
+                await _context.SaveChangesAsync();
+                Console.WriteLine("✅ Сотрудник сохранён успешно.");
+
+                return RedirectToPage("./Index");
+            }
+            catch (DbUpdateException dbEx)
+            {
+                Console.WriteLine($"❌ Database update failed: {dbEx.InnerException?.Message ?? dbEx.Message}");
+                ModelState.AddModelError(string.Empty, "Ошибка при сохранении данных в базу.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Unexpected error: {ex.Message}");
+                ModelState.AddModelError(string.Empty, "Непредвиденная ошибка при добавлении сотрудника.");
+            }
+
+            await PopulatePositionsAsync();
+            return Page();
         }
 
         private async Task<bool> PopulatePositionsAsync()
@@ -51,8 +91,11 @@ namespace CinemaRazor.Pages.Employees
                 .OrderBy(p => p.Title)
                 .ToListAsync();
 
-            ViewData["PositionId"] = new SelectList(positions, "Id", "Title");
+            PositionsList = new SelectList(positions, "Id", "Title");
+            ViewData["PositionId"] = PositionsList;
             ViewData["HasPositions"] = positions.Any();
+
+            Console.WriteLine($"[DEBUG] Найдено должностей: {positions.Count}");
             return positions.Any();
         }
     }

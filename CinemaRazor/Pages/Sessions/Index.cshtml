@@ -28,7 +28,7 @@
                 <td>@item.Movie?.Title</td>
                 <td>Основной зал</td>
                 <td>@item.StartTime.ToString("g")</td>
-                <td>@item.Price.ToString("0.00") ₽</td>
+                <td>@item.Price.ToString("0") BYN</td>
                 <td>
                     <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Редактировать</a>
                     <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Детали</a>

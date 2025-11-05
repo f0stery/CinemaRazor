@@ -43,15 +43,6 @@ namespace CinemaRazor.Data
                 .HasForeignKey(s => s.MovieId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // 💰 Настройка точности цен
-            modelBuilder.Entity<Session>()
-                .Property(s => s.Price)
-                .HasPrecision(10, 2);
-
-            modelBuilder.Entity<Ticket>()
-                .Property(t => t.Price)
-                .HasPrecision(10, 2);
-
             // Уникальный индекс: одно место может быть продано только один раз на сеанс
             modelBuilder.Entity<Ticket>()
                 .HasIndex(t => new { t.SessionId, t.SeatId })

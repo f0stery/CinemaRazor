@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using CinemaRazor.Data;
 using CinemaRazor.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
 
 namespace CinemaRazor.Pages.Tickets
 {
@@ -21,13 +20,29 @@ namespace CinemaRazor.Pages.Tickets
         }
 
         [BindProperty]
-        public Ticket Ticket { get; set; } = default!;
+        public int TicketId { get; set; }
 
-        public SelectList SessionOptions { get; private set; }
+        [BindProperty(SupportsGet = true)]
+        public int? SessionId { get; set; }
 
-        public SelectList SeatOptions { get; private set; }
+        [BindProperty]
+        public int? SelectedSeatId { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public Ticket Ticket { get; private set; }
+
+        public int MovieId { get; private set; }
+
+        public List<SessionOption> MovieSessions { get; private set; } = new();
+
+        public Session Session { get; private set; }
+
+        public List<SeatInfo> SeatLayout { get; private set; } = new();
+
+        public bool HasSessionsForMovie => MovieSessions.Any();
+
+        private int SeatCapacity { get; set; }
+
+        public async Task<IActionResult> OnGetAsync(int? id, int? sessionId)
         {
             if (id == null)
             {
@@ -35,110 +50,166 @@ namespace CinemaRazor.Pages.Tickets
             }
 
             var ticket = await _context.Tickets
-                .Include(t => t.Session)
-                    .ThenInclude(s => s.Movie)
+                .Include(t => t.Session).ThenInclude(s => s.Movie)
                 .Include(t => t.Seat)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .AsNoTracking()
+                .FirstOrDefaultAsync(t => t.Id == id.Value);
+
             if (ticket == null)
             {
                 return NotFound();
             }
+
             Ticket = ticket;
-            await LoadSelectionsAsync(Ticket.SessionId, Ticket.SeatId);
+            TicketId = ticket.Id;
+            MovieId = ticket.Session.MovieId;
+            SelectedSeatId = ticket.SeatId;
+
+            await LoadSeatCapacityAsync();
+            await LoadSessionsForMovieAsync(MovieId);
+
+            SessionId = sessionId ?? ticket.SessionId;
+
+            if (SessionId.HasValue && MovieSessions.All(s => s.Id != SessionId.Value))
+            {
+                SessionId = ticket.SessionId;
+            }
+
+            if (SessionId.HasValue)
+            {
+                await LoadSessionDetailsAsync(SessionId.Value, Ticket.Id);
+
+                if (Session != null && Session.MovieId != MovieId)
+                {
+                    MovieId = Session.MovieId;
+                    await LoadSessionsForMovieAsync(MovieId);
+                }
+            }
+
             return Page();
         }
 
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more information, see https://aka.ms/RazorPagesCRUD.
         public async Task<IActionResult> OnPostAsync()
         {
-            var ticketFromDb = await _context.Tickets
+            var ticket = await _context.Tickets
+                .Include(t => t.Session).ThenInclude(s => s.Movie)
                 .Include(t => t.Seat)
-                .FirstOrDefaultAsync(t => t.Id == Ticket.Id);
+                .FirstOrDefaultAsync(t => t.Id == TicketId);
 
-            if (ticketFromDb == null)
+            if (ticket == null)
             {
                 return NotFound();
             }
 
-            var session = await _context.Sessions.FirstOrDefaultAsync(s => s.Id == Ticket.SessionId);
-            if (session == null)
+            Ticket = ticket;
+            MovieId = ticket.Session.MovieId;
+
+            await LoadSeatCapacityAsync();
+            await LoadSessionsForMovieAsync(MovieId);
+
+            if (!SessionId.HasValue)
             {
-                ModelState.AddModelError("Ticket.SessionId", "Выбранный сеанс не найден.");
+                SessionId = ticket.SessionId;
             }
 
-            var seat = await _context.Seats.FirstOrDefaultAsync(s => s.Id == Ticket.SeatId);
-            if (seat == null)
+            await LoadSessionDetailsAsync(SessionId.Value, ticket.Id);
+
+            if (Session == null)
             {
-                ModelState.AddModelError("Ticket.SeatId", "Выбранное место не найдено.");
+                ModelState.AddModelError(nameof(SessionId), "Выбранный сеанс не найден.");
             }
-            else if (await _context.Tickets.AnyAsync(t => t.SessionId == Ticket.SessionId && t.SeatId == Ticket.SeatId && t.Id != Ticket.Id))
+
+            SeatInfo seat = null;
+
+            if (!SelectedSeatId.HasValue)
             {
-                ModelState.AddModelError(string.Empty, "Это место уже продано для выбранного сеанса.");
+                ModelState.AddModelError(nameof(SelectedSeatId), "Выберите свободное место.");
+            }
+            else
+            {
+                seat = SeatLayout.FirstOrDefault(s => s.SeatId == SelectedSeatId.Value);
+                if (seat == null)
+                {
+                    ModelState.AddModelError(nameof(SelectedSeatId), "Выбранное место не найдено.");
+                }
+                else if (seat.IsOccupied && !(ticket.SessionId == SessionId && seat.SeatId == ticket.SeatId))
+                {
+                    ModelState.AddModelError(nameof(SelectedSeatId), "Это место уже занято для выбранного сеанса.");
+                }
             }
 
             if (!ModelState.IsValid)
             {
-                await LoadSelectionsAsync(Ticket.SessionId, Ticket.SeatId);
+                SelectedSeatId ??= ticket.SeatId;
                 return Page();
             }
 
-            ticketFromDb.SessionId = Ticket.SessionId;
-            ticketFromDb.SeatId = Ticket.SeatId;
-            ticketFromDb.Price = Ticket.Price <= 0 && session != null ? session.Price : Ticket.Price;
-            ticketFromDb.PurchaseDate = Ticket.PurchaseDate == default ? DateTime.Now : Ticket.PurchaseDate;
+            ticket.SessionId = Session.Id;
+            ticket.SeatId = seat!.SeatId;
+            ticket.Price = Session.Price;
 
-            // Не обновляем IsOccupied - проверяем наличие билета напрямую
+            await _context.SaveChangesAsync();
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!TicketExists(Ticket.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            TempData["SuccessMessage"] = $"Билет обновлён: {Session.Movie?.Title ?? "Сеанс"}, ряд {seat.RowNumber}, место {seat.SeatNumber}.";
 
-            return RedirectToPage("./Index");
+            return RedirectToPage("./Index", new { SelectedSessionId = Session.Id, SelectedMovieId = Session.MovieId });
         }
 
-        private bool TicketExists(int id)
+        private async Task LoadSeatCapacityAsync()
         {
-            return _context.Tickets.Any(e => e.Id == id);
+            SeatCapacity = await _context.Seats.AsNoTracking().CountAsync();
         }
 
-        private async Task LoadSelectionsAsync(int? selectedSessionId = null, int? selectedSeatId = null)
+        private async Task LoadSessionsForMovieAsync(int movieId)
         {
-            var sessionItems = await _context.Sessions
-                .Include(s => s.Movie)
+            MovieSessions = await _context.Sessions
                 .AsNoTracking()
+                .Where(s => s.MovieId == movieId)
                 .OrderBy(s => s.StartTime)
-                .Select(s => new
+                .Select(s => new SessionOption
                 {
-                    s.Id,
-                    Display = $"{s.Movie.Title} ({s.StartTime:dd.MM.yyyy HH:mm})"
+                    Id = s.Id,
+                    StartTime = s.StartTime,
+                    EndTime = s.EndTime,
+                    Price = s.Price,
+                    TicketsSold = s.Tickets.Count
                 })
                 .ToListAsync();
 
-            var resolvedSessionId = selectedSessionId ?? sessionItems.FirstOrDefault()?.Id;
+            foreach (var option in MovieSessions)
+            {
+                var sold = option.TicketsSold;
+                if (Ticket != null && option.Id == Ticket.SessionId)
+                {
+                    sold = Math.Max(0, sold - 1);
+                }
 
-            SessionOptions = new SelectList(sessionItems, "Id", "Display", resolvedSessionId);
+                option.SeatsAvailable = SeatCapacity > 0
+                    ? Math.Max(0, SeatCapacity - sold)
+                    : 0;
+            }
+        }
 
-            // Получаем занятые места для выбранного сеанса (через билеты)
-            // Исключаем текущий билет при редактировании
-            var occupiedSeatIds = resolvedSessionId.HasValue
-                ? await _context.Tickets
-                    .Where(t => t.SessionId == resolvedSessionId.Value && (Ticket.Id == 0 || t.Id != Ticket.Id))
-                    .Select(t => t.SeatId)
-                    .ToListAsync()
-                : new List<int>();
+        private async Task LoadSessionDetailsAsync(int sessionId, int ticketIdToExclude)
+        {
+            Session = await _context.Sessions
+                .Include(s => s.Movie)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(s => s.Id == sessionId);
+
+            if (Session == null)
+            {
+                SeatLayout = new List<SeatInfo>();
+                return;
+            }
+
+            SessionId = Session.Id;
+
+            var occupiedSeatIds = new HashSet<int>(await _context.Tickets
+                .AsNoTracking()
+                .Where(t => t.SessionId == sessionId && t.Id != ticketIdToExclude)
+                .Select(t => t.SeatId)
+                .ToListAsync());
 
             var seats = await _context.Seats
                 .AsNoTracking()
@@ -146,17 +217,31 @@ namespace CinemaRazor.Pages.Tickets
                 .ThenBy(s => s.SeatNumber)
                 .ToListAsync();
 
-            // Фильтруем места: показываем только свободные или уже выбранное место
-            var availableSeats = seats
-                .Where(s => !occupiedSeatIds.Contains(s.Id) || s.Id == selectedSeatId)
-                .Select(s => new
-                {
-                    s.Id,
-                    Display = $"Ряд {s.RowNumber}, место {s.SeatNumber}"
-                })
-                .ToList();
+            SeatLayout = seats.Select(s => new SeatInfo
+            {
+                SeatId = s.Id,
+                RowNumber = s.RowNumber,
+                SeatNumber = s.SeatNumber,
+                IsOccupied = occupiedSeatIds.Contains(s.Id)
+            }).ToList();
+        }
 
-            SeatOptions = new SelectList(availableSeats, "Id", "Display", selectedSeatId);
+        public class SeatInfo
+        {
+            public int SeatId { get; set; }
+            public int RowNumber { get; set; }
+            public int SeatNumber { get; set; }
+            public bool IsOccupied { get; set; }
+        }
+
+        public class SessionOption
+        {
+            public int Id { get; set; }
+            public DateTime StartTime { get; set; }
+            public DateTime EndTime { get; set; }
+            public int Price { get; set; }
+            public int TicketsSold { get; set; }
+            public int SeatsAvailable { get; set; }
         }
     }
 }

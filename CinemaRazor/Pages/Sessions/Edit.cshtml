@@ -1,4 +1,4 @@
-﻿@page
+@page
 @model CinemaRazor.Pages.Sessions.EditModel
 
 @{
@@ -29,7 +29,10 @@
 
             <div class="form-group">
                 <label asp-for="Session.Price" class="control-label"></label>
-                <input asp-for="Session.Price" class="form-control" />
+                <div class="input-group">
+                    <span class="input-group-text">BYN</span>
+                    <input asp-for="Session.Price" class="form-control" type="number" min="0" step="1" />
+                </div>
                 <span asp-validation-for="Session.Price" class="text-danger"></span>
             </div>
 

@@ -5,11 +5,21 @@
 namespace CinemaRazor.Migrations
 {
     /// <inheritdoc />
-    public partial class FixEmployeeNullablePosition : Migration
+    public partial class FixFront : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterColumn<int>(
+                name: "AgeRating",
+                table: "Movies",
+                type: "int",
+                maxLength: 20,
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(20)",
+                oldMaxLength: 20);
+
             migrationBuilder.AlterColumn<string>(
                 name: "Phone",
                 table: "Employees",
@@ -42,6 +52,16 @@ namespace CinemaRazor.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterColumn<string>(
+                name: "AgeRating",
+                table: "Movies",
+                type: "nvarchar(20)",
+                maxLength: 20,
+                nullable: false,
+                oldClrType: typeof(int),
+                oldType: "int",
+                oldMaxLength: 20);
+
             migrationBuilder.AlterColumn<string>(
                 name: "Phone",
                 table: "Employees",

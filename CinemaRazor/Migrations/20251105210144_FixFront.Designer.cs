@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CinemaRazor.Migrations
 {
     [DbContext(typeof(CinemaContext))]
-    [Migration("20251105200621_FixEmployeeNullablePosition")]
-    partial class FixEmployeeNullablePosition
+    [Migration("20251105210144_FixFront")]
+    partial class FixFront
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -97,10 +97,9 @@ namespace CinemaRazor.Migrations
                         .HasMaxLength(300)
                         .HasColumnType("nvarchar(300)");
 
-                    b.Property<string>("AgeRating")
-                        .IsRequired()
+                    b.Property<int>("AgeRating")
                         .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .IsRequired()

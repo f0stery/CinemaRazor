@@ -32,9 +32,10 @@ namespace CinemaRazor.Models
         public string Actors { get; set; }
 
         [Required]
-        [StringLength(20)]
+        [Range(0, 100)]
         [Display(Name = "Возрастные ограничения")]
-        public string AgeRating { get; set; }
+        public int? AgeRating { get; set; }
+
 
         [DataType(DataType.Date)]
         [Display(Name = "Дата выхода")]

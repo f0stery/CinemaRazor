@@ -55,9 +55,9 @@
                         </td>
                         <td>@(string.IsNullOrWhiteSpace(item.Phone) ? "—" : item.Phone)</td>
                         <td>
-                            @if (item.Position != null && !string.IsNullOrWhiteSpace(item.Position.Title))
+                            @if (!string.IsNullOrWhiteSpace(item.PositionTitle))
                             {
-                                <span class="badge rounded-pill text-bg-light border">@item.Position.Title</span>
+                                <span class="badge rounded-pill text-bg-light border">@item.PositionTitle</span>
                             }
                             else
                             {

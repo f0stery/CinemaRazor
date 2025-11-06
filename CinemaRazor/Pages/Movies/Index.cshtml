@@ -55,9 +55,9 @@
                             }
                         </td>
                         <td>
-                            @if (movie.Genre != null)
+                            @if (!string.IsNullOrWhiteSpace(movie.GenreName))
                             {
-                                <span class="badge rounded-pill text-bg-light border">@movie.Genre.Name</span>
+                                <span class="badge rounded-pill text-bg-light border">@movie.GenreName</span>
                             }
                             else
                             {

@@ -17,7 +17,7 @@
 
 @if (Model.Employee.Any())
 {
-    <div class="table-container">
+    <div class="surface-card surface-card--flush table-container">
         <div class="table-responsive">
             <table class="table align-middle">
                 <thead>
@@ -80,7 +80,7 @@
 }
 else
 {
-    <div class="support-card">
+    <div class="surface-card surface-card--loose support-card">
         <h2>Пока нет сотрудников</h2>
         <p>Создайте хотя бы одну должность и добавьте сотрудника, чтобы команда появилась в списке.</p>
         <a asp-page="Create" class="btn btn-primary">Добавить первого сотрудника</a>

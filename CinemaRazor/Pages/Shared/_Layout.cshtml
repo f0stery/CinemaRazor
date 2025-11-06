@@ -4,12 +4,20 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - CinemaRazor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/CinemaRazor.styles.css" asp-append-version="true" />
 </head>
-<body>
-    <header>
+<body class="app-shell">
+    <div class="app-shell__backdrop" aria-hidden="true">
+        <div class="app-shell__blur app-shell__blur--primary"></div>
+        <div class="app-shell__blur app-shell__blur--secondary"></div>
+    </div>
+    <div class="app-shell__layout">
+        <header>
         <nav class="navbar navbar-expand-lg app-navbar">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-page="/Index">
@@ -32,17 +40,18 @@
                 </div>
             </div>
         </nav>
-    </header>
+        </header>
 
-    <main role="main" class="container">
-        @RenderBody()
-    </main>
+        <main role="main" class="container">
+            @RenderBody()
+        </main>
 
-    <footer class="footer text-muted">
-        <div class="container">
-            <span class="footer-copy">&copy; 2025 - CinemaRazor</span>
-        </div>
-    </footer>
+        <footer class="footer text-muted">
+            <div class="container">
+                <span class="footer-copy">&copy; 2025 - CinemaRazor</span>
+            </div>
+        </footer>
+    </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

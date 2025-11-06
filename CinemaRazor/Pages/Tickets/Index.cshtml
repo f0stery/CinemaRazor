@@ -18,7 +18,7 @@
     </div>
 }
 
-<div class="table-container mb-4">
+<div class="surface-card surface-card--loose table-container mb-4">
     <form method="get" class="row g-3 align-items-end">
         <div class="col-12 col-md-6">
             <label asp-for="SelectedMovieId" class="form-label">Фильм</label>
@@ -36,7 +36,7 @@
 
 @if (Model.Overview != null)
 {
-    <div class="table-container mb-4">
+    <div class="surface-card surface-card--loose table-container mb-4">
         <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
             <div>
                 <h4 class="mb-1">@Model.Overview.Title</h4>
@@ -48,30 +48,31 @@
             <span class="badge bg-light text-dark">Сеансов: @Model.Overview.SessionsCount</span>
         </div>
 
-        <div class="row g-3 text-center">
+        <div class="row g-3">
             <div class="col-12 col-md-4">
-                <div class="border rounded-3 p-3 h-100">
-                    <div class="text-muted text-uppercase small">Продано билетов</div>
-                    <div class="fs-3 fw-semibold">@Model.Overview.TicketsSold</div>
+                <div class="surface-card surface-card--compact dashboard-card gradient-card-primary h-100">
+                    <div class="card-label">Продано билетов</div>
+                    <div class="card-value">@Model.Overview.TicketsSold</div>
                 </div>
             </div>
             <div class="col-12 col-md-4">
-                <div class="border rounded-3 p-3 h-100">
-                    <div class="text-muted text-uppercase small">Свободно</div>
-                    <div class="fs-3 fw-semibold">@Model.Overview.SeatsAvailable</div>
+                <div class="surface-card surface-card--compact dashboard-card gradient-card-quaternary h-100">
+                    <div class="card-label">Свободные места</div>
+                    <div class="card-value">@Model.Overview.SeatsAvailable</div>
                 </div>
             </div>
             <div class="col-12 col-md-4">
-                <div class="border rounded-3 p-3 h-100">
-                    <div class="text-muted text-uppercase small">Выручка</div>
-                    <div class="fs-3 fw-semibold">@Model.Overview.Revenue.ToString("0") BYN</div>
+                <div class="surface-card surface-card--compact dashboard-card gradient-card-tertiary h-100">
+                    <div class="card-label">Выручка</div>
+                    <div class="card-value">@Model.Overview.Revenue.ToString("0")</div>
+                    <span class="text-muted small">BYN</span>
                 </div>
             </div>
         </div>
     </div>
 }
 
-<div class="table-container mb-4">
+<div class="surface-card surface-card--flush table-container mb-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="mb-0">Сводка по сеансам</h5>
     </div>
@@ -143,7 +144,7 @@
     }
 </div>
 
-<div class="table-container">
+<div class="surface-card surface-card--flush table-container">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="mb-0">Билеты</h5>
     </div>

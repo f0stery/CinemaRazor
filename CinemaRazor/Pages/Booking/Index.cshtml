@@ -12,7 +12,7 @@
 
 @if (!Model.Sessions.Any())
 {
-    <div class="support-card">
+    <div class="surface-card surface-card--loose support-card">
         <h2>Нет доступных сеансов</h2>
         <p>К сожалению, в данный момент нет доступных сеансов для бронирования. Пожалуйста, вернитесь позже или обратитесь к администратору.</p>
         <a asp-page="/Index" class="btn btn-primary">Вернуться на главную</a>
@@ -24,7 +24,7 @@ else
         @foreach (var session in Model.Sessions)
         {
             <div class="col-12 col-md-6 col-lg-4">
-                <div class="session-card h-100">
+                <div class="surface-card surface-card--loose session-card h-100">
                     <div class="card-body">
                         <h5 class="card-title">@session.Movie.Title</h5>
                         <p class="card-text">

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -29,16 +28,16 @@ namespace CinemaRazor.Pages.Sessions
                 return NotFound();
             }
 
-            var session = await _context.Sessions.FirstOrDefaultAsync(m => m.Id == id);
+            var session = await _context.Sessions
+                .Include(s => s.Movie)
+                .FirstOrDefaultAsync(m => m.Id == id);
 
             if (session == null)
             {
                 return NotFound();
             }
-            else
-            {
-                Session = session;
-            }
+
+            Session = session;
             return Page();
         }
 
@@ -52,8 +51,7 @@ namespace CinemaRazor.Pages.Sessions
             var session = await _context.Sessions.FindAsync(id);
             if (session != null)
             {
-                Session = session;
-                _context.Sessions.Remove(Session);
+                _context.Sessions.Remove(session);
                 await _context.SaveChangesAsync();
             }
 

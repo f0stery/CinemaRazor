@@ -7,7 +7,9 @@
 
 <section class="page-header mb-4">
     <h1 class="page-title">Каталог фильмов</h1>
-    <p class="page-subtitle">Управляйте библиотекой фильмов кинотеатра — добавляйте новые картины, редактируйте информацию и фильтруйте по жанрам.</p>
+    <p class="page-subtitle">
+        Управляйте библиотекой фильмов — добавляйте новые картины, редактируйте данные и фильтруйте по жанрам.
+    </p>
 </section>
 
 <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
@@ -18,11 +20,12 @@
                 <option value="">Все жанры</option>
             </select>
         </div>
-        <div>
+        <div class="d-flex gap-2">
             <button type="submit" class="btn btn-outline-secondary">Показать</button>
             <a asp-page="Index" class="btn btn-outline-secondary">Сбросить</a>
         </div>
     </form>
+
     <a asp-page="Create" class="btn btn-primary">Добавить фильм</a>
 </div>
 
@@ -35,7 +38,7 @@
                     <tr>
                         <th>Название</th>
                         <th>Жанр</th>
-                        <th>Производитель</th>
+                        <th>Кинокомпания</th>
                         <th>Страна</th>
                         <th>Возраст</th>
                         <th>Дата выхода</th>
@@ -44,40 +47,42 @@
                     </tr>
                 </thead>
                 <tbody>
-                @foreach (var movie in Model.Movies)
-                {
-                    <tr>
-                        <td>
-                            <div class="fw-semibold">@movie.Title</div>
-                            @if (!string.IsNullOrWhiteSpace(movie.Actors))
-                            {
-                                <div class="text-muted small">@movie.Actors</div>
-                            }
-                        </td>
-                        <td>
-                            @if (!string.IsNullOrWhiteSpace(movie.GenreName))
-                            {
-                                <span class="badge rounded-pill text-bg-light border">@movie.GenreName</span>
-                            }
-                            else
-                            {
-                                <span class="text-muted">—</span>
-                            }
-                        </td>
-                        <td>@(string.IsNullOrWhiteSpace(movie.ProducerCompany) ? "—" : movie.ProducerCompany)</td>
-                        <td>@(string.IsNullOrWhiteSpace(movie.ProductionCountry) ? "—" : movie.ProductionCountry)</td>
-                        <td>@(movie.AgeRating > 0 ? $"{movie.AgeRating}+" : "—")</td>
-                        <td>@movie.ReleaseDate.ToString("dd.MM.yyyy")</td>
-                        <td>@movie.DurationMinutes мин</td>
-                        <td class="text-end">
-                            <div class="btn-group btn-group-sm" role="group">
-                                <a asp-page="./Details" asp-route-id="@movie.Id" class="btn btn-outline-secondary">Просмотр</a>
-                                <a asp-page="./Edit" asp-route-id="@movie.Id" class="btn btn-outline-secondary">Изменить</a>
-                                <a asp-page="./Delete" asp-route-id="@movie.Id" class="btn btn-outline-secondary">Удалить</a>
-                            </div>
-                        </td>
-                    </tr>
-                }
+                    @foreach (var movie in Model.Movies)
+                    {
+                        <tr>
+                            <td>
+                                <div class="fw-semibold">@movie.Title</div>
+                                @if (!string.IsNullOrWhiteSpace(movie.Actors))
+                                {
+                                    <div class="text-muted small">@movie.Actors</div>
+                                }
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrWhiteSpace(movie.GenreName))
+                                {
+                                    <span class="badge bg-light text-dark border fw-semibold px-3 py-2">
+                                        @movie.GenreName
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">—</span>
+                                }
+                            </td>
+                            <td>@(string.IsNullOrWhiteSpace(movie.ProducerCompany) ? "—" : movie.ProducerCompany)</td>
+                            <td>@(string.IsNullOrWhiteSpace(movie.ProductionCountry) ? "—" : movie.ProductionCountry)</td>
+                            <td>@(movie.AgeRating > 0 ? $"{movie.AgeRating}+" : "—")</td>
+                            <td>@movie.ReleaseDate.ToString("dd.MM.yyyy")</td>
+                            <td>@movie.DurationMinutes мин</td>
+                            <td class="text-end">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a asp-page="./Details" asp-route-id="@movie.Id" class="btn btn-outline-secondary">Просмотр</a>
+                                    <a asp-page="./Edit" asp-route-id="@movie.Id" class="btn btn-outline-secondary">Изменить</a>
+                                    <a asp-page="./Delete" asp-route-id="@movie.Id" class="btn btn-outline-secondary">Удалить</a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>

@@ -28,15 +28,15 @@ namespace CinemaRazor.Pages.Movies
                 return NotFound();
             }
 
-            var movie = await _context.Movies.FirstOrDefaultAsync(m => m.Id == id);
-            if (movie == null)
+            Movie = await _context.Movies
+                .Include(m => m.Genre)
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (Movie == null)
             {
                 return NotFound();
             }
-            else
-            {
-                Movie = movie;
-            }
+
             return Page();
         }
     }

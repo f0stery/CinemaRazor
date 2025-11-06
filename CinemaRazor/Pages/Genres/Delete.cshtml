@@ -5,36 +5,25 @@
     ViewData["Title"] = "Удаление жанра";
 }
 
-<section class="page-header mb-4">
-    <h1 class="page-title">Удалить жанр</h1>
-    <p class="page-subtitle">Вы уверены, что хотите удалить этот жанр?</p>
-</section>
+<h1>Удаление жанра</h1>
 
-<div class="delete-warning mb-4">
-    <h3>Внимание!</h3>
-    <p>Это действие необратимо. Удаление жанра может повлиять на связанные с ним фильмы.</p>
-</div>
+<h3>Вы уверены, что хотите удалить этот жанр?</h3>
+<hr />
 
-<div class="surface-card surface-card--loose details-container">
-    <div class="details-header">
-        <h2 class="details-title">@Model.Genre.Name</h2>
-    </div>
+<dl class="row">
+    <dt class="col-sm-2">Название</dt>
+    <dd class="col-sm-10">@Model.Genre.Name</dd>
 
-    <div class="details-row">
-        <div class="details-label">Название:</div>
-        <div class="details-value fw-semibold">@Model.Genre.Name</div>
-    </div>
+    <dt class="col-sm-2">Описание</dt>
+    <dd class="col-sm-10">
+        @(!string.IsNullOrWhiteSpace(Model.Genre.Description)
+                ? Model.Genre.Description
+                : "Описание отсутствует")
+    </dd>
+</dl>
 
-    <div class="details-row">
-        <div class="details-label">Описание:</div>
-        <div class="details-value">@(!string.IsNullOrWhiteSpace(Model.Genre.Description) ? Model.Genre.Description : "Описание отсутствует")</div>
-    </div>
-
-    <form method="post">
-        <input type="hidden" asp-for="Genre.Id" />
-        <div class="details-actions">
-            <button type="submit" class="btn btn-danger">Удалить жанр</button>
-            <a asp-page="Index" class="btn btn-outline-secondary">Отмена</a>
-        </div>
-    </form>
-</div>
+<form method="post">
+    <input type="hidden" asp-for="Genre.Id" />
+    <button type="submit" class="btn btn-danger">Удалить</button>
+    <a asp-page="Index" class="btn btn-secondary">Назад к списку</a>
+</form>

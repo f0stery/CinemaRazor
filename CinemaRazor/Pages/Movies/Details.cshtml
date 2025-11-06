@@ -13,12 +13,20 @@
 <div class="surface-card surface-card--loose details-container">
     <div class="details-header">
         <h2 class="details-title">@Model.Movie.Title</h2>
-        @if (Model.Movie.Genre != null)
-        {
-            <p class="details-subtitle">
-                <span class="badge rounded-pill text-bg-light border">@Model.Movie.Genre.Name</span>
-            </p>
-        }
+    </div>
+
+    <div class="details-row">
+        <div class="details-label">Жанр:</div>
+        <div class="details-value">
+            @if (Model.Movie.Genre != null)
+            {
+                @Model.Movie.Genre.Name
+            }
+            else
+            {
+                <span class="text-muted">Не указан</span>
+            }
+        </div>
     </div>
 
     @if (!string.IsNullOrWhiteSpace(Model.Movie.Description))
@@ -32,7 +40,7 @@
     @if (!string.IsNullOrWhiteSpace(Model.Movie.ProducerCompany))
     {
         <div class="details-row">
-            <div class="details-label">Производитель:</div>
+            <div class="details-label">Кинокомпания:</div>
             <div class="details-value">@Model.Movie.ProducerCompany</div>
         </div>
     }
@@ -40,7 +48,7 @@
     @if (!string.IsNullOrWhiteSpace(Model.Movie.ProductionCountry))
     {
         <div class="details-row">
-            <div class="details-label">Страна производства:</div>
+            <div class="details-label">Страна:</div>
             <div class="details-value">@Model.Movie.ProductionCountry</div>
         </div>
     }
@@ -48,14 +56,16 @@
     @if (!string.IsNullOrWhiteSpace(Model.Movie.Actors))
     {
         <div class="details-row">
-            <div class="details-label">Актеры:</div>
+            <div class="details-label">Актёры:</div>
             <div class="details-value">@Model.Movie.Actors</div>
         </div>
     }
 
     <div class="details-row">
         <div class="details-label">Возрастной рейтинг:</div>
-        <div class="details-value">@(Model.Movie.AgeRating > 0 ? $"{Model.Movie.AgeRating}+" : "Не указан")</div>
+        <div class="details-value">
+            @(Model.Movie.AgeRating > 0 ? $"{Model.Movie.AgeRating}+" : "Не указан")
+        </div>
     </div>
 
     <div class="details-row">
@@ -64,7 +74,7 @@
     </div>
 
     <div class="details-row">
-        <div class="details-label">Длительность:</div>
+        <div class="details-label">Продолжительность:</div>
         <div class="details-value">@Model.Movie.DurationMinutes минут</div>
     </div>
 

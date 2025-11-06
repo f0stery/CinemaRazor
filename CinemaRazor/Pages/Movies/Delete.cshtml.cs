@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -29,16 +28,16 @@ namespace CinemaRazor.Pages.Movies
                 return NotFound();
             }
 
-            var movie = await _context.Movies.FirstOrDefaultAsync(m => m.Id == id);
+            var movie = await _context.Movies
+                .Include(m => m.Genre)
+                .FirstOrDefaultAsync(m => m.Id == id);
 
             if (movie == null)
             {
                 return NotFound();
             }
-            else
-            {
-                Movie = movie;
-            }
+
+            Movie = movie;
             return Page();
         }
 
@@ -50,6 +49,7 @@ namespace CinemaRazor.Pages.Movies
             }
 
             var movie = await _context.Movies.FindAsync(id);
+
             if (movie != null)
             {
                 Movie = movie;

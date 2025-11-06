@@ -5,57 +5,59 @@
 }
 
 <section class="surface-card surface-card--loose page-header page-header--elevated mb-5">
-    <div class="page-header__content">
-        <span class="eyebrow">Панель управления</span>
-        <h1 class="page-title">Администрирование кинотеатра</h1>
-        <p class="page-subtitle">
-            Управляйте репертуаром, расписанием, персоналом и продажами билетов из единой панели. Все данные кинотеатра
-            доступны для просмотра, добавления, редактирования и удаления.
-        </p>
-    </div>
-    <div class="page-header__actions">
-        <a class="btn btn-primary" asp-page="/Sessions/Create">Запланировать сеанс</a>
-        <a class="btn btn-outline-secondary" asp-page="/Movies/Create">Добавить фильм</a>
-        <a class="btn btn-outline-secondary" asp-page="/Tickets/Index">Отчёт по билетам</a>
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center gap-3">
+        <div>
+            <span class="eyebrow text-primary fw-semibold d-block mb-2">Панель управления</span>
+            <h1 class="page-title mb-2">Администрирование кинотеатра</h1>
+            <p class="page-subtitle text-muted mb-0">
+                Управляйте репертуаром, расписанием, персоналом и продажами билетов из единой панели.
+                Все данные кинотеатра доступны для просмотра, добавления, редактирования и удаления.
+            </p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a class="btn btn-primary px-4 py-2" asp-page="/Sessions/Create">Запланировать сеанс</a>
+            <a class="btn btn-outline-primary px-4 py-2" asp-page="/Movies/Create">Добавить фильм</a>
+            <a class="btn btn-outline-secondary px-4 py-2" asp-page="/Tickets/Index">Отчёт по билетам</a>
+        </div>
     </div>
 </section>
 
 <section class="mb-5">
     <div class="row g-4">
         <div class="col-12 col-md-6 col-xl-4">
-            <div class="surface-card surface-card--compact dashboard-card gradient-card-primary">
-                <div class="card-label">Фильмов в базе</div>
-                <div class="card-value">@Model.Stats.Movies</div>
+            <div class="surface-card surface-card--compact dashboard-card gradient-card-primary text-center p-4 rounded-4 shadow-sm">
+                <div class="card-label text-muted small mb-1">Фильмов в базе</div>
+                <div class="card-value display-6 fw-bold">@Model.Stats.Movies</div>
             </div>
         </div>
         <div class="col-12 col-md-6 col-xl-4">
-            <div class="surface-card surface-card--compact dashboard-card gradient-card-quinary">
-                <div class="card-label">Жанров</div>
-                <div class="card-value">@Model.Stats.Genres</div>
+            <div class="surface-card surface-card--compact dashboard-card gradient-card-quinary text-center p-4 rounded-4 shadow-sm">
+                <div class="card-label text-muted small mb-1">Жанров</div>
+                <div class="card-value display-6 fw-bold">@Model.Stats.Genres</div>
             </div>
         </div>
         <div class="col-12 col-md-6 col-xl-4">
-            <div class="surface-card surface-card--compact dashboard-card gradient-card-secondary">
-                <div class="card-label">Активных сеансов</div>
-                <div class="card-value">@Model.Stats.Sessions</div>
+            <div class="surface-card surface-card--compact dashboard-card gradient-card-secondary text-center p-4 rounded-4 shadow-sm">
+                <div class="card-label text-muted small mb-1">Активных сеансов</div>
+                <div class="card-value display-6 fw-bold">@Model.Stats.Sessions</div>
             </div>
         </div>
         <div class="col-12 col-md-6 col-xl-4">
-            <div class="surface-card surface-card--compact dashboard-card gradient-card-senary">
-                <div class="card-label">Проданных билетов</div>
-                <div class="card-value">@Model.Stats.Tickets</div>
+            <div class="surface-card surface-card--compact dashboard-card gradient-card-senary text-center p-4 rounded-4 shadow-sm">
+                <div class="card-label text-muted small mb-1">Проданных билетов</div>
+                <div class="card-value display-6 fw-bold">@Model.Stats.Tickets</div>
             </div>
         </div>
         <div class="col-12 col-md-6 col-xl-4">
-            <div class="surface-card surface-card--compact dashboard-card gradient-card-tertiary">
-                <div class="card-label">Сотрудников</div>
-                <div class="card-value">@Model.Stats.Employees</div>
+            <div class="surface-card surface-card--compact dashboard-card gradient-card-tertiary text-center p-4 rounded-4 shadow-sm">
+                <div class="card-label text-muted small mb-1">Сотрудников</div>
+                <div class="card-value display-6 fw-bold">@Model.Stats.Employees</div>
             </div>
         </div>
         <div class="col-12 col-md-6 col-xl-4">
-            <div class="surface-card surface-card--compact dashboard-card gradient-card-quaternary">
-                <div class="card-label">Должностей</div>
-                <div class="card-value">@Model.Stats.Positions</div>
+            <div class="surface-card surface-card--compact dashboard-card gradient-card-quaternary text-center p-4 rounded-4 shadow-sm">
+                <div class="card-label text-muted small mb-1">Должностей</div>
+                <div class="card-value display-6 fw-bold">@Model.Stats.Positions</div>
             </div>
         </div>
     </div>
@@ -65,9 +67,11 @@
     <div class="row g-4">
         <div class="col-12 col-lg-6">
             <div class="surface-card surface-card--loose management-card h-100">
-                <h2>Репертуар и расписание</h2>
-                <p>Добавляйте фильмы, описания, жанры и планируйте будущие сеансы с указанием времени и стоимости.</p>
-                <div class="d-flex gap-2 flex-wrap">
+                <h2 class="h4 mb-2">Репертуар и расписание</h2>
+                <p class="text-muted mb-3">
+                    Добавляйте фильмы, описания, жанры и планируйте будущие сеансы с указанием времени и стоимости.
+                </p>
+                <div class="d-flex flex-wrap gap-2">
                     <a class="btn btn-outline-primary" asp-page="/Movies/Create">Новый фильм</a>
                     <a class="btn btn-outline-secondary" asp-page="/Movies/Index">Каталог фильмов</a>
                     <a class="btn btn-outline-primary" asp-page="/Sessions/Create">Новый сеанс</a>
@@ -78,9 +82,11 @@
         </div>
         <div class="col-12 col-lg-6">
             <div class="surface-card surface-card--loose management-card h-100">
-                <h2>Команда и продажи</h2>
-                <p>Управляйте сотрудниками, должностями и контролируйте реализацию билетов по каждому фильму.</p>
-                <div class="d-flex gap-2 flex-wrap">
+                <h2 class="h4 mb-2">Команда и продажи</h2>
+                <p class="text-muted mb-3">
+                    Управляйте сотрудниками, должностями и контролируйте реализацию билетов по каждому фильму.
+                </p>
+                <div class="d-flex flex-wrap gap-2">
                     <a class="btn btn-outline-primary" asp-page="/Employees/Create">Добавить сотрудника</a>
                     <a class="btn btn-outline-secondary" asp-page="/Employees/Index">Все сотрудники</a>
                     <a class="btn btn-outline-primary" asp-page="/Tickets/Create">Продать билет</a>
@@ -92,7 +98,7 @@
     </div>
 </section>
 
-<section class="mb-5">
+<section>
     <div class="row g-4">
         <div class="col-12 col-xl-6">
             <div class="surface-card surface-card--flush table-container h-100">
@@ -113,26 +119,26 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            @foreach (var session in Model.UpcomingSessions)
-                            {
-                                <tr>
-                                    <td>
-                                        <a asp-page="/Sessions/Details" asp-route-id="@session.SessionId">@session.MovieTitle</a>
-                                    </td>
-                                    <td>@session.StartTime.ToString("dd.MM.yyyy HH:mm")</td>
-                                    <td>
-                                        @{
-                                            DateTime? endTime = session.EndTime > DateTime.MinValue && session.EndTime >= session.StartTime
+                                @foreach (var session in Model.UpcomingSessions)
+                                {
+                                    <tr>
+                                        <td>
+                                            <a asp-page="/Sessions/Details" asp-route-id="@session.SessionId">@session.MovieTitle</a>
+                                        </td>
+                                        <td>@session.StartTime.ToString("dd.MM.yyyy HH:mm")</td>
+                                        <td>
+                                            @{
+                                                DateTime? endTime = session.EndTime > DateTime.MinValue && session.EndTime >= session.StartTime
                                                 ? session.EndTime
                                                 : (session.DurationMinutes > 0
-                                                    ? session.StartTime.AddMinutes(session.DurationMinutes)
-                                                    : (DateTime?)null);
-                                        }
-                                        @(endTime.HasValue ? endTime.Value.ToString("dd.MM.yyyy HH:mm") : "—")
-                                    </td>
-                                    <td>@session.Price.ToString("0") BYN</td>
-                                </tr>
-                            }
+                                                ? session.StartTime.AddMinutes(session.DurationMinutes)
+                                                : (DateTime?)null);
+                                            }
+                                            @(endTime.HasValue? endTime.Value.ToString("dd.MM.yyyy HH:mm") : "—")
+                                        </td>
+                                        <td>@session.Price.ToString("0") BYN</td>
+                                    </tr>
+                                }
                             </tbody>
                         </table>
                     </div>
@@ -152,13 +158,13 @@
                 @if (Model.TicketSales.Any())
                 {
                     <ul class="list-group list-group-flush">
-                    @foreach (var sale in Model.TicketSales)
-                    {
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <span>@sale.MovieTitle</span>
-                            <span class="badge bg-primary rounded-pill">@sale.TicketsSold</span>
-                        </li>
-                    }
+                        @foreach (var sale in Model.TicketSales)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <span>@sale.MovieTitle</span>
+                                <span class="badge bg-primary rounded-pill">@sale.TicketsSold</span>
+                            </li>
+                        }
                     </ul>
                 }
                 else
@@ -169,4 +175,3 @@
         </div>
     </div>
 </section>
-

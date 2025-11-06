@@ -3,9 +3,6 @@
 
 @{
     ViewData["Title"] = "Редактирование сеанса";
-}
-
-@{
     var movieDurationsJson = System.Text.Json.JsonSerializer.Serialize(Model.MovieDurations);
 }
 
@@ -15,64 +12,78 @@
 </section>
 
 <div class="form-container">
-    <form method="post">
-        <div asp-validation-summary="All" class="alert alert-danger"></div>
+    <form method="post" class="p-4 surface-card surface-card--loose rounded-4 shadow-sm">
+        @* Показываем сообщение об ошибках только если они есть *@
+        @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+        {
+            <div asp-validation-summary="All" class="alert alert-danger mb-4"></div>
+        }
+
         <input type="hidden" asp-for="Session.Id" />
 
-        <div class="row">
+        <div class="row g-4">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label asp-for="Session.MovieId" class="form-label">
+                    <label asp-for="Session.MovieId" class="form-label fw-semibold">
                         <span class="text-danger">*</span> Фильм
                     </label>
-                    <select asp-for="Session.MovieId" class="form-select" asp-items="Model.MovieOptions"></select>
-                    <span asp-validation-for="Session.MovieId" class="text-danger"></span>
+                    <select asp-for="Session.MovieId" class="form-select" asp-items="Model.MovieOptions">
+                        <option value="">Выберите фильм</option>
+                    </select>
+                    <span asp-validation-for="Session.MovieId" class="text-danger small"></span>
                 </div>
             </div>
 
             <div class="col-md-6">
                 <div class="form-group">
-                    <label asp-for="Session.Price" class="form-label">Цена билета</label>
+                    <label asp-for="Session.Price" class="form-label fw-semibold">Цена билета</label>
                     <div class="input-group">
                         <span class="input-group-text">BYN</span>
                         <input asp-for="Session.Price" class="form-control" type="number" min="0" step="1" />
                     </div>
-                    <span asp-validation-for="Session.Price" class="text-danger"></span>
+                    <span asp-validation-for="Session.Price" class="text-danger small"></span>
                 </div>
             </div>
-        </div>
 
-        <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label asp-for="Session.StartTime" class="form-label">
+                    <label asp-for="Session.StartTime" class="form-label fw-semibold">
                         <span class="text-danger">*</span> Дата и время начала
                     </label>
                     <input asp-for="Session.StartTime" class="form-control" type="datetime-local" />
-                    <span asp-validation-for="Session.StartTime" class="text-danger"></span>
+                    <span asp-validation-for="Session.StartTime" class="text-danger small"></span>
                 </div>
             </div>
 
             <div class="col-md-6">
                 <div class="form-group">
-                    <label class="form-label">Время окончания</label>
-                    <input id="edit-calculated-end-time" class="form-control" type="text" readonly value="@Model.Session.EndTime.ToString("dd.MM.yyyy HH:mm")" />
+                    <label class="form-label fw-semibold">Время окончания</label>
+                    <input id="edit-calculated-end-time" class="form-control" type="text"
+                           readonly value="@Model.Session.EndTime.ToString("dd.MM.yyyy HH:mm")" />
                     <small class="text-muted">Перерасчитывается из длительности фильма.</small>
                 </div>
             </div>
         </div>
 
-        <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Сохранить изменения</button>
-            <a asp-page="Index" class="btn btn-outline-secondary">Отмена</a>
+        <div class="form-actions d-flex justify-content-end gap-2 mt-4">
+            <button type="submit" class="btn btn-primary px-4">Сохранить изменения</button>
+            <a asp-page="Index" class="btn btn-outline-secondary px-4">Отмена</a>
         </div>
     </form>
 </div>
+
+<style>
+    .form-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+</style>
 
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
     <script>
         (function () {
             const durations = @Html.Raw(movieDurationsJson);

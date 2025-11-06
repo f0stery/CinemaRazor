@@ -5,30 +5,23 @@
     ViewData["Title"] = "Просмотр жанра";
 }
 
-<section class="page-header mb-4">
-    <h1 class="page-title">@Model.Genre.Name</h1>
-    <p class="page-subtitle">Описание жанра и связанные материалы.</p>
-</section>
+<h1>Просмотр жанра</h1>
+<hr />
 
-<div class="surface-card surface-card--loose details-container">
-    <div class="details-header">
-        <h2 class="details-title">@Model.Genre.Name</h2>
-        <p class="details-subtitle">Информация о жанре</p>
-    </div>
+<dl class="row">
+    <dt class="col-sm-2">Название</dt>
+    <dd class="col-sm-10">@Model.Genre.Name</dd>
 
-    <div class="details-row">
-        <div class="details-label">Название:</div>
-        <div class="details-value fw-semibold">@Model.Genre.Name</div>
-    </div>
+    <dt class="col-sm-2">Описание</dt>
+    <dd class="col-sm-10">
+        @(!string.IsNullOrWhiteSpace(Model.Genre.Description)
+                ? Model.Genre.Description
+                : "Описание отсутствует")
+    </dd>
+</dl>
 
-    <div class="details-row">
-        <div class="details-label">Описание:</div>
-        <div class="details-value">@(!string.IsNullOrWhiteSpace(Model.Genre.Description) ? Model.Genre.Description : "Описание отсутствует")</div>
-    </div>
-
-    <div class="details-actions">
-        <a asp-page="Edit" asp-route-id="@Model.Genre.Id" class="btn btn-primary">Изменить</a>
-        <a asp-page="Delete" asp-route-id="@Model.Genre.Id" class="btn btn-outline-secondary">Удалить</a>
-        <a asp-page="Index" class="btn btn-outline-secondary">Назад к списку</a>
-    </div>
+<div>
+    <a asp-page="Edit" asp-route-id="@Model.Genre.Id" class="btn btn-primary">Изменить</a>
+    <a asp-page="Delete" asp-route-id="@Model.Genre.Id" class="btn btn-danger">Удалить</a>
+    <a asp-page="Index" class="btn btn-secondary">Назад к списку</a>
 </div>

@@ -2,55 +2,48 @@
 @model CinemaRazor.Pages.Employees.DeleteModel
 
 @{
-    ViewData["Title"] = "Удалить сотрудника";
+    ViewData["Title"] = "Удаление сотрудника";
 }
 
-<section class="page-header mb-4">
-    <h1 class="page-title">Удалить сотрудника</h1>
-    <p class="page-subtitle">Вы уверены, что хотите удалить этого сотрудника?</p>
-</section>
+<h1>Удаление сотрудника</h1>
 
-<div class="delete-warning mb-4">
-    <h3>Внимание!</h3>
-    <p>Это действие необратимо. Удаление сотрудника приведет к удалению его из базы данных.</p>
-</div>
+<h3>Вы уверены, что хотите удалить этого сотрудника?</h3>
+<p class="text-danger"><strong>Это действие необратимо!</strong></p>
 
-<div class="surface-card surface-card--loose details-container">
-    <div class="details-header">
-        <h2 class="details-title">@Model.Employee.FullName</h2>
-        @if (Model.Employee.Position != null)
-        {
-            <p class="details-subtitle">
-                <span class="badge rounded-pill text-bg-light border">@Model.Employee.Position.Title</span>
-            </p>
-        }
-    </div>
+<hr />
 
-    <div class="details-row">
-        <div class="details-label">Возраст:</div>
-        <div class="details-value">@(Model.Employee.Age > 0 ? $"{Model.Employee.Age} лет" : "Не указан")</div>
-    </div>
+<dl class="row">
+    <dt class="col-sm-2">ФИО</dt>
+    <dd class="col-sm-10">@Model.Employee.FullName</dd>
 
-    <div class="details-row">
-        <div class="details-label">Пол:</div>
-        <div class="details-value">@(string.IsNullOrWhiteSpace(Model.Employee.Gender) ? "Не указан" : Model.Employee.Gender)</div>
-    </div>
+    <dt class="col-sm-2">Должность</dt>
+    <dd class="col-sm-10">
+        @(Model.Employee.Position != null ? Model.Employee.Position.Title : "Не указана")
+    </dd>
 
-    <div class="details-row">
-        <div class="details-label">Адрес:</div>
-        <div class="details-value">@(string.IsNullOrWhiteSpace(Model.Employee.Address) ? "Не указан" : Model.Employee.Address)</div>
-    </div>
+    <dt class="col-sm-2">Возраст</dt>
+    <dd class="col-sm-10">
+        @(Model.Employee.Age > 0 ? $"{Model.Employee.Age} лет" : "Не указан")
+    </dd>
 
-    <div class="details-row">
-        <div class="details-label">Телефон:</div>
-        <div class="details-value">@(string.IsNullOrWhiteSpace(Model.Employee.Phone) ? "Не указан" : Model.Employee.Phone)</div>
-    </div>
+    <dt class="col-sm-2">Пол</dt>
+    <dd class="col-sm-10">
+        @(string.IsNullOrWhiteSpace(Model.Employee.Gender) ? "Не указан" : Model.Employee.Gender)
+    </dd>
 
-    <form method="post">
-        <input type="hidden" asp-for="Employee.Id" />
-        <div class="details-actions">
-            <button type="submit" class="btn btn-danger">Удалить сотрудника</button>
-            <a asp-page="./Index" class="btn btn-outline-secondary">Отмена</a>
-        </div>
-    </form>
-</div>
+    <dt class="col-sm-2">Адрес</dt>
+    <dd class="col-sm-10">
+        @(string.IsNullOrWhiteSpace(Model.Employee.Address) ? "Не указан" : Model.Employee.Address)
+    </dd>
+
+    <dt class="col-sm-2">Телефон</dt>
+    <dd class="col-sm-10">
+        @(string.IsNullOrWhiteSpace(Model.Employee.Phone) ? "Не указан" : Model.Employee.Phone)
+    </dd>
+</dl>
+
+<form method="post">
+    <input type="hidden" asp-for="Employee.Id" />
+    <button type="submit" class="btn btn-danger">Удалить</button>
+    <a asp-page="./Index" class="btn btn-secondary">Назад к списку</a>
+</form>

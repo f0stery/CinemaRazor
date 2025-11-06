@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace CinemaRazor.Models
 {
@@ -11,31 +12,25 @@ namespace CinemaRazor.Models
         [Display(Name = "Название фильма")]
         public string Title { get; set; }
 
-        [Required]
-        [StringLength(1000)]
+        [Required, StringLength(1000)]
         [Display(Name = "Описание")]
         public string Description { get; set; }
 
-        [Required]
-        [StringLength(100)]
+        [Required, StringLength(100)]
         [Display(Name = "Фирма производитель")]
         public string ProducerCompany { get; set; }
 
-        [Required]
-        [StringLength(100)]
+        [Required, StringLength(100)]
         [Display(Name = "Страна производитель")]
         public string ProductionCountry { get; set; }
 
-        [Required]
-        [StringLength(300)]
+        [Required, StringLength(300)]
         [Display(Name = "Актёры")]
         public string Actors { get; set; }
 
-        [Required]
-        [Range(0, 100)]
+        [Required, Range(0, 100)]
         [Display(Name = "Возрастные ограничения")]
         public int? AgeRating { get; set; }
-
 
         [DataType(DataType.Date)]
         [Display(Name = "Дата выхода")]
@@ -50,7 +45,11 @@ namespace CinemaRazor.Models
         public int GenreId { get; set; }
 
         [Display(Name = "Жанр")]
-        [ValidateNever] // <-- вот это важно
+        [ValidateNever]
         public Genre Genre { get; set; }
+
+        // 🔗 Добавлено: один фильм может иметь несколько сеансов
+        [ValidateNever]
+        public ICollection<Session>? Sessions { get; set; }
     }
 }

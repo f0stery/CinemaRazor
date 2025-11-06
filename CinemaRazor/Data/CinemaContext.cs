@@ -29,21 +29,28 @@ namespace CinemaRazor.Data
                 .HasForeignKey(t => t.SeatId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // 🎞 Ticket → Session (с правильной обратной связью!)
+            // 🎞 Ticket → Session (удаляем билеты при удалении сеанса)
             modelBuilder.Entity<Ticket>()
                 .HasOne(t => t.Session)
-                .WithMany(s => s.Tickets) // ✅ добавлено сюда
+                .WithMany(s => s.Tickets)
                 .HasForeignKey(t => t.SessionId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // 🎬 Session → Movie
+            // 🎬 Session → Movie (удаляем сеансы при удалении фильма)
             modelBuilder.Entity<Session>()
                 .HasOne(s => s.Movie)
-                .WithMany()
+                .WithMany(m => m.Sessions)
                 .HasForeignKey(s => s.MovieId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Уникальный индекс: одно место может быть продано только один раз на сеанс
+            // 📀 Movie → Genre (удаляем фильмы при удалении жанра)
+            modelBuilder.Entity<Movie>()
+                .HasOne(m => m.Genre)
+                .WithMany(g => g.Movies)
+                .HasForeignKey(m => m.GenreId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // 🎫 Один билет = одно место в конкретном сеансе
             modelBuilder.Entity<Ticket>()
                 .HasIndex(t => new { t.SessionId, t.SeatId })
                 .IsUnique();

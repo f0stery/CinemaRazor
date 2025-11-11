@@ -6,75 +6,91 @@
     var hasPositions = ViewData["HasPositions"] as bool? ?? false;
 }
 
-<h1>Создание сотрудника</h1>
+<section class="page-header mb-4">
+    <h1 class="page-title">Новый сотрудник</h1>
+    <p class="page-subtitle">Заполните анкету для сотрудника и назначьте подходящую должность.</p>
+</section>
 
 @if (!hasPositions)
 {
-    <div class="alert alert-warning" role="alert">
-        <strong>Нет доступных должностей.</strong>
-        Добавьте должность, прежде чем создавать сотрудника.
-        <br />
-        <a asp-page="/Positions/Create" class="alert-link">Создать должность</a>
+    <div class="surface-card surface-card--loose support-card mb-4">
+        <h2>Нет доступных должностей</h2>
+        <p>Создайте хотя бы одну должность, чтобы назначить её новому сотруднику.</p>
+        <div class="d-flex flex-wrap gap-2">
+            <a asp-page="/Positions/Create" class="btn btn-primary">Создать должность</a>
+            <a asp-page="/Positions/Index" class="btn btn-outline-secondary">Перейти к списку должностей</a>
+        </div>
     </div>
 }
 
-<hr />
+<div class="surface-card surface-card--loose form-container">
+    <form method="post">
+        @Html.AntiForgeryToken()
 
-<form method="post">
-    @Html.AntiForgeryToken()
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-    <fieldset @(hasPositions ? string.Empty : "disabled")>
-        <div class="form-group mb-3">
-            <label asp-for="Employee.FullName" class="form-label">ФИО</label>
-            <input asp-for="Employee.FullName" class="form-control" />
-            <span asp-validation-for="Employee.FullName" class="text-danger"></span>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <label asp-for="Employee.Age" class="form-label">Возраст</label>
-                <input asp-for="Employee.Age" class="form-control" type="number" min="16" max="100" />
-                <span asp-validation-for="Employee.Age" class="text-danger"></span>
+        <fieldset @(hasPositions ? string.Empty : "disabled")>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Employee.FullName" class="form-label">
+                            <span class="text-danger">*</span> ФИО
+                        </label>
+                        <input asp-for="Employee.FullName" class="form-control" placeholder="Например, Иванов Иван Иванович" />
+                        <span asp-validation-for="Employee.FullName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="Employee.Age" class="form-label">Возраст</label>
+                        <input asp-for="Employee.Age" class="form-control" type="number" min="16" max="100" />
+                        <span asp-validation-for="Employee.Age" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="Employee.Gender" class="form-label">Пол</label>
+                        <input asp-for="Employee.Gender" class="form-control" maxlength="10" />
+                        <span asp-validation-for="Employee.Gender" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
 
-            <div class="col-md-6 mb-3">
-                <label asp-for="Employee.Gender" class="form-label">Пол</label>
-                <input asp-for="Employee.Gender" class="form-control" maxlength="10" />
-                <span asp-validation-for="Employee.Gender" class="text-danger"></span>
+            <div class="form-group">
+                <label asp-for="Employee.Address" class="form-label">Адрес</label>
+                <input asp-for="Employee.Address" class="form-control" placeholder="Город, улица, дом" />
+                <span asp-validation-for="Employee.Address" class="text-danger"></span>
             </div>
-        </div>
 
-        <div class="form-group mb-3">
-            <label asp-for="Employee.Address" class="form-label">Адрес</label>
-            <input asp-for="Employee.Address" class="form-control" />
-            <span asp-validation-for="Employee.Address" class="text-danger"></span>
-        </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Employee.Phone" class="form-label">Телефон</label>
+                        <input asp-for="Employee.Phone" class="form-control" placeholder="+375 (__) ___-__-__" />
+                        <span asp-validation-for="Employee.Phone" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Employee.PositionId" class="form-label">
+                            <span class="text-danger">*</span> Должность
+                        </label>
+                        <select asp-for="Employee.PositionId" class="form-select" asp-items="ViewBag.PositionId">
+                            <option value="">Выберите должность</option>
+                        </select>
+                        <span asp-validation-for="Employee.PositionId" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
 
-        <div class="form-group mb-3">
-            <label asp-for="Employee.Phone" class="form-label">Телефон</label>
-            <input asp-for="Employee.Phone" class="form-control" />
-            <span asp-validation-for="Employee.Phone" class="text-danger"></span>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary" @(hasPositions ? string.Empty : "disabled")>Создать сотрудника</button>
+            <a asp-page="Index" class="btn btn-outline-secondary">Отмена</a>
         </div>
-
-        <div class="form-group mb-3">
-            <label asp-for="Employee.PositionId" class="form-label">Должность</label>
-            <select asp-for="Employee.PositionId" class="form-select" asp-items="ViewBag.PositionId">
-                <option value="">Выберите должность</option>
-            </select>
-            <span asp-validation-for="Employee.PositionId" class="text-danger"></span>
-        </div>
-    </fieldset>
-
-    <div class="mt-3">
-        <input type="submit" value="Создать сотрудника" class="btn btn-primary" @(hasPositions ? string.Empty : "disabled") />
-        <a asp-page="Index" class="btn btn-secondary">Назад к списку</a>
-    </div>
-</form>
+    </form>
+</div>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }

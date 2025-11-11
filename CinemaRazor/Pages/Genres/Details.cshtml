@@ -2,26 +2,44 @@
 @model CinemaRazor.Pages.Genres.DetailsModel
 
 @{
-    ViewData["Title"] = "Просмотр жанра";
+    ViewData["Title"] = "Жанр";
 }
 
-<h1>Просмотр жанра</h1>
-<hr />
+<section class="page-header mb-4">
+    <h1 class="page-title">Подробнее о жанре</h1>
+    <p class="page-subtitle">Просмотрите описание жанра и используйте его в фильмотеке для группировки фильмов.</p>
+</section>
 
-<dl class="row">
-    <dt class="col-sm-2">Название</dt>
-    <dd class="col-sm-10">@Model.Genre.Name</dd>
+@if (Model.Genre == null)
+{
+    <div class="alert alert-warning">
+        Жанр не найден.
+        <div class="mt-3">
+            <a asp-page="Index" class="btn btn-outline-secondary">Вернуться к списку</a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="surface-card surface-card--loose details-container">
+        <div class="details-header">
+            <h2 class="details-title">@Model.Genre.Name</h2>
+            <p class="details-subtitle">Идентификатор: @Model.Genre.Id</p>
+        </div>
 
-    <dt class="col-sm-2">Описание</dt>
-    <dd class="col-sm-10">
-        @(!string.IsNullOrWhiteSpace(Model.Genre.Description)
-                ? Model.Genre.Description
-                : "Описание отсутствует")
-    </dd>
-</dl>
+        <div class="details-row">
+            <div class="details-label">Описание</div>
+            <div class="details-value">
+                @(string.IsNullOrWhiteSpace(Model.Genre.Description)
+                    ? "Описание не задано."
+                    : Model.Genre.Description)
+            </div>
+        </div>
 
-<div>
-    <a asp-page="Edit" asp-route-id="@Model.Genre.Id" class="btn btn-primary">Изменить</a>
-    <a asp-page="Delete" asp-route-id="@Model.Genre.Id" class="btn btn-danger">Удалить</a>
-    <a asp-page="Index" class="btn btn-secondary">Назад к списку</a>
-</div>
+        <div class="details-actions">
+            <a asp-page="./Edit" asp-route-id="@Model.Genre.Id" class="btn btn-primary">Изменить</a>
+            <a asp-page="./Delete" asp-route-id="@Model.Genre.Id" class="btn btn-outline-secondary">Удалить</a>
+            <a asp-page="./Index" class="btn btn-outline-secondary">К списку жанров</a>
+        </div>
+    </div>
+}

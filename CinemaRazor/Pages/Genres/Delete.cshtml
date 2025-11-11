@@ -5,25 +5,46 @@
     ViewData["Title"] = "Удаление жанра";
 }
 
-<h1>Удаление жанра</h1>
+<section class="page-header mb-4">
+    <h1 class="page-title">Удаление жанра</h1>
+    <p class="page-subtitle">Удалите жанр, если он больше не используется в фильмотеке.</p>
+</section>
 
-<h3>Вы уверены, что хотите удалить этот жанр?</h3>
-<hr />
+@if (Model.Genre == null)
+{
+    <div class="alert alert-warning">
+        Жанр не найден или уже удалён.
+        <div class="mt-3">
+            <a asp-page="Index" class="btn btn-outline-secondary">Вернуться к списку</a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="surface-card surface-card--loose delete-warning">
+        <h3>Подтвердите удаление</h3>
+        <p>Это действие нельзя отменить. Проверьте, что жанр не используется в фильмах.</p>
+    </div>
 
-<dl class="row">
-    <dt class="col-sm-2">Название</dt>
-    <dd class="col-sm-10">@Model.Genre.Name</dd>
+    <div class="surface-card surface-card--loose details-container mb-4">
+        <div class="details-header">
+            <h2 class="details-title">@Model.Genre.Name</h2>
+            <p class="details-subtitle">Идентификатор: @Model.Genre.Id</p>
+        </div>
 
-    <dt class="col-sm-2">Описание</dt>
-    <dd class="col-sm-10">
-        @(!string.IsNullOrWhiteSpace(Model.Genre.Description)
-                ? Model.Genre.Description
-                : "Описание отсутствует")
-    </dd>
-</dl>
+        <div class="details-row">
+            <div class="details-label">Описание</div>
+            <div class="details-value">
+                @(string.IsNullOrWhiteSpace(Model.Genre.Description)
+                    ? "Описание не задано."
+                    : Model.Genre.Description)
+            </div>
+        </div>
+    </div>
 
-<form method="post">
-    <input type="hidden" asp-for="Genre.Id" />
-    <button type="submit" class="btn btn-danger">Удалить</button>
-    <a asp-page="Index" class="btn btn-secondary">Назад к списку</a>
-</form>
+    <form method="post" class="d-flex flex-wrap gap-2">
+        <input type="hidden" asp-for="Genre.Id" />
+        <button type="submit" class="btn btn-danger">Удалить жанр</button>
+        <a asp-page="Index" class="btn btn-outline-secondary">Отмена</a>
+    </form>
+}

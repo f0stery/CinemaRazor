@@ -213,12 +213,10 @@ else
                         }
                     </div>
 
-                    @{
-                        var selectedSeat = Model.SelectedSeatId.HasValue
+                                            var selectedSeat = Model.SelectedSeatId.HasValue
                             ? Model.SeatLayout.FirstOrDefault(s => s.SeatId == Model.SelectedSeatId.Value)
                             : null;
-                    }
-                    <p id="selected-info" class="seat-selection-summary">
+                                        <p id="selected-info" class="seat-selection-summary">
                         @(selectedSeat != null
                             ? $"Выбрано место: ряд {selectedSeat.RowNumber}, место {selectedSeat.SeatNumber}"
                             : "Место не выбрано")

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CinemaRazor.Migrations
 {
     [DbContext(typeof(CinemaContext))]
-    [Migration("20251106205200_AddMovieGenreRelations")]
-    partial class AddMovieGenreRelations
+    [Migration("20251111091318_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

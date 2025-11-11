@@ -110,8 +110,8 @@ else
                         Начало: @Model.Session.StartTime.ToString("dd.MM.yyyy HH:mm")<br />
                         @{
                             DateTime? endTime = Model.Session.EndTime > Model.Session.StartTime
-                                ? Model.Session.EndTime
-                                : (DateTime?)null;
+                            ? Model.Session.EndTime
+                            : (DateTime?)null;
                         }
                         Окончание: @(endTime.HasValue ? endTime.Value.ToString("dd.MM.yyyy HH:mm") : "—")
                     </div>
@@ -204,18 +204,17 @@ else
                         }
                     </div>
 
-                    @{
-                        var selectedSeat = Model.SelectedSeatId.HasValue
-                            ? Model.SeatLayout.FirstOrDefault(s => s.SeatId == Model.SelectedSeatId.Value)
-                            : null;
-                    }
+                    var selectedSeat = Model.SelectedSeatId.HasValue
+                    ? Model.SeatLayout.FirstOrDefault(s => s.SeatId == Model.SelectedSeatId.Value)
+                    : null;
+
                     <p id="selected-info" class="seat-selection-summary">
                         @(selectedSeat != null
                             ? $"Выбрано место: ряд {selectedSeat.RowNumber}, место {selectedSeat.SeatNumber}"
                             : "Место не выбрано")
                     </p>
 
-                    <div class="seat-actions">
+                    <div class="seat-actions d-flex gap-2 justify-content-center">
                         <button type="submit" id="sellTicketButton" class="btn btn-primary" disabled>Продать билет</button>
                         <a asp-page="Index" class="btn btn-outline-secondary">Отмена</a>
                     </div>
@@ -232,14 +231,14 @@ else
 }
 
 @section Scripts {
-    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('sellTicketForm');
-            if (!form) {
-                return;
-            }
+            if (!form) return;
 
             const seatButtons = Array.from(form.querySelectorAll('[data-seat-id]'));
             const selectedInput = document.getElementById('selected-seat-id');
@@ -247,10 +246,7 @@ else
             const selectedInfo = document.getElementById('selected-info');
 
             const updateSummary = (row, seat) => {
-                if (!selectedInfo) {
-                    return;
-                }
-
+                if (!selectedInfo) return;
                 selectedInfo.textContent = row && seat
                     ? `Выбрано место: ряд ${row}, место ${seat}`
                     : 'Место не выбрано';
@@ -258,34 +254,22 @@ else
 
             const clearSelection = () => {
                 seatButtons.forEach(btn => btn.classList.remove('selected'));
-                if (selectedInput) {
-                    selectedInput.value = '';
-                }
-                if (submitButton) {
-                    submitButton.disabled = true;
-                }
+                selectedInput.value = '';
+                submitButton.disabled = true;
                 updateSummary(null, null);
             };
 
             const applySelection = (button) => {
-                if (!button || !selectedInput || !submitButton) {
-                    return;
-                }
-
                 seatButtons.forEach(btn => btn.classList.remove('selected'));
                 button.classList.add('selected');
-
                 selectedInput.value = button.dataset.seatId;
                 submitButton.disabled = false;
-
                 updateSummary(button.dataset.row, button.dataset.seat);
             };
 
             seatButtons.forEach(button => {
                 button.addEventListener('click', () => {
-                    if (button.disabled) {
-                        return;
-                    }
+                    if (button.disabled) return;
                     applySelection(button);
                 });
             });
@@ -293,10 +277,6 @@ else
             const preselected = seatButtons.find(btn => btn.classList.contains('selected'));
             if (preselected) {
                 applySelection(preselected);
-            } else if (seatButtons.length === 0) {
-                if (submitButton) {
-                    submitButton.disabled = selectedInput ? !selectedInput.value : true;
-                }
             } else {
                 clearSelection();
             }
